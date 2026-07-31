@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test di fumo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Nessuna dipendenza da installare: il progetto è volutamente senza
+      # build step e i test girano con il solo runtime di Node.
+      - name: Esegui i test
+        run: node test/smoke.js

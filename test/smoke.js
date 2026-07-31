@@ -401,6 +401,105 @@ test('generatori: con una BU vuota non lanciano eccezioni e segnalano i buchi', 
 });
 
 // ---------------------------------------------------------------------
+// Contenuto generato
+// I test sopra verificano la struttura. Questi verificano che le regole del
+// modello restino visibili nell'output: se qualcuno rompe il ciclo sulle leve
+// o riformula la CTA, la suite deve diventare rossa.
+// ---------------------------------------------------------------------
+
+function generaPerBuCompilata(idGeneratore) {
+  var ctx = creaContesto();
+  var bu = creaBuCompilata(ctx);
+  var g = ctx.BU.gen.trovaGeneratore(idGeneratore);
+  assicura(g, 'generatore "' + idGeneratore + '" non registrato');
+  return { bu: bu, md: g.genera(bu) };
+}
+
+// Estrae il testo di una sezione markdown di secondo livello, fino alla successiva.
+function sezione(md, intestazione) {
+  var parti = md.split(intestazione);
+  assicura(parti.length > 1, 'sezione "' + intestazione + '" assente dall\'output');
+  return parti[1].split('\n## ')[0];
+}
+
+test('landing: un blocco della sezione problema per ogni leva', function () {
+  var r = generaPerBuCompilata('landing');
+  var blocchi = sezione(r.md, '## 2. Problema').match(/^### /gm) || [];
+  assicuraUguale(blocchi.length, r.bu.leve.length,
+    'blocchi problema (' + blocchi.length + ') diversi dal numero di leve (' + r.bu.leve.length + ')');
+});
+
+test('landing: una riga di tabella di contrasto per ogni leva', function () {
+  var r = generaPerBuCompilata('landing');
+  var testo = sezione(r.md, '## 3. Contrasto');
+  // Righe della tabella meno intestazione e separatore.
+  var righe = (testo.match(/^\|.*\|$/gm) || []).length - 2;
+  assicuraUguale(righe, r.bu.leve.length,
+    'righe di contrasto (' + righe + ') diverse dal numero di leve (' + r.bu.leve.length + ')');
+});
+
+test('landing: ogni leva compare nella tabella di contrasto con la propria soluzione', function () {
+  var r = generaPerBuCompilata('landing');
+  var testo = sezione(r.md, '## 3. Contrasto');
+  r.bu.leve.forEach(function (leva, i) {
+    assicura(testo.indexOf(leva.come_lo_elimini) !== -1,
+      'la leva ' + (i + 1) + ' non porta il suo "come lo elimini" nella tabella di contrasto');
+  });
+});
+
+test('landing: la CTA coincide con il campo azione_richiesta', function () {
+  var r = generaPerBuCompilata('landing');
+  var cta = r.bu.campi.test.azione_richiesta.valore;
+  assicura(sezione(r.md, '## 1. Hero').indexOf(cta) !== -1,
+    'la CTA nell\'hero non e\' il valore del campo azione_richiesta');
+});
+
+test('landing: la sezione prove non espone le note interne di verifica', function () {
+  var r = generaPerBuCompilata('landing');
+  var testo = sezione(r.md, '## 5. Prove');
+  var prove = [];
+  ['identita', 'mercato', 'offerta', 'risorse', 'test'].forEach(function (sez) {
+    Object.keys(r.bu.campi[sez] || {}).forEach(function (chiave) {
+      var p = r.bu.campi[sez][chiave].prova;
+      if (p && String(p).trim()) prove.push(String(p).trim());
+    });
+  });
+  assicura(prove.length > 0, 'la fixture non ha campi con prova: il test non proverebbe nulla');
+  prove.forEach(function (p) {
+    assicura(testo.indexOf(p) === -1,
+      'la sezione prove pubblica una nota interna di verifica: "' + p + '"');
+  });
+});
+
+test('messaggi campagna: un angolo per ogni leva', function () {
+  var r = generaPerBuCompilata('messaggi-campagna');
+  var angoli = r.md.match(/^### Angolo \d+/gm) || [];
+  assicuraUguale(angoli.length, r.bu.leve.length,
+    'angoli di campagna (' + angoli.length + ') diversi dal numero di leve (' + r.bu.leve.length + ')');
+});
+
+test('validazione: nomina entrambe le soglie e distingue quella che autorizza a costruire', function () {
+  var r = generaPerBuCompilata('validazione');
+  assicura(/segnale di messaggio/i.test(r.md), 'manca il segnale di messaggio');
+  assicura(/segnale di mercato/i.test(r.md), 'manca il segnale di mercato');
+  assicura(/autorizza a costruire/i.test(r.md),
+    'il piano non dice quale soglia autorizza a costruire');
+});
+
+test('scheda: una BU vuota elenca tutti i campi critici tra le condizioni di stop', function () {
+  var ctx = creaContesto();
+  var bu = ctx.BU.schema.nuovaBU('Vuota');
+  var md = ctx.BU.gen.trovaGeneratore('scheda').genera(bu);
+  var stop = md.split(/## Cosa fermerebbe[^\n]*/)[1];
+  assicura(stop, 'la scheda non contiene la sezione "cosa fermerebbe"');
+  var critici = ctx.BU.schema.CAMPI.filter(function (d) { return d.critico; });
+  critici.forEach(function (d) {
+    assicura(stop.indexOf(d.etichetta) !== -1,
+      'campo critico "' + d.etichetta + '" assente dalle condizioni di stop');
+  });
+});
+
+// ---------------------------------------------------------------------
 // Riepilogo
 // ---------------------------------------------------------------------
 

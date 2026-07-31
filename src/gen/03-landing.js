@@ -8,7 +8,6 @@
   'use strict';
 
   var BU = global.BU = global.BU || {};
-  var schema = BU.schema;
   var render = BU.render;
 
   function sezioneHero(bu) {
@@ -55,16 +54,22 @@
     ].join('\n');
   }
 
-  function sezioneProve(bu) {
-    var righe = [];
-    schema.CAMPI.forEach(function (def) {
-      var campo = schema.ottieniCampo(bu, def.sezione, def.chiave);
-      if (schema.statoEffettivoCampo(campo) === 'verificata' && campo.prova && campo.prova.trim()) {
-        righe.push(def.etichetta + ': ' + campo.prova.trim());
-      }
-    });
-    if (!righe.length) return render.manca('almeno un campo verificato con prova compilata');
-    return render.elencoPuntato(righe);
+  // Le prove della landing sono materiale PUBBLICO: casi reali, loghi, numeri.
+  // Non vanno confuse con il campo `prova` delle voci dello schema, che è una
+  // nota interna di verifica ("confermato in 5 interviste, luglio 2026") e non
+  // è pubblicabile. Il modello oggi non raccoglie prove pubbliche: finché non
+  // lo farà, questa sezione resta esplicitamente da scrivere.
+  function sezioneProve() {
+    var righe = [
+      render.daScrivere('casi reali: contesto, problema, intervento, esito'),
+      render.daScrivere('loghi clienti, se utilizzabili'),
+      render.daScrivere('numeri: quanti progetti, in quanto tempo, con che esito'),
+      '',
+      '_Tagliare la sezione se non ci sono prove vere: una sezione prove debole fa',
+      'più danno della sua assenza. Le note nel campo "prova" di ciascuna voce sono',
+      'verifiche interne, non materiale da pubblicare._'
+    ];
+    return righe.join('\n');
   }
 
   function sezioneChiLoFa(bu) {
@@ -159,7 +164,7 @@
     righe.push(sezioneOfferta(bu));
     righe.push('');
     righe.push('## 5. Prove');
-    righe.push(sezioneProve(bu));
+    righe.push(sezioneProve());
     righe.push('');
     righe.push('## 6. Chi lo fa');
     righe.push(sezioneChiLoFa(bu));
