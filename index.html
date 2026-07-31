@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BU Blueprint</title>
+<link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+
+<aside id="sidebar">
+  <div id="sidebar-titolo">
+    BU Blueprint
+    <small>ipotesi → materiali → landing → test → decisione</small>
+  </div>
+  <ul id="sidebar-elenco"></ul>
+  <div id="sidebar-azioni">
+    <button type="button" id="bottone-nuova-bu" class="pulsante pulsante--primario">+ Nuova business unit</button>
+    <button type="button" id="bottone-esporta-backup" class="pulsante pulsante--secondario">Esporta backup JSON</button>
+    <button type="button" id="bottone-ripristina-backup" class="pulsante pulsante--secondario">Ripristina backup JSON</button>
+    <input type="file" id="input-ripristina-backup" accept="application/json,.json" style="display:none">
+  </div>
+  <div id="indicatore-salvataggio"></div>
+</aside>
+
+<main id="main">
+  <header id="bu-header"></header>
+  <nav id="tabs"></nav>
+  <div id="vista-container"></div>
+</main>
+
+<script src="src/schema.js"></script>
+<script src="src/store.js"></script>
+<script src="src/render.js"></script>
+<script src="src/gen/_registry.js"></script>
+<script src="src/gen/01-scheda.js"></script>
+<script src="src/gen/02-proposta-valore.js"></script>
+<script src="src/gen/03-landing.js"></script>
+<script src="src/gen/04-messaggi-campagna.js"></script>
+<script src="src/gen/05-validazione.js"></script>
+<script src="src/ui.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>
