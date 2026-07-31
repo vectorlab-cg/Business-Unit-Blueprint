@@ -22,6 +22,20 @@ aprire il file. Fai backup regolari con **"Esporta backup JSON"** nella
 barra laterale — è l'unico modo di spostare i dati su un'altra macchina o di
 recuperarli se svuoti la cache del browser.
 
+## Un esempio
+
+[`esempio/ricambi-su-misura.json`](esempio/ricambi-su-misura.json) è una
+business unit completa, generata con lo stesso codice dell'app (non scritta a
+mano): tutti i campi compilati, 4 leve, i 5 materiali generati per davvero,
+risultati del test e una decisione presa ("Continua"). Per caricarla, apri
+l'app e usa **"Ripristina backup JSON"** nella barra laterale — attenzione,
+sostituisce tutte le business unit locali, quindi usalo su un'installazione
+vuota o dopo aver fatto un backup delle tue.
+
+Un dettaglio non casuale: il campo **Prezzo** è segnato "Verificata" ma senza
+prova compilata, apposta, per mostrare dal vivo la regola non negoziabile —
+in COMPILA lo vedrai comunque colorato e trattato come "da verificare".
+
 ## Le tre viste
 
 Per ogni business unit:

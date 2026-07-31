@@ -73,8 +73,9 @@
 
   function faqAlternativa(bu) {
     return {
-      domanda: 'In cosa siete diversi da: ' + render.testoCampo(bu, 'mercato', 'alternativa_attuale') + '?',
-      risposta: render.testoCampo(bu, 'identita', 'meccanismo') + ', così che ' + render.testoCampo(bu, 'offerta', 'risultato_promesso') + '.'
+      domanda: 'In cosa siete diversi da: ' + render.senzaPuntoFinale(render.testoCampo(bu, 'mercato', 'alternativa_attuale')) + '?',
+      risposta: render.senzaPuntoFinale(render.testoCampo(bu, 'identita', 'meccanismo')) + ', così che ' +
+        render.senzaPuntoFinale(render.testoCampo(bu, 'offerta', 'risultato_promesso')) + '.'
     };
   }
 
@@ -90,7 +91,7 @@
     return (bu.leve || []).map(function (leva) {
       var domanda = (leva.come_lo_chiama_lui && leva.come_lo_chiama_lui.trim()) || render.manca('come lo chiama lui');
       var risposta = leva.come_lo_elimini || render.manca('come lo elimini');
-      return { domanda: domanda + '?', risposta: risposta };
+      return { domanda: render.senzaPuntoFinale(domanda) + '?', risposta: risposta };
     });
   }
 
@@ -115,7 +116,7 @@
 
   function sezioneChiusura(bu) {
     var righe = [];
-    righe.push(render.testoCampo(bu, 'offerta', 'risultato_promesso') + '.');
+    righe.push(render.senzaPuntoFinale(render.testoCampo(bu, 'offerta', 'risultato_promesso')) + '.');
     righe.push('**' + render.testoCampo(bu, 'test', 'azione_richiesta') + '**');
     righe.push(render.daScrivere('testo di chiusura e rassicurazione finale'));
     return righe.join('\n');

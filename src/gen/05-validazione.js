@@ -27,7 +27,7 @@
       var chiama = leva.come_lo_chiama_lui && leva.come_lo_chiama_lui.trim();
       var elimini = leva.come_lo_elimini && leva.come_lo_elimini.trim();
       righe.push('Leva: "' + (chiama || render.manca('come lo chiama lui')) + '" è un problema reale per ' +
-        render.testoCampo(bu, 'mercato', 'cliente_ideale') + ', e "' +
+        render.senzaPuntoFinale(render.testoCampo(bu, 'mercato', 'cliente_ideale')) + ', e "' +
         (elimini || render.manca('come lo elimini')) + '" lo risolve davvero.');
     });
 
@@ -70,9 +70,9 @@
   }
 
   function criteriDecisione(bu) {
-    var sogliaMercato = render.testoCampo(bu, 'test', 'soglia_mercato');
-    var sogliaMessaggio = render.testoCampo(bu, 'test', 'soglia_messaggio');
-    var durata = render.testoCampo(bu, 'test', 'durata_test');
+    var sogliaMercato = render.senzaPuntoFinale(render.testoCampo(bu, 'test', 'soglia_mercato'));
+    var sogliaMessaggio = render.senzaPuntoFinale(render.testoCampo(bu, 'test', 'soglia_messaggio'));
+    var durata = render.senzaPuntoFinale(render.testoCampo(bu, 'test', 'durata_test'));
 
     return [
       '**CONTINUA** — si raggiunge il segnale di mercato (' + sogliaMercato + '): si passa a costruire.',

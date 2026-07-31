@@ -35,11 +35,12 @@
     righe.push('');
     righe.push('Ciao,');
     righe.push('');
-    righe.push(apertura + '.');
+    righe.push(render.senzaPuntoFinale(apertura) + '.');
     righe.push('');
-    righe.push(render.testoCampo(bu, 'identita', 'meccanismo') + ', così che ' + render.testoCampo(bu, 'offerta', 'risultato_promesso') + '.');
+    righe.push(render.senzaPuntoFinale(render.testoCampo(bu, 'identita', 'meccanismo')) + ', così che ' +
+      render.senzaPuntoFinale(render.testoCampo(bu, 'offerta', 'risultato_promesso')) + '.');
     righe.push('');
-    righe.push(render.testoCampo(bu, 'test', 'azione_richiesta') + '?');
+    righe.push(render.senzaPuntoFinale(render.testoCampo(bu, 'test', 'azione_richiesta')) + '?');
     righe.push('');
     righe.push(render.daScrivere('firma'));
     return righe.join('\n');
@@ -52,10 +53,10 @@
       : render.manca('come lo chiama lui (prima leva)');
 
     var righe = [];
-    righe.push('Ciao, vedo che vi occupate di ' + render.testoCampo(bu, 'mercato', 'cliente_ideale') + '.');
-    righe.push('"' + apertura + '" — vi suona familiare?');
-    righe.push(render.testoCampo(bu, 'identita', 'meccanismo') + '.');
-    righe.push(render.testoCampo(bu, 'test', 'azione_richiesta') + '?');
+    righe.push('Ciao, vedo che vi occupate di ' + render.senzaPuntoFinale(render.testoCampo(bu, 'mercato', 'cliente_ideale')) + '.');
+    righe.push('"' + render.senzaPuntoFinale(apertura) + '" — vi suona familiare?');
+    righe.push(render.senzaPuntoFinale(render.testoCampo(bu, 'identita', 'meccanismo')) + '.');
+    righe.push(render.senzaPuntoFinale(render.testoCampo(bu, 'test', 'azione_richiesta')) + '?');
     return righe.join('\n');
   }
 
@@ -91,7 +92,8 @@
     righe.push('Regole:');
     righe.push('- Un annuncio per angolo, stesso formato, stessa lunghezza: solo l\'angolo cambia.');
     righe.push('- Usa le parole del cliente, non gergo interno.');
-    righe.push('- La promessa dell\'annuncio non deve superare "risultato promesso": ' + render.testoCampo(bu, 'offerta', 'risultato_promesso') + '.');
+    righe.push('- La promessa dell\'annuncio non deve superare "risultato promesso": ' +
+      render.senzaPuntoFinale(render.testoCampo(bu, 'offerta', 'risultato_promesso')) + '.');
     return '```\n' + righe.join('\n') + '\n```';
   }
 

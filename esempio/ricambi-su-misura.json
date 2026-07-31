@@ -1,0 +1,229 @@
+{
+  "versione": 1,
+  "esportatoIl": "2026-07-31T11:16:38.619Z",
+  "businessUnit": [
+    {
+      "id": "bu_ms8ukor8_1_2cnw94",
+      "nome": "Ricambi su misura",
+      "stato": "validata",
+      "creata": "2026-07-20T08:00:00.000Z",
+      "modificata": "2026-09-20T16:30:00.000Z",
+      "campi": {
+        "identita": {
+          "descrizione": {
+            "valore": "Produciamo pezzi di ricambio meccanici su misura per linee di imballaggio ferme per assenza del pezzo originale.",
+            "stato": "verificata",
+            "prova": "Confermato in 5 interviste con responsabili manutenzione, luglio 2026."
+          },
+          "meccanismo": {
+            "valore": "Rileviamo la quota in stabilimento, disegniamo il pezzo in CAD e lo produciamo internamente entro 48 ore.",
+            "stato": "verificata",
+            "prova": "3 casi pilota completati con successo tra maggio e giugno 2026."
+          }
+        },
+        "mercato": {
+          "cliente_ideale": {
+            "valore": "PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni.",
+            "stato": "verificata",
+            "prova": "Elenco di 40 aziende contattate, 12 rispondenti confermano il profilo."
+          },
+          "decisore": {
+            "valore": "Responsabile di manutenzione o plant manager.",
+            "stato": "da_verificare",
+            "prova": ""
+          },
+          "contesto_decisore": {
+            "valore": "Ha una linea ferma, un fornitore originale che risponde in 2-3 settimane, e un capo che chiede quando riparte.",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "alternativa_attuale": {
+            "valore": "Aspetta il ricambio originale dal produttore della macchina, o tiene un magazzino di scorta sovradimensionato.",
+            "stato": "verificata",
+            "prova": "Confermato da tutti i 12 rispondenti."
+          }
+        },
+        "offerta": {
+          "servizio": {
+            "valore": "Rilievo in loco, disegno CAD, produzione e consegna del pezzo di ricambio.",
+            "stato": "verificata",
+            "prova": "Erogato così nei 3 casi pilota."
+          },
+          "unita_vendita": {
+            "valore": "Un pezzo di ricambio urgente.",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "risultato_promesso": {
+            "valore": "Linea di nuovo operativa entro 48 ore invece di 2-3 settimane.",
+            "stato": "verificata",
+            "prova": "Cronometrato nei 3 casi pilota: 31h, 46h, 40h."
+          },
+          "escluso": {
+            "valore": "Manutenzione ordinaria, assistenza da remoto, ricambi a catalogo standard.",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "prezzo": {
+            "valore": "800-1.800 € a pezzo, in base alla complessità.",
+            "stato": "verificata",
+            "prova": ""
+          },
+          "modalita_vendita": {
+            "valore": "Chiamata di diagnosi gratuita, preventivo entro 24h, conferma via email.",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "tempi": {
+            "valore": "48 ore dalla conferma dell'ordine.",
+            "stato": "da_revisionare",
+            "prova": ""
+          }
+        },
+        "risorse": {
+          "competenze_presenti": {
+            "valore": [
+              "Disegno CAD meccanico",
+              "Tornitura e fresatura CNC",
+              "Rete di 2 fornitori di materiali rapidi"
+            ],
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "competenze_mancanti": {
+            "valore": [
+              "Copertura logistica nazionale entro 48h",
+              "Un secondo tecnico per il rilievo in loco"
+            ],
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "persone": {
+            "valore": [
+              "Marco Belli — tecnico rilievo — visite in stabilimento e disegno CAD",
+              "Giulia Conti — responsabile commerciale — primo contatto e preventivi"
+            ],
+            "stato": "ipotesi",
+            "prova": ""
+          }
+        },
+        "test": {
+          "canale_test": {
+            "valore": "LinkedIn Ads geolocalizzati",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "budget_test": {
+            "valore": "600 €",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "durata_test": {
+            "valore": {
+              "testo": "4 settimane",
+              "dataFine": "2026-09-15"
+            },
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "azione_richiesta": {
+            "valore": "Prenota una diagnosi gratuita della tua linea ferma.",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "soglia_messaggio": {
+            "valore": "Almeno 20 contatti e un tasso di compilazione del modulo del 25%.",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "soglia_mercato": {
+            "valore": "Almeno 5 conversazioni arrivate a discutere il prezzo, con almeno 1 preventivo richiesto.",
+            "stato": "verificata",
+            "prova": "Soglia concordata con la direzione prima del lancio del test, luglio 2026."
+          }
+        }
+      },
+      "leve": [
+        {
+          "id": "leva_ms8ukor9_2_3tm317",
+          "tipo": "dolore",
+          "fatto_osservabile": "La linea si ferma e resta ferma per giorni in attesa del pezzo.",
+          "come_lo_chiama_lui": "Non troviamo il pezzo in tempo, siamo bloccati.",
+          "come_lo_chiami_tu": "Assenza di un fornitore di ricambi a risposta rapida.",
+          "come_lo_elimini": "Rileviamo e produciamo il pezzo su misura entro 48 ore."
+        },
+        {
+          "id": "leva_ms8ukor9_3_bx1kmb",
+          "tipo": "dolore",
+          "fatto_osservabile": "Il fornitore originale ha tempi di consegna di 2-3 settimane e prezzi di listino alti.",
+          "come_lo_chiama_lui": "Ci tengono in ostaggio, pagare o restare fermi.",
+          "come_lo_chiami_tu": "Dipendenza da un unico fornitore con lead time lungo e potere di prezzo.",
+          "come_lo_elimini": "Offriamo un canale alternativo qualificato, indipendente dal produttore originale."
+        },
+        {
+          "id": "leva_ms8ukor9_4_hyg1d5",
+          "tipo": "obiettivo",
+          "fatto_osservabile": "Il responsabile di manutenzione viene valutato sui minuti di fermo linea annuali.",
+          "come_lo_chiama_lui": "Devo abbassare il downtime, è il mio KPI principale.",
+          "come_lo_chiami_tu": "Pressione sul downtime non pianificato come metrica di performance individuale.",
+          "come_lo_elimini": "Accordo quadro con tempi di consegna garantiti e contatto diretto prioritario."
+        },
+        {
+          "id": "leva_ms8ukor9_5_d90bqz",
+          "tipo": "dolore",
+          "fatto_osservabile": "Tenere un magazzino di scorta per ogni possibile ricambio costa e non copre comunque tutti i casi.",
+          "come_lo_chiama_lui": "Abbiamo un magazzino pieno di pezzi che non useremo mai, e ci manca sempre quello giusto.",
+          "come_lo_chiami_tu": "Costo di immobilizzo del magazzino di sicurezza sproporzionato alla copertura reale.",
+          "come_lo_elimini": "Produzione on-demand: nessuna scorta necessaria, il pezzo si fa quando serve."
+        }
+      ],
+      "materiali": {
+        "scheda": {
+          "stato": "approvato",
+          "testo": "# Scheda business unit — Ricambi su misura\n\nStato: Validata\n\n## Sintesi\nProduciamo pezzi di ricambio meccanici su misura per linee di imballaggio ferme per assenza del pezzo originale.\n\n## Meccanismo\nRileviamo la quota in stabilimento, disegniamo il pezzo in CAD e lo produciamo internamente entro 48 ore.\n\n## Cliente\n- Cliente ideale: PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni. _(Verificata)_\n- Decisore: Responsabile di manutenzione o plant manager. _(Da verificare)_\n- Contesto del decisore: Ha una linea ferma, un fornitore originale che risponde in 2-3 settimane, e un capo che chiede quando riparte. _(Ipotesi)_\n- Alternativa attuale: Aspetta il ricambio originale dal produttore della macchina, o tiene un magazzino di scorta sovradimensionato. _(Verificata)_\n\n## Leve\n| Tipo | Fatto osservabile | Come lo chiama lui | Come lo chiami tu | Come lo elimini |\n| --- | --- | --- | --- | --- |\n| Dolore | La linea si ferma e resta ferma per giorni in attesa del pezzo. | Non troviamo il pezzo in tempo, siamo bloccati. | Assenza di un fornitore di ricambi a risposta rapida. | Rileviamo e produciamo il pezzo su misura entro 48 ore. |\n| Dolore | Il fornitore originale ha tempi di consegna di 2-3 settimane e prezzi di listino alti. | Ci tengono in ostaggio, pagare o restare fermi. | Dipendenza da un unico fornitore con lead time lungo e potere di prezzo. | Offriamo un canale alternativo qualificato, indipendente dal produttore originale. |\n| Obiettivo | Il responsabile di manutenzione viene valutato sui minuti di fermo linea annuali. | Devo abbassare il downtime, è il mio KPI principale. | Pressione sul downtime non pianificato come metrica di performance individuale. | Accordo quadro con tempi di consegna garantiti e contatto diretto prioritario. |\n| Dolore | Tenere un magazzino di scorta per ogni possibile ricambio costa e non copre comunque tutti i casi. | Abbiamo un magazzino pieno di pezzi che non useremo mai, e ci manca sempre quello giusto. | Costo di immobilizzo del magazzino di sicurezza sproporzionato alla copertura reale. | Produzione on-demand: nessuna scorta necessaria, il pezzo si fa quando serve. |\n\n## Offerta\n- Servizio: Rilievo in loco, disegno CAD, produzione e consegna del pezzo di ricambio. _(Verificata)_\n- Unità di vendita: Un pezzo di ricambio urgente. _(Ipotesi)_\n- Risultato promesso: Linea di nuovo operativa entro 48 ore invece di 2-3 settimane. _(Verificata)_\n- Escluso: Manutenzione ordinaria, assistenza da remoto, ricambi a catalogo standard. _(Ipotesi)_\n- Prezzo: 800-1.800 € a pezzo, in base alla complessità. _(Da verificare)_\n- Modalità di vendita: Chiamata di diagnosi gratuita, preventivo entro 24h, conferma via email. _(Ipotesi)_\n- Tempi: 48 ore dalla conferma dell'ordine. _(Da revisionare)_\n\n## Risorse\n**Competenze presenti**\n- Disegno CAD meccanico\n- Tornitura e fresatura CNC\n- Rete di 2 fornitori di materiali rapidi\n\n**Competenze mancanti**\n- Copertura logistica nazionale entro 48h\n- Un secondo tecnico per il rilievo in loco\n\n**Persone**\n- Marco Belli — tecnico rilievo — visite in stabilimento e disegno CAD\n- Giulia Conti — responsabile commerciale — primo contatto e preventivi\n\n## Stato della conoscenza\n| Stato | Numero campi |\n| --- | --- |\n| Ipotesi | 12 |\n| Da verificare | 2 |\n| Verificata | 7 |\n| Da revisionare | 1 |\n\n## Domande aperte\n- Mercato > Decisore — da verificare\n- Offerta > Prezzo — da verificare\n\n## Cosa fermerebbe questa business unit\n- Prezzo non verificato (stato: Da verificare).\n",
+          "generatoIl": "2026-09-20T16:30:00.000Z",
+          "modificatoAMano": false
+        },
+        "proposta-valore": {
+          "stato": "da_revisionare",
+          "testo": "# Proposta di valore — Ricambi su misura\n\n## Formula\nPer Responsabile di manutenzione o plant manager di PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni che Ha una linea ferma, un fornitore originale che risponde in 2-3 settimane, e un capo che chiede quando riparte, Ricambi su misura Rileviamo la quota in stabilimento, disegniamo il pezzo in CAD e lo produciamo internamente entro 48 ore, così che Linea di nuovo operativa entro 48 ore invece di 2-3 settimane. A differenza di Aspetta il ricambio originale dal produttore della macchina, o tiene un magazzino di scorta sovradimensionato, Rileviamo e produciamo il pezzo su misura entro 48 ore.\n\n## Varianti di taglio\n**Taglio risultato**\nLinea di nuovo operativa entro 48 ore invece di 2-3 settimane. Lo facciamo per PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni attraverso Rileviamo la quota in stabilimento, disegniamo il pezzo in CAD e lo produciamo internamente entro 48 ore.\n\n**Taglio meccanismo**\nRicambi su misura Rileviamo la quota in stabilimento, disegniamo il pezzo in CAD e lo produciamo internamente entro 48 ore: è così che PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni ottiene Linea di nuovo operativa entro 48 ore invece di 2-3 settimane.\n\n**Taglio contrasto**\nOggi PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni Aspetta il ricambio originale dal produttore della macchina, o tiene un magazzino di scorta sovradimensionato. Con Ricambi su misura, invece, Rileviamo la quota in stabilimento, disegniamo il pezzo in CAD e lo produciamo internamente entro 48 ore, e il risultato è Linea di nuovo operativa entro 48 ore invece di 2-3 settimane.\n\n## Tabella di contrasto\n| Prima (oggi) | Dopo (con Ricambi su misura) |\n| --- | --- |\n| La linea si ferma e resta ferma per giorni in attesa del pezzo. | Rileviamo e produciamo il pezzo su misura entro 48 ore. |\n| Il fornitore originale ha tempi di consegna di 2-3 settimane e prezzi di listino alti. | Offriamo un canale alternativo qualificato, indipendente dal produttore originale. |\n| Il responsabile di manutenzione viene valutato sui minuti di fermo linea annuali. | Accordo quadro con tempi di consegna garantiti e contatto diretto prioritario. |\n| Tenere un magazzino di scorta per ogni possibile ricambio costa e non copre comunque tutti i casi. | Produzione on-demand: nessuna scorta necessaria, il pezzo si fa quando serve. |\n\n## Prompt per 8 headline\n```\nScrivi 8 headline per la landing page di \"Ricambi su misura\".\n\nCliente ideale: PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni.\nDecisore: Responsabile di manutenzione o plant manager.\nMeccanismo (cosa facciamo davvero): Rileviamo la quota in stabilimento, disegniamo il pezzo in CAD e lo produciamo internamente entro 48 ore.\nRisultato promesso: Linea di nuovo operativa entro 48 ore invece di 2-3 settimane.\nAlternativa attuale del cliente: Aspetta il ricambio originale dal produttore della macchina, o tiene un magazzino di scorta sovradimensionato.\nParole usate dal cliente per descrivere il problema: Non troviamo il pezzo in tempo, siamo bloccati. / Ci tengono in ostaggio, pagare o restare fermi. / Devo abbassare il downtime, è il mio KPI principale. / Abbiamo un magazzino pieno di pezzi che non useremo mai, e ci manca sempre quello giusto.\n\nRegole:\n- Usa le parole del cliente, non gergo interno.\n- Ogni headline deve essere falsificabile: deve poter essere letta come vera o falsa, non come slogan vago.\n- Niente aggettivi generici (innovativo, efficiente, smart) senza un fatto a supporto.\n- Varia l'angolo: almeno una headline per risultato, una per meccanismo, una per contrasto con l'alternativa attuale.\n- Massimo 12 parole per headline.\n```\n\n[DA SCRIVERE: 8 headline, usando il prompt sopra in uno strumento di scrittura esterno]\n",
+          "generatoIl": "2026-09-20T16:30:00.000Z",
+          "modificatoAMano": false
+        },
+        "landing": {
+          "stato": "bozza",
+          "testo": "# Struttura landing page — Ricambi su misura\n\n## 1. Hero\nHeadline: [DA SCRIVERE: headline principale (vedi anche il generatore Proposta di valore)]\nSottotitolo: Linea di nuovo operativa entro 48 ore invece di 2-3 settimane.\nCTA: Prenota una diagnosi gratuita della tua linea ferma.\n\n## 2. Problema\n### Non troviamo il pezzo in tempo, siamo bloccati.\nLa linea si ferma e resta ferma per giorni in attesa del pezzo.\n_Nome tecnico del problema: Assenza di un fornitore di ricambi a risposta rapida._\n\n### Ci tengono in ostaggio, pagare o restare fermi.\nIl fornitore originale ha tempi di consegna di 2-3 settimane e prezzi di listino alti.\n_Nome tecnico del problema: Dipendenza da un unico fornitore con lead time lungo e potere di prezzo._\n\n### Devo abbassare il downtime, è il mio KPI principale.\nIl responsabile di manutenzione viene valutato sui minuti di fermo linea annuali.\n_Nome tecnico del problema: Pressione sul downtime non pianificato come metrica di performance individuale._\n\n### Abbiamo un magazzino pieno di pezzi che non useremo mai, e ci manca sempre quello giusto.\nTenere un magazzino di scorta per ogni possibile ricambio costa e non copre comunque tutti i casi.\n_Nome tecnico del problema: Costo di immobilizzo del magazzino di sicurezza sproporzionato alla copertura reale._\n\n## 3. Contrasto\n| Prima (oggi) | Dopo (con Ricambi su misura) |\n| --- | --- |\n| La linea si ferma e resta ferma per giorni in attesa del pezzo. | Rileviamo e produciamo il pezzo su misura entro 48 ore. |\n| Il fornitore originale ha tempi di consegna di 2-3 settimane e prezzi di listino alti. | Offriamo un canale alternativo qualificato, indipendente dal produttore originale. |\n| Il responsabile di manutenzione viene valutato sui minuti di fermo linea annuali. | Accordo quadro con tempi di consegna garantiti e contatto diretto prioritario. |\n| Tenere un magazzino di scorta per ogni possibile ricambio costa e non copre comunque tutti i casi. | Produzione on-demand: nessuna scorta necessaria, il pezzo si fa quando serve. |\n\n## 4. Offerta\n- Servizio: Rilievo in loco, disegno CAD, produzione e consegna del pezzo di ricambio.\n- Unità di vendita: Un pezzo di ricambio urgente.\n- Risultato promesso: Linea di nuovo operativa entro 48 ore invece di 2-3 settimane.\n- Escluso: Manutenzione ordinaria, assistenza da remoto, ricambi a catalogo standard.\n- Prezzo: 800-1.800 € a pezzo, in base alla complessità.\n- Tempi: 48 ore dalla conferma dell'ordine.\n\n## 5. Prove\n- Descrizione: Confermato in 5 interviste con responsabili manutenzione, luglio 2026.\n- Meccanismo: 3 casi pilota completati con successo tra maggio e giugno 2026.\n- Cliente ideale: Elenco di 40 aziende contattate, 12 rispondenti confermano il profilo.\n- Alternativa attuale: Confermato da tutti i 12 rispondenti.\n- Servizio: Erogato così nei 3 casi pilota.\n- Risultato promesso: Cronometrato nei 3 casi pilota: 31h, 46h, 40h.\n- Soglia di mercato: Soglia concordata con la direzione prima del lancio del test, luglio 2026.\n\n## 6. Chi lo fa\n- Marco Belli — tecnico rilievo — visite in stabilimento e disegno CAD\n- Giulia Conti — responsabile commerciale — primo contatto e preventivi\n\n## 7. FAQ\n**In cosa siete diversi da: Aspetta il ricambio originale dal produttore della macchina, o tiene un magazzino di scorta sovradimensionato?**\nRileviamo la quota in stabilimento, disegniamo il pezzo in CAD e lo produciamo internamente entro 48 ore, così che Linea di nuovo operativa entro 48 ore invece di 2-3 settimane.\n\n**Quanto costa?**\n800-1.800 € a pezzo, in base alla complessità.\n\n**Quanto tempo richiede?**\n48 ore dalla conferma dell'ordine.\n\n**Non troviamo il pezzo in tempo, siamo bloccati?**\nRileviamo e produciamo il pezzo su misura entro 48 ore.\n\n**Ci tengono in ostaggio, pagare o restare fermi?**\nOffriamo un canale alternativo qualificato, indipendente dal produttore originale.\n\n**Devo abbassare il downtime, è il mio KPI principale?**\nAccordo quadro con tempi di consegna garantiti e contatto diretto prioritario.\n\n**Abbiamo un magazzino pieno di pezzi che non useremo mai, e ci manca sempre quello giusto?**\nProduzione on-demand: nessuna scorta necessaria, il pezzo si fa quando serve.\n\n**Serve qualcosa di specifico da parte nostra prima di iniziare?**\n[DA SCRIVERE: risposta che tenga conto che mancano ancora: Copertura logistica nazionale entro 48h; Un secondo tecnico per il rilievo in loco]\n\n## 8. Chiusura\nLinea di nuovo operativa entro 48 ore invece di 2-3 settimane.\n**Prenota una diagnosi gratuita della tua linea ferma.**\n[DA SCRIVERE: testo di chiusura e rassicurazione finale]\n\n## Prompt per scrivere i testi mancanti\n```\nScrivi i testi mancanti della landing page di \"Ricambi su misura\" (segnati [DA SCRIVERE] nel documento).\n\nCliente ideale: PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni.\nDecisore: Responsabile di manutenzione o plant manager.\nMeccanismo: Rileviamo la quota in stabilimento, disegniamo il pezzo in CAD e lo produciamo internamente entro 48 ore.\nRisultato promesso: Linea di nuovo operativa entro 48 ore invece di 2-3 settimane.\nAlternativa attuale: Aspetta il ricambio originale dal produttore della macchina, o tiene un magazzino di scorta sovradimensionato.\nAzione richiesta (CTA): Prenota una diagnosi gratuita della tua linea ferma.\n\nRegole di scrittura:\n- Usa le parole del cliente (vedi \"come lo chiama lui\" nelle leve), non gergo interno.\n- Ogni frase deve essere verificabile o concreta, non uno slogan vago.\n- Non promettere risultati diversi da quello dichiarato in \"risultato promesso\".\n- Non nascondere \"escluso\": se serve, va reso esplicito nel testo.\n- Coerenza con la CTA: tutta la pagina deve portare a \"Prenota una diagnosi gratuita della tua linea ferma.\".\n```\n",
+          "generatoIl": "2026-09-20T16:30:00.000Z",
+          "modificatoAMano": false
+        },
+        "messaggi-campagna": {
+          "stato": "bozza",
+          "testo": "# Messaggi campagna — Ricambi su misura\n\n## Angoli di campagna (uno per leva)\n### Angolo 1: Non troviamo il pezzo in tempo, siamo bloccati.\n- Nome tecnico del problema: Assenza di un fornitore di ricambi a risposta rapida.\n- Fatto osservabile: La linea si ferma e resta ferma per giorni in attesa del pezzo.\n- Soluzione: Rileviamo e produciamo il pezzo su misura entro 48 ore.\n- Annuncio: [DA SCRIVERE: breve annuncio pubblicitario basato su questo angolo]\n\n### Angolo 2: Ci tengono in ostaggio, pagare o restare fermi.\n- Nome tecnico del problema: Dipendenza da un unico fornitore con lead time lungo e potere di prezzo.\n- Fatto osservabile: Il fornitore originale ha tempi di consegna di 2-3 settimane e prezzi di listino alti.\n- Soluzione: Offriamo un canale alternativo qualificato, indipendente dal produttore originale.\n- Annuncio: [DA SCRIVERE: breve annuncio pubblicitario basato su questo angolo]\n\n### Angolo 3: Devo abbassare il downtime, è il mio KPI principale.\n- Nome tecnico del problema: Pressione sul downtime non pianificato come metrica di performance individuale.\n- Fatto osservabile: Il responsabile di manutenzione viene valutato sui minuti di fermo linea annuali.\n- Soluzione: Accordo quadro con tempi di consegna garantiti e contatto diretto prioritario.\n- Annuncio: [DA SCRIVERE: breve annuncio pubblicitario basato su questo angolo]\n\n### Angolo 4: Abbiamo un magazzino pieno di pezzi che non useremo mai, e ci manca sempre quello giusto.\n- Nome tecnico del problema: Costo di immobilizzo del magazzino di sicurezza sproporzionato alla copertura reale.\n- Fatto osservabile: Tenere un magazzino di scorta per ogni possibile ricambio costa e non copre comunque tutti i casi.\n- Soluzione: Produzione on-demand: nessuna scorta necessaria, il pezzo si fa quando serve.\n- Annuncio: [DA SCRIVERE: breve annuncio pubblicitario basato su questo angolo]\n\n## Email di primo contatto\nOggetto: Linea di nuovo operativa entro 48 ore invece di 2-3 settimane.\n\nCiao,\n\nLa linea si ferma e resta ferma per giorni in attesa del pezzo.\n\nRileviamo la quota in stabilimento, disegniamo il pezzo in CAD e lo produciamo internamente entro 48 ore, così che Linea di nuovo operativa entro 48 ore invece di 2-3 settimane.\n\nPrenota una diagnosi gratuita della tua linea ferma?\n\n[DA SCRIVERE: firma]\n\n## Messaggio LinkedIn\nCiao, vedo che vi occupate di PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni.\n\"Non troviamo il pezzo in tempo, siamo bloccati\" — vi suona familiare?\nRileviamo la quota in stabilimento, disegniamo il pezzo in CAD e lo produciamo internamente entro 48 ore.\nPrenota una diagnosi gratuita della tua linea ferma?\n\n## Spunti di parole chiave (dalle leve)\n- Non troviamo il pezzo in tempo, siamo bloccati.\n- Assenza di un fornitore di ricambi a risposta rapida.\n- Ci tengono in ostaggio, pagare o restare fermi.\n- Dipendenza da un unico fornitore con lead time lungo e potere di prezzo.\n- Devo abbassare il downtime, è il mio KPI principale.\n- Pressione sul downtime non pianificato come metrica di performance individuale.\n- Abbiamo un magazzino pieno di pezzi che non useremo mai, e ci manca sempre quello giusto.\n- Costo di immobilizzo del magazzino di sicurezza sproporzionato alla copertura reale.\n\n## Prompt per scrivere gli annunci\n```\nScrivi gli annunci per la campagna di test di \"Ricambi su misura\".\n\nCanale: LinkedIn Ads geolocalizzati\nBudget: 600 €\nCliente ideale: PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni.\nAzione richiesta (CTA): Prenota una diagnosi gratuita della tua linea ferma.\n\nScrivi un annuncio per ciascuno di questi angoli, uno per leva. Si testano uno contro\nl'altro: l'angolo vincente dice quale problema il mercato sente davvero, non quale\nproblema pensavamo fosse più importante.\n\n1. \"Non troviamo il pezzo in tempo, siamo bloccati.\" → risolto con: Rileviamo e produciamo il pezzo su misura entro 48 ore.\n2. \"Ci tengono in ostaggio, pagare o restare fermi.\" → risolto con: Offriamo un canale alternativo qualificato, indipendente dal produttore originale.\n3. \"Devo abbassare il downtime, è il mio KPI principale.\" → risolto con: Accordo quadro con tempi di consegna garantiti e contatto diretto prioritario.\n4. \"Abbiamo un magazzino pieno di pezzi che non useremo mai, e ci manca sempre quello giusto.\" → risolto con: Produzione on-demand: nessuna scorta necessaria, il pezzo si fa quando serve.\n\nRegole:\n- Un annuncio per angolo, stesso formato, stessa lunghezza: solo l'angolo cambia.\n- Usa le parole del cliente, non gergo interno.\n- La promessa dell'annuncio non deve superare \"risultato promesso\": Linea di nuovo operativa entro 48 ore invece di 2-3 settimane.\n```\n",
+          "generatoIl": "2026-09-20T16:30:00.000Z",
+          "modificatoAMano": false
+        },
+        "validazione": {
+          "stato": "pubblicabile",
+          "testo": "# Piano di validazione — Ricambi su misura\n\n## Ipotesi da testare\n- Decisore: Responsabile di manutenzione o plant manager. _(Da verificare)_\n- Contesto del decisore: Ha una linea ferma, un fornitore originale che risponde in 2-3 settimane, e un capo che chiede quando riparte. _(Ipotesi)_\n- Unità di vendita: Un pezzo di ricambio urgente. _(Ipotesi)_\n- Escluso: Manutenzione ordinaria, assistenza da remoto, ricambi a catalogo standard. _(Ipotesi)_\n- Prezzo: 800-1.800 € a pezzo, in base alla complessità. _(Da verificare)_\n- Modalità di vendita: Chiamata di diagnosi gratuita, preventivo entro 24h, conferma via email. _(Ipotesi)_\n- Tempi: 48 ore dalla conferma dell'ordine. _(Da revisionare)_\n- Competenze presenti: Disegno CAD meccanico; Tornitura e fresatura CNC; Rete di 2 fornitori di materiali rapidi _(Ipotesi)_\n- Competenze mancanti: Copertura logistica nazionale entro 48h; Un secondo tecnico per il rilievo in loco _(Ipotesi)_\n- Persone: Marco Belli — tecnico rilievo — visite in stabilimento e disegno CAD; Giulia Conti — responsabile commerciale — primo contatto e preventivi _(Ipotesi)_\n- Canale del test: LinkedIn Ads geolocalizzati _(Ipotesi)_\n- Budget del test: 600 € _(Ipotesi)_\n- Durata del test: 4 settimane, fine: 2026-09-15 _(Ipotesi)_\n- Azione richiesta: Prenota una diagnosi gratuita della tua linea ferma. _(Ipotesi)_\n- Soglia di messaggio: Almeno 20 contatti e un tasso di compilazione del modulo del 25%. _(Ipotesi)_\n- Leva: \"Non troviamo il pezzo in tempo, siamo bloccati.\" è un problema reale per PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni, e \"Rileviamo e produciamo il pezzo su misura entro 48 ore.\" lo risolve davvero.\n- Leva: \"Ci tengono in ostaggio, pagare o restare fermi.\" è un problema reale per PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni, e \"Offriamo un canale alternativo qualificato, indipendente dal produttore originale.\" lo risolve davvero.\n- Leva: \"Devo abbassare il downtime, è il mio KPI principale.\" è un problema reale per PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni, e \"Accordo quadro con tempi di consegna garantiti e contatto diretto prioritario.\" lo risolve davvero.\n- Leva: \"Abbiamo un magazzino pieno di pezzi che non useremo mai, e ci manca sempre quello giusto.\" è un problema reale per PMI manifatturiere italiane, 50-200 dipendenti, con almeno una linea automatizzata più vecchia di 10 anni, e \"Produzione on-demand: nessuna scorta necessaria, il pezzo si fa quando serve.\" lo risolve davvero.\n\n## Scheda del test\n- Canale: LinkedIn Ads geolocalizzati\n- Budget: 600 €\n- Durata: 4 settimane, fine: 2026-09-15\n- Azione richiesta (CTA): Prenota una diagnosi gratuita della tua linea ferma.\n\n## Le due soglie\n**Segnale di messaggio** (autorizza a telefonare): Almeno 20 contatti e un tasso di compilazione del modulo del 25%.\n**Segnale di mercato** (unica soglia che autorizza a costruire): Almeno 5 conversazioni arrivate a discutere il prezzo, con almeno 1 preventivo richiesto.\n\nLe due soglie restano separate: il segnale di messaggio dice solo che il messaggio arriva, non che qualcuno è disposto a pagare. Solo il segnale di mercato autorizza a costruire.\n\n## Costo di scoprire di aver sbagliato\n- Denaro: 600 €\n- Tempo: 4 settimane, fine: 2026-09-15\n- Ore-persona: [DA SCRIVERE: stima delle ore-persona necessarie per condurre il test]\n\n## Metriche da registrare\n| Metrica da registrare | Decide davvero? |\n| --- | --- |\n| Contatti raggiunti | No |\n| Messaggi / risposte ricevute | No |\n| Tasso di risposta | No |\n| Conversazioni arrivate al prezzo | Sì — decide |\n| Preventivi inviati | Sì — decide |\n| Vendite / contratti chiusi | Sì — decide |\n| Angolo / leva vincente | Sì — decide |\n| Note libere | No |\n\n## Criteri di decisione\n**CONTINUA** — si raggiunge il segnale di mercato (Almeno 5 conversazioni arrivate a discutere il prezzo, con almeno 1 preventivo richiesto): si passa a costruire.\n\n**MODIFICA** — si raggiunge il segnale di messaggio (Almeno 20 contatti e un tasso di compilazione del modulo del 25%) ma non quello di mercato: si rivede offerta o angolo e si ritesta.\n\n**FERMA** — non si raggiunge nemmeno il segnale di messaggio (Almeno 20 contatti e un tasso di compilazione del modulo del 25%) entro la durata del test (4 settimane, fine: 2026-09-15): si archivia l'ipotesi.\n",
+          "generatoIl": "2026-09-20T16:30:00.000Z",
+          "modificatoAMano": false
+        }
+      },
+      "risultati": {
+        "contatti_raggiunti": "34",
+        "messaggi_ricevuti": "11",
+        "tasso_risposta": "32%",
+        "conversazioni_al_prezzo": "6",
+        "preventivi": "4",
+        "vendite": "2",
+        "angolo_vincente": "Leva 1 (\"Non troviamo il pezzo in tempo\") — quasi il doppio dei click rispetto alle altre tre.",
+        "note_risultati": "Test durato 4 settimane su LinkedIn Ads, budget 580€ speso su 600€ stanziati."
+      },
+      "decisione": "continua",
+      "noteDecisione": {
+        "motivazione": "Soglia di mercato raggiunta e superata: 6 conversazioni al prezzo contro una soglia minima di 5, 4 preventivi, 2 vendite chiuse durante il test stesso. Si passa a costruire l'offerta stabile.",
+        "data": "2026-09-20"
+      }
+    }
+  ]
+}

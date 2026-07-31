@@ -16,21 +16,32 @@
     return (prima.come_lo_elimini && prima.come_lo_elimini.trim()) || render.manca('come lo elimini (prima leva)');
   }
 
+  // I campi vengono spesso scritti come frasi compiute (punto finale
+  // incluso). Qui vengono incollati dentro un'altra frase: si toglie il
+  // punto per non ritrovarsi con punteggiatura doppia ("...ore., così che").
   function formulaPrincipale(bu) {
-    return 'Per ' + render.testoCampo(bu, 'mercato', 'decisore') +
-      ' di ' + render.testoCampo(bu, 'mercato', 'cliente_ideale') +
-      ' che ' + render.testoCampo(bu, 'mercato', 'contesto_decisore') +
-      ', ' + bu.nome + ' ' + render.testoCampo(bu, 'identita', 'meccanismo') +
-      ', così che ' + render.testoCampo(bu, 'offerta', 'risultato_promesso') +
-      '. A differenza di ' + render.testoCampo(bu, 'mercato', 'alternativa_attuale') +
-      ', ' + differenzaPrimaLeva(bu) + '.';
+    var decisore = render.senzaPuntoFinale(render.testoCampo(bu, 'mercato', 'decisore'));
+    var cliente = render.senzaPuntoFinale(render.testoCampo(bu, 'mercato', 'cliente_ideale'));
+    var contesto = render.senzaPuntoFinale(render.testoCampo(bu, 'mercato', 'contesto_decisore'));
+    var meccanismo = render.senzaPuntoFinale(render.testoCampo(bu, 'identita', 'meccanismo'));
+    var risultato = render.senzaPuntoFinale(render.testoCampo(bu, 'offerta', 'risultato_promesso'));
+    var alternativa = render.senzaPuntoFinale(render.testoCampo(bu, 'mercato', 'alternativa_attuale'));
+    var differenza = render.senzaPuntoFinale(differenzaPrimaLeva(bu));
+
+    return 'Per ' + decisore +
+      ' di ' + cliente +
+      ' che ' + contesto +
+      ', ' + bu.nome + ' ' + meccanismo +
+      ', così che ' + risultato +
+      '. A differenza di ' + alternativa +
+      ', ' + differenza + '.';
   }
 
   function variantiDiTaglio(bu) {
-    var cliente = render.testoCampo(bu, 'mercato', 'cliente_ideale');
-    var meccanismo = render.testoCampo(bu, 'identita', 'meccanismo');
-    var risultato = render.testoCampo(bu, 'offerta', 'risultato_promesso');
-    var alternativa = render.testoCampo(bu, 'mercato', 'alternativa_attuale');
+    var cliente = render.senzaPuntoFinale(render.testoCampo(bu, 'mercato', 'cliente_ideale'));
+    var meccanismo = render.senzaPuntoFinale(render.testoCampo(bu, 'identita', 'meccanismo'));
+    var risultato = render.senzaPuntoFinale(render.testoCampo(bu, 'offerta', 'risultato_promesso'));
+    var alternativa = render.senzaPuntoFinale(render.testoCampo(bu, 'mercato', 'alternativa_attuale'));
 
     var righe = [];
     righe.push('**Taglio risultato**');

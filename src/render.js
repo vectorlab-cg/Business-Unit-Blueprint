@@ -91,6 +91,17 @@
     return BU.schema.STATI_CAMPO_ETICHETTE[stato] || stato;
   }
 
+  // Toglie un punto/esclamativo/interrogativo finale. Serve per incollare il
+  // testo di un campo (che l'utente scrive spesso come frase compiuta, punto
+  // incluso) dentro un'altra frase composta da un generatore, senza
+  // ritrovarsi con punteggiatura doppia ("...ore., così che...").
+  // Non tocca i segnaposto [MANCA: ...] / [DA SCRIVERE: ...], che finiscono
+  // con "]".
+  function senzaPuntoFinale(testo) {
+    testo = (testo === null || testo === undefined) ? '' : String(testo);
+    return testo.replace(/[.!?]+\s*$/, '');
+  }
+
   BU.render = {
     manca: manca,
     daScrivere: daScrivere,
@@ -100,7 +111,8 @@
     testoCampo: testoCampo,
     righeLista: righeLista,
     listaMarkdown: listaMarkdown,
-    etichettaStatoCampo: etichettaStatoCampo
+    etichettaStatoCampo: etichettaStatoCampo,
+    senzaPuntoFinale: senzaPuntoFinale
   };
 
 }(typeof window !== 'undefined' ? window : this));
