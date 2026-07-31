@@ -129,6 +129,20 @@
         }
       });
       divCampo.appendChild(inputValore);
+    } else if (def.tipo === 'scelta') {
+      inputValore = el('select', {
+        class: 'campo-valore campo-valore--scelta',
+        onchange: function (e) {
+          campo.valore = e.target.value;
+          aggiornaVisivo();
+          segnalaModifica();
+        }
+      }, [el('option', { value: '', selected: campo.valore ? undefined : 'selected' }, ['— non deciso —'])]
+        .concat((def.opzioni || []).map(function (o) {
+          return el('option', { value: o, selected: o === campo.valore ? 'selected' : undefined },
+            [(def.etichetteOpzioni && def.etichetteOpzioni[o]) || o]);
+        })));
+      divCampo.appendChild(inputValore);
     } else if (def.tipo === 'durata') {
       var inputTesto = el('input', {
         type: 'text', class: 'campo-valore campo-valore--durata-testo', placeholder: 'es. 4 settimane',
@@ -209,13 +223,6 @@
   function renderLevaCard(bu, leva, indice, segnalaModifica, ridisegna) {
     var card = el('div', { class: 'leva-card' });
 
-    var selTipo = el('select', {
-      class: 'leva-tipo',
-      onchange: function (e) { leva.tipo = e.target.value; segnalaModifica(); }
-    }, schema.TIPI_LEVA.map(function (t) {
-      return el('option', { value: t, selected: t === leva.tipo ? 'selected' : undefined }, [schema.TIPI_LEVA_ETICHETTE[t]]);
-    }));
-
     var bottoneRimuovi = el('button', {
       type: 'button', class: 'pulsante pulsante--pericolo pulsante--piccolo', title: 'Rimuovi leva',
       onclick: function () {
@@ -226,7 +233,10 @@
       }
     }, ['Rimuovi']);
 
-    card.appendChild(el('div', { class: 'leva-intestazione' }, [selTipo, bottoneRimuovi]));
+    card.appendChild(el('div', { class: 'leva-intestazione' }, [
+      el('span', { class: 'leva-titolo', text: 'Leva ' + (indice + 1) }),
+      bottoneRimuovi
+    ]));
 
     [
       ['fatto_osservabile', 'Fatto osservabile', 'Cosa succede al cliente, concretamente'],

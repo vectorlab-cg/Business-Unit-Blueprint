@@ -60,7 +60,6 @@
     }
     var righe = bu.leve.map(function (leva) {
       return [
-        schema.TIPI_LEVA_ETICHETTE[leva.tipo] || leva.tipo,
         leva.fatto_osservabile || render.manca('fatto osservabile'),
         leva.come_lo_chiama_lui || render.manca('come lo chiama lui'),
         leva.come_lo_chiami_tu || render.manca('come lo chiami tu'),
@@ -68,7 +67,7 @@
       ];
     });
     return render.tabella(
-      ['Tipo', 'Fatto osservabile', 'Come lo chiama lui', 'Come lo chiami tu', 'Come lo elimini'],
+      ['Fatto osservabile', 'Come lo chiama lui', 'Come lo chiami tu', 'Come lo elimini'],
       righe
     );
   }

@@ -58,11 +58,15 @@
     pubblicabile: 'Pubblicabile'
   };
 
-  var TIPI_LEVA = ['dolore', 'obiettivo'];
+  // Da quale lato apre la comunicazione. È una scelta per business unit, non
+  // per leva: la leva contiene già entrambi i lati (fatto_osservabile è la
+  // perdita, come_lo_elimini è il risultato). Nasce come ipotesi e diventa
+  // verificata solo quando un test di campagna dice quale dei due converte.
+  var APERTURE = ['perdita', 'risultato'];
 
-  var TIPI_LEVA_ETICHETTE = {
-    dolore: 'Dolore',
-    obiettivo: 'Obiettivo'
+  var APERTURE_ETICHETTE = {
+    perdita: 'Dalla perdita',
+    risultato: 'Dal risultato'
   };
 
   var DECISIONI = ['continua', 'modifica', 'ferma'];
@@ -92,6 +96,11 @@
       aiuto: 'Una frase, cosa fa la BU senza aggettivi.' },
     { sezione: 'identita', chiave: 'meccanismo', etichetta: 'Meccanismo', tipo: 'testo', critico: true,
       aiuto: 'Cosa fate come AZIONE, non come categoria. Non "consulenza tecnica" ma "inseriamo risorse tecniche dentro il sistema aziendale del cliente".' },
+    { sezione: 'identita', chiave: 'apertura', etichetta: 'Da dove apriamo', tipo: 'scelta',
+      opzioni: APERTURE, etichetteOpzioni: APERTURE_ETICHETTE, critico: false,
+      aiuto: 'Dalla perdita che il cliente subisce oggi, oppure dal risultato che otterrebbe. ' +
+        'Orienta il taglio del blocco problema in landing e degli angoli di campagna. ' +
+        'Finché non lo ha deciso un test, resta un\'ipotesi.' },
 
     // MERCATO
     { sezione: 'mercato', chiave: 'cliente_ideale', etichetta: 'Cliente ideale', tipo: 'testo', critico: true,
@@ -186,7 +195,6 @@
   function nuovaLeva() {
     return {
       id: generaId('leva'),
-      tipo: 'dolore',
       fatto_osservabile: '',
       come_lo_chiama_lui: '',
       come_lo_chiami_tu: '',
@@ -256,6 +264,19 @@
   // ---------------------------------------------------------------------
 
   // Regola 1: "verificata" senza prova ricade in "da_verificare".
+  // Apertura scelta per questa BU. Se non è stata decisa si assume 'perdita',
+  // ma `aperturaDecisa` permette ai generatori di dirlo invece di nasconderlo.
+  function apertura(bu) {
+    var campo = ottieniCampo(bu, 'identita', 'apertura');
+    var v = campo && typeof campo.valore === 'string' ? campo.valore : '';
+    return APERTURE.indexOf(v) !== -1 ? v : 'perdita';
+  }
+
+  function aperturaDecisa(bu) {
+    var campo = ottieniCampo(bu, 'identita', 'apertura');
+    return !!(campo && APERTURE.indexOf(campo.valore) !== -1);
+  }
+
   function statoEffettivoCampo(campo) {
     if (!campo) return 'ipotesi';
     if (campo.stato === 'verificata' && !(campo.prova && String(campo.prova).trim())) {
@@ -345,7 +366,9 @@
     var leva = nuovaLeva();
     if (grezza && typeof grezza === 'object') {
       if (typeof grezza.id === 'string' && grezza.id) leva.id = grezza.id;
-      if (TIPI_LEVA.indexOf(grezza.tipo) !== -1) leva.tipo = grezza.tipo;
+      // `tipo` esisteva nello schema v1 (dolore|obiettivo). Non veniva letto da
+      // nessun generatore ed è stato sostituito dal campo identita.apertura,
+      // che è una scelta per business unit. I dati vecchi lo perdono in silenzio.
       ['fatto_osservabile', 'come_lo_chiama_lui', 'come_lo_chiami_tu', 'come_lo_elimini'].forEach(function (k) {
         if (typeof grezza[k] === 'string') leva[k] = grezza[k];
       });
@@ -411,8 +434,8 @@
     STATI_BU_ETICHETTE: STATI_BU_ETICHETTE,
     STATI_MATERIALE: STATI_MATERIALE,
     STATI_MATERIALE_ETICHETTE: STATI_MATERIALE_ETICHETTE,
-    TIPI_LEVA: TIPI_LEVA,
-    TIPI_LEVA_ETICHETTE: TIPI_LEVA_ETICHETTE,
+    APERTURE: APERTURE,
+    APERTURE_ETICHETTE: APERTURE_ETICHETTE,
     DECISIONI: DECISIONI,
     DECISIONI_ETICHETTE: DECISIONI_ETICHETTE,
     SEZIONI: SEZIONI,
@@ -430,6 +453,8 @@
     ottieniCampo: ottieniCampo,
 
     statoEffettivoCampo: statoEffettivoCampo,
+    apertura: apertura,
+    aperturaDecisa: aperturaDecisa,
     campoHaValore: campoHaValore,
     completezza: completezza,
 

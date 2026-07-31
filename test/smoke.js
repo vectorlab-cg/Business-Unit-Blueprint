@@ -112,6 +112,7 @@ function creaBuCompilata(sandbox) {
   }
 
   imposta('identita', 'descrizione', 'Produciamo ricambi meccanici su misura per linee di imballaggio ferme.', 'verificata', 'Interviste con 5 responsabili manutenzione.');
+  imposta('identita', 'apertura', 'perdita', 'ipotesi');
   imposta('identita', 'meccanismo', 'Inseriamo un tecnico in stabilimento che rileva la quota e consegna il pezzo entro 48 ore.', 'ipotesi');
 
   imposta('mercato', 'cliente_ideale', 'PMI manifatturiere 50-200 dipendenti con linee automatizzate.', 'verificata', 'Elenco 40 aziende contattate.');
@@ -140,21 +141,18 @@ function creaBuCompilata(sandbox) {
 
   bu.leve = [
     Object.assign(schema.nuovaLeva(), {
-      tipo: 'dolore',
       fatto_osservabile: 'La linea si ferma e resta ferma per giorni.',
       come_lo_chiama_lui: 'Non troviamo il pezzo in tempo.',
       come_lo_chiami_tu: 'Assenza di un fornitore di ricambi a risposta rapida.',
       come_lo_elimini: 'Rileviamo e produciamo il pezzo entro 48 ore.'
     }),
     Object.assign(schema.nuovaLeva(), {
-      tipo: 'dolore',
       fatto_osservabile: 'Il fornitore originale ha tempi di due settimane.',
       come_lo_chiama_lui: 'Ci tengono in ostaggio.',
       come_lo_chiami_tu: 'Dipendenza da un unico fornitore con lead time lungo.',
       come_lo_elimini: 'Offriamo un canale alternativo qualificato in 48 ore.'
     }),
     Object.assign(schema.nuovaLeva(), {
-      tipo: 'obiettivo',
       fatto_osservabile: 'Il responsabile vuole ridurre i fermi macchina annuali.',
       come_lo_chiama_lui: 'Vogliamo meno fermi linea.',
       come_lo_chiami_tu: 'Riduzione del downtime non pianificato.',
@@ -279,7 +277,7 @@ test('migrazione: una BU con schema precedente viene normalizzata senza perdite'
 
   // leva incompleta viene completata, non scartata
   assicuraUguale(bu.leve.length, 1);
-  assicuraUguale(bu.leve[0].tipo, 'dolore');
+  assicuraUguale(bu.leve[0].tipo, undefined); // rimosso dallo schema: sostituito da identita.apertura
   assicuraUguale(bu.leve[0].fatto_osservabile, 'x');
   assicuraUguale(bu.leve[0].come_lo_chiama_lui, 'y');
   assicuraUguale(bu.leve[0].come_lo_chiami_tu, '');
@@ -497,6 +495,51 @@ test('scheda: una BU vuota elenca tutti i campi critici tra le condizioni di sto
     assicura(stop.indexOf(d.etichetta) !== -1,
       'campo critico "' + d.etichetta + '" assente dalle condizioni di stop');
   });
+});
+
+test('apertura: cambiare "da dove apriamo" cambia davvero landing e campagna', function () {
+  var ctx = creaContesto();
+  var bu = creaBuCompilata(ctx);
+  var land = ctx.BU.gen.trovaGeneratore('landing');
+  var camp = ctx.BU.gen.trovaGeneratore('messaggi-campagna');
+
+  bu.campi.identita.apertura.valore = 'perdita';
+  var landA = land.genera(bu), campA = camp.genera(bu);
+  bu.campi.identita.apertura.valore = 'risultato';
+  var landB = land.genera(bu), campB = camp.genera(bu);
+
+  assicura(landA !== landB, 'la landing non cambia al variare dell\'apertura: il campo sarebbe decorativo');
+  assicura(campA !== campB, 'i messaggi campagna non cambiano al variare dell\'apertura');
+});
+
+test('apertura: dal risultato i blocchi problema aprono con la soluzione', function () {
+  var ctx = creaContesto();
+  var bu = creaBuCompilata(ctx);
+  bu.campi.identita.apertura.valore = 'risultato';
+  var md = ctx.BU.gen.trovaGeneratore('landing').genera(bu);
+  var problema = sezione(md, '## 2. Problema');
+  bu.leve.forEach(function (leva, i) {
+    assicura(problema.indexOf('### ' + leva.come_lo_elimini) !== -1,
+      'il blocco ' + (i + 1) + ' non apre con "come lo elimini" pur avendo apertura dal risultato');
+  });
+});
+
+test('apertura: non decisa, il materiale lo dichiara invece di nasconderlo', function () {
+  var ctx = creaContesto();
+  var bu = creaBuCompilata(ctx);
+  bu.campi.identita.apertura.valore = '';
+  var md = ctx.BU.gen.trovaGeneratore('landing').genera(bu);
+  assicura(/non . stato compilato/i.test(md) || md.indexOf('non è stato compilato') !== -1,
+    'con apertura vuota la landing non segnala di aver assunto un default');
+});
+
+test('leve: il campo tipo dello schema v1 non sopravvive alla normalizzazione', function () {
+  var ctx = creaContesto();
+  var bu = ctx.BU.schema.normalizzaBU({
+    nome: 'Vecchia', leve: [{ tipo: 'obiettivo', fatto_osservabile: 'x' }]
+  });
+  assicura(bu.leve[0].tipo === undefined, 'il campo tipo è ancora presente sulle leve');
+  assicuraUguale(bu.leve[0].fatto_osservabile, 'x', 'la normalizzazione ha perso il contenuto della leva');
 });
 
 // ---------------------------------------------------------------------

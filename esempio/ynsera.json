@@ -1,0 +1,196 @@
+{
+  "versione": 1,
+  "esportatoIl": "2026-07-31T12:00:00.000Z",
+  "businessUnit": [
+    {
+      "id": "bu_ynsera_ricostruita",
+      "nome": "Ynsera",
+      "stato": "in_definizione",
+      "creata": "2026-03-01T09:00:00.000Z",
+      "modificata": "2026-07-31T12:00:00.000Z",
+      "campi": {
+        "identita": {
+          "descrizione": {
+            "valore": "Business unit di Vectorlab che inserisce un sistema tecnico completo — persone, supervisione e continuità — dentro i progetti di sviluppo dei clienti.",
+            "stato": "verificata",
+            "prova": "Documento YNSERA-POSIZIONE DEFINITIVA.pdf, marzo 2026."
+          },
+          "meccanismo": {
+            "valore": "Inseriamo nel sistema aziendale del cliente non una risorsa singola ma una struttura multidisciplinare con supervisione e responsabilità incluse, al prezzo di una sola risorsa.",
+            "stato": "verificata",
+            "prova": "Il naming YNSERA e il monogramma derivano da questo meccanismo. Documento YNSERA-POSIZIONE DEFINITIVA.pdf, marzo 2026."
+          },
+          "apertura": {
+            "valore": "perdita",
+            "stato": "ipotesi",
+            "prova": ""
+          }
+        },
+        "mercato": {
+          "cliente_ideale": {
+            "valore": "Aziende tech con progetti di sviluppo software in corso, team interno incompleto o dipendente da poche figure chiave.",
+            "stato": "da_verificare",
+            "prova": ""
+          },
+          "decisore": {
+            "valore": "CTO o responsabile tecnico.",
+            "stato": "da_verificare",
+            "prova": ""
+          },
+          "contesto_decisore": {
+            "valore": "Ha un progetto in corso che rallenta, un team che non copre tutte le competenze necessarie, e passa tempo a coordinare invece che a costruire.",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "alternativa_attuale": {
+            "valore": "Si rivolge a vendor che inseriscono risorse individuali, senza supervisione e senza un sistema dietro. Oppure assume internamente.",
+            "stato": "da_verificare",
+            "prova": ""
+          }
+        },
+        "offerta": {
+          "servizio": {
+            "valore": "Inserimento di una struttura multidisciplinare nel progetto del cliente, articolata in sei fasi: qualificazione, pianificazione, onboarding, esecuzione, continuità, delivery. Include sei mesi di presidio post-consegna.",
+            "stato": "verificata",
+            "prova": "Sezioni HOW IT WORKS e POST-DELIVERY CONTROL. Layout sito YNSERA-ATTERRAGGIO.pdf, 23/03/2026."
+          },
+          "unita_vendita": {
+            "valore": "",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "risultato_promesso": {
+            "valore": "Output di livello senior senza pagare prezzi senior, e senza tempo di gestione a carico del cliente.",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "escluso": {
+            "valore": "",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "prezzo": {
+            "valore": "",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "modalita_vendita": {
+            "valore": "Riunione di qualificazione con il team commerciale. Se il cliente è qualificato viene assegnato un project manager dedicato che definisce perimetro e timeline.",
+            "stato": "verificata",
+            "prova": "Documento PUNTI OPERATIVI.docx."
+          },
+          "tempi": {
+            "valore": "Avvio immediato: il sistema allinea ruoli, workflow e priorità dal primo giorno.",
+            "stato": "ipotesi",
+            "prova": ""
+          }
+        },
+        "risorse": {
+          "competenze_presenti": {
+            "valore": [
+              "Immersive technologies (VR, AR, XR)",
+              "Simulation e digital twins",
+              "Intelligenza artificiale e data science",
+              "Real-time 3D development",
+              "Web 3D applications",
+              "System integration e protocolli industriali"
+            ],
+            "stato": "verificata",
+            "prova": "Sezione TECHNOLOGIES. Layout sito YNSERA-ATTERRAGGIO.pdf, 23/03/2026."
+          },
+          "competenze_mancanti": {
+            "valore": [],
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "persone": {
+            "valore": [
+              "Davide Ruzzenenti — Chief Executive Officer — struttura, direzione e chiarezza operativa",
+              "Andrea Ruzzenenti — Chief Technology Officer — esecuzione tecnica e referente per i clienti",
+              "Francesco Capetti — System Architect — architetture scalabili e coerenza tecnica",
+              "Tommaso Ramella — AI & Data Scientist — machine learning, NLP e modelli predittivi",
+              "Andrea Quidacciolu Turcatti — Advanced Software Engineer — algoritmi e modellazione matematica",
+              "Marco Ottone Casagrande — Real-time Software Engineer — sistemi realtime ed embedded",
+              "Federico Isola — Mathematical Systems Engineer — simulazione e applicazioni interattive",
+              "Riccardo Olivato — VR/AR & XR Developer — applicazioni immersive in Unreal Engine",
+              "Alessandro Castrovillari — Web3D Developer — 3D su VR, AR e browser",
+              "Claudiu Stefano Nae — Web3D & XR Developer — prototipazione realtime e interfacce 3D",
+              "Andrei Apostu — Full Stack Developer — frontend, backend e tooling"
+            ],
+            "stato": "verificata",
+            "prova": "Sezione TEAM con ruoli e responsabilità. Layout sito YNSERA-ATTERRAGGIO.pdf, 23/03/2026."
+          }
+        },
+        "test": {
+          "canale_test": {
+            "valore": "Meta Ads (Facebook e Instagram), tramite Business Manager dedicato.",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "budget_test": {
+            "valore": "",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "durata_test": {
+            "valore": {
+              "testo": "",
+              "dataFine": ""
+            },
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "azione_richiesta": {
+            "valore": "Scan your daily losses: completare RISCAN, il questionario diagnostico a 4 domande, e ricevere via email la lettura del proprio livello di esposizione operativa.",
+            "stato": "verificata",
+            "prova": "CTA unica del sito, ripetuta in ogni punto decisionale. Layout sito YNSERA-ATTERRAGGIO.pdf, 23/03/2026."
+          },
+          "soglia_messaggio": {
+            "valore": "",
+            "stato": "ipotesi",
+            "prova": ""
+          },
+          "soglia_mercato": {
+            "valore": "",
+            "stato": "ipotesi",
+            "prova": ""
+          }
+        }
+      },
+      "leve": [
+        {
+          "id": "leva_ynsera_1",
+          "fatto_osservabile": "Paga tariffe da senior e riceve output da junior: il divario tra costo e risultato ricade su di lui.",
+          "come_lo_chiama_lui": "Mi serve un altro sviluppatore.",
+          "come_lo_chiami_tu": "Disallineamento tra costo e seniority reale.",
+          "come_lo_elimini": "Forniamo output di livello senior al prezzo di una singola risorsa, con supervisione inclusa."
+        },
+        {
+          "id": "leva_ynsera_2",
+          "fatto_osservabile": "Se si allontana dal progetto, il progetto si ferma: passa il tempo a gestire invece che a costruire.",
+          "come_lo_chiama_lui": "Se non ci sono io non va avanti niente.",
+          "come_lo_chiami_tu": "Dipendenza dalla presenza del management.",
+          "come_lo_elimini": "Supervisione e coordinamento sono dentro il sistema: il cliente non coordina, il sistema gira."
+        },
+        {
+          "id": "leva_ynsera_3",
+          "fatto_osservabile": "Il team non copre tutte le competenze che il progetto richiede, e la complessità cresce più in fretta della struttura.",
+          "come_lo_chiama_lui": "Ci manca una competenza specifica.",
+          "come_lo_chiami_tu": "Incompletezza del team rispetto al perimetro del progetto.",
+          "come_lo_elimini": "Presidiamo l'intero stack con un team multidisciplinare già formato, non con una figura singola."
+        },
+        {
+          "id": "leva_ynsera_4",
+          "fatto_osservabile": "Parti del progetto dipendono da singole persone: se una si ferma o esce, la delivery si blocca.",
+          "come_lo_chiama_lui": "Se quella persona va via siamo nei guai.",
+          "come_lo_chiami_tu": "Dipendenza da risorse singole.",
+          "come_lo_elimini": "Nulla dipende da una sola persona: il sistema si riassesta internamente senza impatti sulla delivery."
+        }
+      ],
+      "materiali": {},
+      "risultati": {},
+      "decisione": null,
+      "noteDecisione": "Ricostruzione a posteriori del caso Ynsera sullo schema di BU Blueprint, luglio 2026. I campi vuoti non sono dimenticanze: sono ciò che nel percorso reale non è mai stato definito. Prezzo, unità di vendita, esclusioni, competenze mancanti e le due soglie del test non compaiono in nessuno dei documenti prodotti."
+    }
+  ]
+}

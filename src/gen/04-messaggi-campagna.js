@@ -11,17 +11,35 @@
   var schema = BU.schema;
   var render = BU.render;
 
+  // Come per la landing, il taglio dipende da identita.apertura. Il contenuto
+  // dell'angolo non cambia: cambia da quale lato l'annuncio attacca.
   function angoliCampagna(bu) {
     if (!bu.leve || !bu.leve.length) return render.manca('almeno una leva per definire gli angoli');
-    return bu.leve.map(function (leva, i) {
+    var dalRisultato = schema.apertura(bu) === 'risultato';
+
+    var blocchi = bu.leve.map(function (leva, i) {
+      var titolo = dalRisultato
+        ? (leva.come_lo_elimini || render.manca('come lo elimini'))
+        : (leva.come_lo_chiama_lui || render.manca('come lo chiama lui'));
       var righe = [];
-      righe.push('### Angolo ' + (i + 1) + ': ' + (leva.come_lo_chiama_lui || render.manca('come lo chiama lui')));
+      righe.push('### Angolo ' + (i + 1) + ': ' + titolo);
       righe.push('- Nome tecnico del problema: ' + (leva.come_lo_chiami_tu || render.manca('come lo chiami tu')));
       righe.push('- Fatto osservabile: ' + (leva.fatto_osservabile || render.manca('fatto osservabile')));
       righe.push('- Soluzione: ' + (leva.come_lo_elimini || render.manca('come lo elimini')));
-      righe.push('- Annuncio: ' + render.daScrivere('breve annuncio pubblicitario basato su questo angolo'));
+      righe.push('- Attacca da: ' + (dalRisultato ? 'lo stato desiderato' : 'la perdita subita oggi'));
+      righe.push('- Annuncio: ' + render.daScrivere(dalRisultato
+        ? 'annuncio che apre sul risultato ottenibile'
+        : 'annuncio che apre sulla perdita in corso'));
       return righe.join('\n');
     }).join('\n\n');
+
+    var intro = dalRisultato
+      ? '_Tutti gli angoli aprono dal risultato. Vale la pena mettere in gara almeno un angolo dal lato opposto: è la domanda a cui una campagna risponde meglio e più in fretta._'
+      : '_Tutti gli angoli aprono dalla perdita. Vale la pena mettere in gara almeno un angolo dal lato opposto: è la domanda a cui una campagna risponde meglio e più in fretta._';
+    if (!schema.aperturaDecisa(bu)) {
+      intro += '\n_Il campo «Da dove apriamo» non è stato compilato: si assume l\'apertura dalla perdita._';
+    }
+    return intro + '\n\n' + blocchi;
   }
 
   function emailPrimoContatto(bu) {

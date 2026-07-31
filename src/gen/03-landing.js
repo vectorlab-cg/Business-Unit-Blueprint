@@ -8,6 +8,7 @@
   'use strict';
 
   var BU = global.BU = global.BU || {};
+  var schema = BU.schema;
   var render = BU.render;
 
   function sezioneHero(bu) {
@@ -18,18 +19,36 @@
     return righe.join('\n');
   }
 
+  // Il taglio dipende da identita.apertura: dalla perdita si apre sul sintomo
+  // che il cliente subisce oggi, dal risultato sullo stato che otterrebbe.
+  // Il contenuto della leva è lo stesso, cambia da quale lato lo si racconta.
   function sezioneProblema(bu) {
     if (!bu.leve || !bu.leve.length) return render.manca('almeno una leva per popolare la sezione problema');
-    return bu.leve.map(function (leva) {
-      var titolo = (leva.come_lo_chiama_lui && leva.come_lo_chiama_lui.trim()) ||
-        (leva.fatto_osservabile && leva.fatto_osservabile.trim()) ||
-        render.manca('leva senza testo');
+    var dalRisultato = schema.apertura(bu) === 'risultato';
+
+    var blocchi = bu.leve.map(function (leva) {
       var righe = [];
-      righe.push('### ' + titolo);
-      righe.push(leva.fatto_osservabile || render.manca('fatto osservabile'));
-      righe.push('_Nome tecnico del problema: ' + (leva.come_lo_chiami_tu || render.manca('come lo chiami tu')) + '_');
+      if (dalRisultato) {
+        righe.push('### ' + (leva.come_lo_elimini || render.manca('come lo elimini')));
+        righe.push('Oggi invece: ' + (leva.fatto_osservabile || render.manca('fatto osservabile')));
+        righe.push('_Nome tecnico del problema: ' + (leva.come_lo_chiami_tu || render.manca('come lo chiami tu')) + '_');
+        righe.push('Testo del blocco: ' + render.daScrivere('2 righe sullo stato desiderato, seconda persona'));
+      } else {
+        righe.push('### ' + (leva.come_lo_chiama_lui || leva.fatto_osservabile || render.manca('leva senza testo')));
+        righe.push(leva.fatto_osservabile || render.manca('fatto osservabile'));
+        righe.push('_Nome tecnico del problema: ' + (leva.come_lo_chiami_tu || render.manca('come lo chiami tu')) + '_');
+        righe.push('Testo del blocco: ' + render.daScrivere('2 righe sulla perdita, seconda persona'));
+      }
       return righe.join('\n');
     }).join('\n\n');
+
+    var intro = dalRisultato
+      ? '_Apertura dal risultato: ogni blocco parte dallo stato che il cliente otterrebbe e nomina la perdita subito dopo._'
+      : '_Apertura dalla perdita: ogni blocco parte dal sintomo che il cliente subisce oggi._';
+    if (!schema.aperturaDecisa(bu)) {
+      intro += '\n_Il campo «Da dove apriamo» non è stato compilato: si assume l\'apertura dalla perdita._';
+    }
+    return intro + '\n\n' + blocchi;
   }
 
   function sezioneContrasto(bu) {

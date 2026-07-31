@@ -59,6 +59,27 @@ verificato senza dover ritoccare il selettore.
 Motivo: senza questo vincolo qualunque campo tende a scivolare verso
 "verificata" per ottimismo, e la scheda finisce per mentire.
 
+## Apertura
+
+`identita.apertura` vale `perdita` o `risultato` e decide da quale lato
+raccontare le leve. Cambia due cose, in modo verificabile:
+
+- il blocco problema in landing: apre sul sintomo di oggi oppure sullo stato desiderato
+- l'angolo di campagna: attacca dalla perdita in corso oppure dal risultato ottenibile
+
+Il contenuto non cambia mai: cambia solo l'ordine in cui i due lati vengono
+raccontati. Un test verifica che la landing generata sia effettivamente diversa
+fra le due impostazioni — se qualcuno rende il campo inerte, la suite diventa
+rossa.
+
+Come ogni altro campo ha `stato` e `prova`, e nasce `ipotesi`. Non è una
+decisione da prendere a tavolino: è una delle poche domande a cui una campagna
+risponde bene e in fretta, mettendo in gara due angoli sullo stesso pubblico.
+Diventa `verificata` quando il test lo dice, con la prova che lo dimostra.
+
+Se il campo è vuoto i generatori assumono `perdita` e **lo dichiarano nel testo**
+invece di nasconderlo.
+
 ## Leve
 
 Da 3 a 5 per business unit (limite morbido in UI, non imposto al salvataggio:
@@ -66,14 +87,27 @@ una BU con 1 o 6 leve resta salvabile, l'interfaccia segnala solo quando sono
 meno di 3). Struttura:
 
 ```
-{ id, tipo: 'dolore' | 'obiettivo',
-  fatto_osservabile, come_lo_chiama_lui, come_lo_chiami_tu, come_lo_elimini }
+{ id, fatto_osservabile, come_lo_chiama_lui, come_lo_chiami_tu, come_lo_elimini }
 ```
 
 Le leve non hanno `stato`/`prova`: sono l'unità grezza da cui i generatori
 derivano blocco problema, riga di contrasto, angolo di campagna, FAQ e
 ipotesi da testare. Non hanno una casa in una sezione di `campi` perché non
 sono un "campo" nel senso sopra — sono una lista propria (`bu.leve`).
+
+### Perché non c'è un tipo `dolore | obiettivo`
+
+C'era, nello schema v1, e non veniva letto da nessun generatore: cambiarlo
+produceva materiale identico byte per byte. Era decorativo.
+
+Ma il difetto vero era di modello, non di implementazione: **la leva contiene
+già entrambi i lati.** `fatto_osservabile` è la perdita che il cliente subisce,
+`come_lo_elimini` è il risultato che otterrebbe. La tabella di contrasto li
+mette già affiancati nelle sue due colonne. Un campo che sceglie fra i due
+duplicava ciò che la struttura esprime da sola.
+
+Quello che invece mancava è una decisione **per business unit**, non per leva:
+da quale lato apre la comunicazione. È diventata `identita.apertura`.
 
 ## Materiali
 
