@@ -81,13 +81,14 @@
     { chiave: 'identita', etichetta: 'Identità' },
     { chiave: 'mercato', etichetta: 'Mercato' },
     { chiave: 'offerta', etichetta: 'Offerta' },
+    { chiave: 'pilota', etichetta: 'Pilota' },
     { chiave: 'risorse', etichetta: 'Risorse' },
     { chiave: 'test', etichetta: 'Test' }
   ];
 
   // ---------------------------------------------------------------------
   // Definizione dei campi
-  // tipo: 'testo' | 'lista' | 'durata'
+  // tipo: 'testo' | 'lista' | 'durata' | 'scelta'
   // ---------------------------------------------------------------------
 
   var CAMPI = [
@@ -99,7 +100,7 @@
     { sezione: 'identita', chiave: 'apertura', etichetta: 'Da dove apriamo', tipo: 'scelta',
       opzioni: APERTURE, etichetteOpzioni: APERTURE_ETICHETTE, critico: false,
       aiuto: 'Dalla perdita che il cliente subisce oggi, oppure dal risultato che otterrebbe. ' +
-        'Orienta il taglio del blocco problema in landing e degli angoli di campagna. ' +
+        'Orienta il taglio del blocco problema in landing e nella presentazione commerciale. ' +
         'Finché non lo ha deciso un test, resta un\'ipotesi.' },
 
     // MERCATO
@@ -127,6 +128,19 @@
       aiuto: 'Come si arriva alla firma.' },
     { sezione: 'offerta', chiave: 'tempi', etichetta: 'Tempi', tipo: 'testo', critico: false,
       aiuto: 'Dal sì alla consegna.' },
+
+    // PILOTA — versione ridotta dell'offerta per il primo cliente/i primi
+    // clienti, pensata per abbassare la soglia d'ingresso. Non è la stessa
+    // cosa del prezzo provvisorio dell'offerta standard (quello è già
+    // offerta.prezzo, con il suo stato): qui il servizio stesso è ridotto.
+    { sezione: 'pilota', chiave: 'servizio_pilota', etichetta: 'Servizio del pilota', tipo: 'testo', critico: false,
+      aiuto: 'Cosa include, in versione ridotta rispetto al servizio standard.' },
+    { sezione: 'pilota', chiave: 'prezzo_pilota', etichetta: 'Prezzo del pilota', tipo: 'testo', critico: false,
+      aiuto: 'Spesso simbolico o scontato rispetto al prezzo standard.' },
+    { sezione: 'pilota', chiave: 'durata_pilota', etichetta: 'Durata del pilota', tipo: 'durata', critico: false,
+      aiuto: 'Con una data di fine.' },
+    { sezione: 'pilota', chiave: 'criteri_successo_pilota', etichetta: 'Criteri di successo del pilota', tipo: 'lista', critico: false,
+      aiuto: 'Una voce per riga: cosa deve succedere perché il pilota sia un successo.' },
 
     // RISORSE (liste, una voce per riga)
     { sezione: 'risorse', chiave: 'competenze_presenti', etichetta: 'Competenze presenti', tipo: 'lista', critico: false,

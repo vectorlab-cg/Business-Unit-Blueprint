@@ -1,5 +1,5 @@
 /*
- * gen/03-landing.js
+ * gen/08-landing.js
  * Generatore "Struttura landing page": otto sezioni fisse (hero, problema,
  * contrasto, offerta, prove, chi lo fa, FAQ, chiusura) più un prompt
  * compilato per scrivere i testi mancanti.
@@ -202,7 +202,7 @@
 
   BU.registraGeneratore({
     id: 'landing',
-    nome: 'Struttura landing page',
+    nome: 'Landing page',
     descrizione: 'Otto sezioni fisse (hero, problema, contrasto, offerta, prove, chi lo fa, FAQ, chiusura) e un prompt per i testi mancanti.',
     richiede: [
       'offerta.risultato_promesso', 'test.azione_richiesta', 'offerta.servizio',

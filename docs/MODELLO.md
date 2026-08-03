@@ -10,7 +10,7 @@ ragione.
 {
   id, nome, stato,
   creata, modificata,
-  campi: { identita: {...}, mercato: {...}, offerta: {...}, risorse: {...}, test: {...} },
+  campi: { identita: {...}, mercato: {...}, offerta: {...}, pilota: {...}, risorse: {...}, test: {...} },
   leve: [ ... ],
   materiali: { <idGeneratore>: {...} },
   risultati: { ... },
@@ -27,11 +27,14 @@ registra una decisione in VALIDAZIONE (vedi sotto).
 ## Campi
 
 Ogni campo (`BU.schema.CAMPI`) appartiene a una sezione (`identita`,
-`mercato`, `offerta`, `risorse`, `test`) e ha un tipo:
+`mercato`, `offerta`, `pilota`, `risorse`, `test`) e ha un tipo:
 
 - `testo` — stringa libera.
 - `lista` — array di stringhe, una voce per riga in COMPILA.
-- `durata` — `{ testo, dataFine }` (usato solo da `test.durata_test`).
+- `durata` — `{ testo, dataFine }` (usato da `test.durata_test` e `pilota.durata_pilota`).
+- `scelta` — stringa vincolata a un elenco di opzioni (`opzioni` +
+  `etichetteOpzioni` nella definizione del campo); in COMPILA è un `<select>`
+  con "— non deciso —" come default. Usato oggi solo da `identita.apertura`.
 
 Ogni campo, qualunque il tipo, ha sempre le stesse tre proprietà:
 
@@ -44,7 +47,7 @@ Ogni campo, qualunque il tipo, ha sempre le stesse tre proprietà:
 
 I campi con `critico: true` nella definizione sono quelli la cui assenza
 finisce nella sezione "Cosa fermerebbe questa business unit" del generatore
-scheda.
+BU One-Page.
 
 ### La regola sullo stato effettivo
 
@@ -65,17 +68,18 @@ Motivo: senza questo vincolo qualunque campo tende a scivolare verso
 raccontare le leve. Cambia due cose, in modo verificabile:
 
 - il blocco problema in landing: apre sul sintomo di oggi oppure sullo stato desiderato
-- l'angolo di campagna: attacca dalla perdita in corso oppure dal risultato ottenibile
+- la slide problema della presentazione commerciale: idem
 
 Il contenuto non cambia mai: cambia solo l'ordine in cui i due lati vengono
-raccontati. Un test verifica che la landing generata sia effettivamente diversa
-fra le due impostazioni — se qualcuno rende il campo inerte, la suite diventa
-rossa.
+raccontati. Un test verifica che landing e presentazione generate siano
+effettivamente diverse fra le due impostazioni — se qualcuno rende il campo
+inerte, la suite diventa rossa.
 
 Come ogni altro campo ha `stato` e `prova`, e nasce `ipotesi`. Non è una
-decisione da prendere a tavolino: è una delle poche domande a cui una campagna
-risponde bene e in fretta, mettendo in gara due angoli sullo stesso pubblico.
-Diventa `verificata` quando il test lo dice, con la prova che lo dimostra.
+decisione da prendere a tavolino: è una delle poche domande a cui un test di
+campagna risponde bene e in fretta, mettendo in gara due angoli sullo stesso
+pubblico. Diventa `verificata` quando il test lo dice, con la prova che lo
+dimostra.
 
 Se il campo è vuoto i generatori assumono `perdita` e **lo dichiarano nel testo**
 invece di nasconderlo.
@@ -108,6 +112,21 @@ duplicava ciò che la struttura esprime da sola.
 
 Quello che invece mancava è una decisione **per business unit**, non per leva:
 da quale lato apre la comunicazione. È diventata `identita.apertura`.
+
+## Pilota
+
+Sezione separata da `offerta`: `servizio_pilota`, `prezzo_pilota`,
+`durata_pilota`, `criteri_successo_pilota`. Un pilota non è l'offerta
+standard con uno sconto — è un servizio volutamente più piccolo, per
+abbassare la soglia d'ingresso del primo cliente. Per questo ha un
+`servizio_pilota` proprio, non solo un prezzo diverso.
+
+Non va confuso con il "prezzo provvisorio" dell'offerta standard: quello
+è semplicemente `offerta.prezzo` finché il suo stato non è `verificata` —
+non serve un campo a parte, lo stato del campo lo dice già.
+
+Nessun campo di questa sezione è critico: il pilota è un percorso
+opzionale, non una condizione per cui la business unit si ferma se manca.
 
 ## Materiali
 
@@ -156,7 +175,7 @@ sempre una BU completa e valida secondo lo schema corrente. Regole:
   lista salvata come stringa singola diventa un array di una riga; una
   `durata_test` salvata come stringa diventa `{ testo: quella stringa,
   dataFine: '' }), altrimenti scartati in favore del default.
-- Gli enum (`stato`, `tipo` di leva, `decisione`, stato materiale) fuori
+- Gli enum (`stato` dei campi, `apertura`, `decisione`, stato materiale) fuori
   dai valori validi ricadono sul default piuttosto che propagare un valore
   sconosciuto nell'interfaccia.
 - Niente viene mai scartato silenziosamente per il solo fatto di non essere

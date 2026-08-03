@@ -26,7 +26,7 @@ recuperarli se svuoti la cache del browser.
 
 [`esempio/ricambi-su-misura.json`](esempio/ricambi-su-misura.json) è una
 business unit completa, generata con lo stesso codice dell'app (non scritta a
-mano): tutti i campi compilati, 4 leve, i 5 materiali generati per davvero,
+mano): tutti i campi compilati, 4 leve, i 14 materiali generati per davvero,
 risultati del test e una decisione presa ("Continua"). Per caricarla, apri
 l'app e usa **"Ripristina backup JSON"** nella barra laterale — attenzione,
 sostituisce tutte le business unit locali, quindi usalo su un'installazione
@@ -41,7 +41,7 @@ in COMPILA lo vedrai comunque colorato e trattato come "da verificare".
 Per ogni business unit:
 
 - **Compila** — questionario per sezioni (Identità, Mercato, Offerta,
-  Risorse, Test) più le leve. Ogni campo ha un valore, uno stato
+  Pilota, Risorse, Test) più le leve. Ogni campo ha un valore, uno stato
   (`ipotesi | da_verificare | verificata | da_revisionare`) e una prova.
   Un campo segnato "verificata" senza prova compilata viene trattato dal
   sistema come "da verificare", e l'interfaccia lo segnala — vedi
@@ -52,34 +52,65 @@ Per ogni business unit:
   davvero evidenziate) e la decisione finale: **Continua / Modifica /
   Ferma**, con motivazione e data.
 
-## I cinque generatori
+## I quattordici generatori
 
 Ognuno produce Markdown a partire dai dati compilati, senza mai nascondere i
 buchi: dove manca un dato compare `[MANCA: nome campo]`, dove serve
 scrittura umana compare `[DA SCRIVERE: cosa]` insieme a un prompt già
 compilato con i dati rilevanti, da incollare in uno strumento di scrittura
-esterno (il sistema non chiama nessun modello linguistico).
+esterno (il sistema non chiama nessun modello linguistico e non ha accesso a
+dati esterni: non inventa mai aziende, persone o numeri).
 
-1. **Scheda business unit** — sintesi interamente deterministica: identità,
-   mercato, leve, offerta, risorse, stato della conoscenza, domande aperte,
-   cosa fermerebbe questa business unit.
-2. **Proposta di valore** — formula compilata dai campi, tre varianti di
+1. **BU One-Page** — la sintesi di una pagina: cosa facciamo, per chi,
+   offerta, pilota, leve principali, cosa fermerebbe la business unit.
+2. **Problem Statement** — chi ha il problema, il problema dalle leve,
+   perché adesso, perché le soluzioni attuali non bastano, costo di non
+   risolverlo.
+3. **Ideal Customer Profile** — profilo, chi decide, segnali osservabili da
+   cercare (dalle leve), cosa fa oggi, criteri di esclusione.
+4. **Criteri di ricerca prospect** — titolo, settore, dimensione azienda e
+   parole chiave per cercare 50 prospect su LinkedIn (o strumento
+   equivalente). Produce solo i *criteri* di ricerca: lo strumento non ha
+   dati esterni e non deve mai inventare nominativi.
+5. **Proposta di valore** — formula compilata dai campi, tre varianti di
    taglio, tabella di contrasto dalle leve, prompt per 8 headline.
-3. **Struttura landing page** — otto sezioni fisse (hero, problema,
-   contrasto, offerta, prove, chi lo fa, FAQ, chiusura) e un prompt per i
-   testi che richiedono scrittura umana.
-4. **Messaggi campagna** — un angolo per leva, email di primo contatto,
-   messaggio LinkedIn, parole chiave dalle leve, prompt per gli annunci.
-5. **Piano di validazione** — ipotesi da testare, scheda del test, le due
-   soglie **separate** (segnale di messaggio ≠ segnale di mercato), costo di
-   scoprire di aver sbagliato, metriche da registrare, criteri di decisione.
+6. **Offerta pilota** — confronto servizio/prezzo tra offerta standard e
+   pilota, durata, criteri di successo.
+7. **Brief demo/mockup** — non è il materiale finale: è il brief per chi
+   costruisce la demo — obiettivo, pubblico, cosa dimostrare leva per leva.
+8. **Landing page** — otto sezioni fisse (hero, problema, contrasto,
+   offerta, prove, chi lo fa, FAQ, chiusura) e un prompt per i testi che
+   richiedono scrittura umana.
+9. **Presentazione commerciale** — struttura slide-per-slide di un deck di
+   vendita: problema, soluzione, prove, offerta, prossimi passi.
+10. **Script discovery call** — domande di scoperta dalle leve,
+    qualificazione, transizione all'offerta, chiusura.
+11. **Template proposta economica** — documento inviabile al cliente:
+    problema, proposta, cosa non include, investimento, tempi, validità.
+12. **Pipeline commerciale** — documento *statico*: le fasi della pipeline e
+    dove si inseriscono le due soglie del test. Non traccia i contatti
+    (niente CRM dentro l'app — quello resta in uno strumento esterno).
+13. **Dashboard KPI** — documento *statico*: fotografia dei risultati
+    inseriti in VALIDAZIONE al momento della generazione, con le metriche
+    che decidono davvero evidenziate. Non è un cruscotto vivo: si rigenera
+    a mano dopo aver aggiornato i risultati.
+14. **Criteri di continuazione o chiusura** — ipotesi da testare, scheda del
+    test, le due soglie **separate** (segnale di messaggio ≠ segnale di
+    mercato), costo di scoprire di aver sbagliato, criteri **Continua /
+    Modifica / Ferma**.
 
 Le due soglie del test non si confondono mai: il **segnale di messaggio**
 (il messaggio arriva) autorizza solo a telefonare; solo il **segnale di
-mercato** (qualcuno paga) autorizza a costruire.
+mercato** (qualcuno paga) autorizza a costruire. Compaiono nominate così, in
+più di un generatore, apposta.
 
-Aggiungere un sesto generatore costa un file e una riga in `index.html`:
-[docs/AGGIUNGERE-UN-GENERATORE.md](docs/AGGIUNGERE-UN-GENERATORE.md).
+`identita.apertura` (perdita | risultato) decide da quale lato raccontare le
+leve — cambia davvero l'output di Landing e Presentazione commerciale, non
+solo esteticamente: un test verifica che il markdown generato sia
+effettivamente diverso fra le due impostazioni.
+
+Aggiungere un quindicesimo generatore costa un file e una riga in
+`index.html`: [docs/AGGIUNGERE-UN-GENERATORE.md](docs/AGGIUNGERE-UN-GENERATORE.md).
 
 ## Struttura del progetto
 
@@ -94,11 +125,20 @@ src/
   app.js                    avvio, routing, sidebar, salvataggio differito
   gen/
     _registry.js             BU.registraGeneratore(...)
-    01-scheda.js
-    02-proposta-valore.js
-    03-landing.js
-    04-messaggi-campagna.js
-    05-validazione.js
+    01-bu-one-page.js
+    02-problem-statement.js
+    03-icp.js
+    04-criteri-prospect.js
+    05-proposta-valore.js
+    06-offerta-pilota.js
+    07-demo-brief.js
+    08-landing.js
+    09-presentazione-commerciale.js
+    10-script-discovery-call.js
+    11-template-proposta-economica.js
+    12-pipeline-commerciale.js
+    13-dashboard-kpi.js
+    14-criteri-decisione.js
 test/
   smoke.js                  test senza dipendenze — node test/smoke.js
 docs/
@@ -163,3 +203,30 @@ La specifica lasciava alcuni dettagli aperti. Scelte fatte, e perché:
   eventualmente modificato a mano) se presente, altrimenti genera al volo
   per quel materiale — non forza mai una rigenerazione che sovrascriverebbe
   modifiche manuali.
+- **"Messaggi campagna" (angoli, email, messaggio LinkedIn) è stato tolto**
+  nel passaggio dai 5 ai 14 generatori: non aveva un corrispondente esplicito
+  nella nuova lista. Se serve ancora, va riaggiunto come generatore a parte
+  — il contenuto (angoli dalle leve, email, messaggio LinkedIn) esisteva già
+  e si recupera facilmente dallo storico.
+- **"Lista di 50 prospect" produce solo i criteri di ricerca, mai nomi
+  inventati.** Lo strumento non ha accesso a dati esterni: una lista di
+  aziende o persone generata qui sarebbe per forza fabbricata. Il generatore
+  "Criteri di ricerca prospect" produce titolo, settore, dimensione azienda
+  e parole chiave da usare su LinkedIn (o strumento equivalente) — i 50
+  nominativi restano un lavoro umano con dati reali.
+- **"Demo o mockup" diventa un brief testuale**, non il materiale finale:
+  non è un artefatto che uno strumento di solo testo può produrre. Il
+  generatore "Brief demo/mockup" dice cosa mostrare e a chi; la demo vera
+  la costruisce una persona.
+- **"Pipeline commerciale" e "Dashboard KPI" restano documenti statici**,
+  non un CRM o un cruscotto vivo dentro l'app — coerente con "niente CRM,
+  automazioni, analytics" della specifica originale. "Dashboard KPI" legge
+  comunque i valori reali già inseriti in VALIDAZIONE (non è un template
+  vuoto), ma è una fotografia: si rigenera a mano, non si aggiorna da sola.
+- **Sezione "Pilota" separata da "Offerta"**, con un `servizio_pilota` tutto
+  suo: un pilota non è solo un prezzo più basso, è un servizio ridotto
+  apposta per abbassare la soglia d'ingresso. Nessun campo è critico: è un
+  percorso opzionale. Il "prezzo provvisorio" richiesto separatamente nella
+  lista originale non ha un campo dedicato: coincide con `offerta.prezzo`
+  finché il suo stato non è "verificata" — aggiungerne uno avrebbe duplicato
+  un dato che il sistema ha già.

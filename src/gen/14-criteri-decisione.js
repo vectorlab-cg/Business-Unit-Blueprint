@@ -1,8 +1,9 @@
 /*
- * gen/05-validazione.js
- * Generatore "Piano di validazione": ipotesi da testare, scheda del test,
- * le due soglie separate, costo di scoprire di aver sbagliato, metriche
- * da registrare, criteri CONTINUA / MODIFICA / FERMA.
+ * gen/14-criteri-decisione.js
+ * Generatore "Criteri di continuazione o chiusura": ipotesi da testare,
+ * scheda del test, le due soglie separate, costo di scoprire di aver
+ * sbagliato, criteri CONTINUA / MODIFICA / FERMA. Per i valori attuali
+ * delle metriche vedi il generatore "Dashboard KPI".
  */
 (function (global) {
   'use strict';
@@ -62,13 +63,6 @@
     ].join('\n');
   }
 
-  function tabellaMetriche(bu) {
-    var righe = schema.RISULTATI.map(function (def) {
-      return [def.etichetta, def.decide ? 'Sì — decide' : 'No'];
-    });
-    return render.tabella(['Metrica da registrare', 'Decide davvero?'], righe);
-  }
-
   function criteriDecisione(bu) {
     var sogliaMercato = render.senzaPuntoFinale(render.testoCampo(bu, 'test', 'soglia_mercato'));
     var sogliaMessaggio = render.senzaPuntoFinale(render.testoCampo(bu, 'test', 'soglia_messaggio'));
@@ -85,7 +79,7 @@
 
   function genera(bu) {
     var righe = [];
-    righe.push('# Piano di validazione — ' + bu.nome);
+    righe.push('# Criteri di continuazione o chiusura — ' + bu.nome);
     righe.push('');
     righe.push('## Ipotesi da testare');
     righe.push(ipotesiDaTestare(bu));
@@ -99,19 +93,18 @@
     righe.push('## Costo di scoprire di aver sbagliato');
     righe.push(costoDiScoprireDiAverSbagliato(bu));
     righe.push('');
-    righe.push('## Metriche da registrare');
-    righe.push(tabellaMetriche(bu));
-    righe.push('');
     righe.push('## Criteri di decisione');
     righe.push(criteriDecisione(bu));
+    righe.push('');
+    righe.push('_Per i valori attuali delle metriche rispetto a queste soglie, vedi il generatore "Dashboard KPI"._');
     righe.push('');
     return righe.join('\n');
   }
 
   BU.registraGeneratore({
-    id: 'validazione',
-    nome: 'Piano di validazione',
-    descrizione: 'Ipotesi da testare, scheda del test, le due soglie separate, costo dell\'errore, metriche e criteri di decisione.',
+    id: 'criteri-decisione',
+    nome: 'Criteri di continuazione o chiusura',
+    descrizione: 'Ipotesi da testare, scheda del test, le due soglie separate, costo dell\'errore, criteri CONTINUA/MODIFICA/FERMA.',
     richiede: ['test.canale_test', 'test.azione_richiesta', 'test.soglia_mercato'],
     genera: genera
   });

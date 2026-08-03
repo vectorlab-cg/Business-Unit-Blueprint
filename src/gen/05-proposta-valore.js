@@ -1,5 +1,5 @@
 /*
- * gen/02-proposta-valore.js
+ * gen/05-proposta-valore.js
  * Generatore "Proposta di valore": formula compilata dai campi, tre
  * varianti di taglio, tabella di contrasto dalle leve, prompt per 8 headline.
  */

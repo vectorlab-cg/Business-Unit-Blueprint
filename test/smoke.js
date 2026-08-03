@@ -128,6 +128,11 @@ function creaBuCompilata(sandbox) {
   imposta('offerta', 'modalita_vendita', 'Preventivo telefonico, conferma via email.', 'ipotesi');
   imposta('offerta', 'tempi', '48 ore dalla conferma.', 'ipotesi');
 
+  imposta('pilota', 'servizio_pilota', 'Un solo pezzo di ricambio, senza accordo quadro.', 'ipotesi');
+  imposta('pilota', 'prezzo_pilota', '400 euro, indipendentemente dalla complessità.', 'ipotesi');
+  bu.campi.pilota.durata_pilota.valore = { testo: '1 intervento', dataFine: '2026-08-15' };
+  imposta('pilota', 'criteri_successo_pilota', ['Consegna entro 48 ore', 'Il cliente richiede un secondo pezzo'], 'ipotesi');
+
   imposta('risorse', 'competenze_presenti', ['Disegno CAD', 'Tornitura CNC'], 'ipotesi');
   imposta('risorse', 'competenze_mancanti', ['Logistica urgente su tutto il territorio'], 'ipotesi');
   imposta('risorse', 'persone', ['Marco — tecnico rilievo — visite in stabilimento'], 'ipotesi');
@@ -138,6 +143,15 @@ function creaBuCompilata(sandbox) {
   imposta('test', 'azione_richiesta', 'Prenota una diagnosi gratuita della linea.', 'ipotesi');
   imposta('test', 'soglia_messaggio', '20 contatti, 30% di compilazione modulo.', 'ipotesi');
   imposta('test', 'soglia_mercato', 'Almeno 5 conversazioni arrivate al prezzo.', 'ipotesi');
+
+  bu.risultati.contatti_raggiunti = '34';
+  bu.risultati.messaggi_ricevuti = '11';
+  bu.risultati.tasso_risposta = '32%';
+  bu.risultati.conversazioni_al_prezzo = '6';
+  bu.risultati.preventivi = '4';
+  bu.risultati.vendite = '2';
+  bu.risultati.angolo_vincente = 'La leva sul fermo linea.';
+  bu.risultati.note_risultati = 'Test durato 4 settimane su LinkedIn Ads.';
 
   bu.leve = [
     Object.assign(schema.nuovaLeva(), {
@@ -343,9 +357,9 @@ test('store: importaJSON rifiuta JSON non valido con errore descrittivo', functi
 // Test: generatori
 // ---------------------------------------------------------------------
 
-test('generatori: sono registrati tutti e 5', function () {
+test('generatori: sono registrati tutti e 14', function () {
   var ctx = creaContesto();
-  assicuraUguale(ctx.BU.gen.elencaGeneratori().length, 5);
+  assicuraUguale(ctx.BU.gen.elencaGeneratori().length, 14);
 });
 
 test('generatori: ogni id registrato è unico', function () {
@@ -469,25 +483,27 @@ test('landing: la sezione prove non espone le note interne di verifica', functio
   });
 });
 
-test('messaggi campagna: un angolo per ogni leva', function () {
-  var r = generaPerBuCompilata('messaggi-campagna');
-  var angoli = r.md.match(/^### Angolo \d+/gm) || [];
-  assicuraUguale(angoli.length, r.bu.leve.length,
-    'angoli di campagna (' + angoli.length + ') diversi dal numero di leve (' + r.bu.leve.length + ')');
+test('presentazione commerciale: la slide problema cambia in base alle leve', function () {
+  var r = generaPerBuCompilata('presentazione-commerciale');
+  var slide = sezione(r.md, '## Slide 2 — Il problema');
+  r.bu.leve.forEach(function (leva, i) {
+    assicura(slide.indexOf(leva.fatto_osservabile) !== -1,
+      'la leva ' + (i + 1) + ' non compare nella slide problema');
+  });
 });
 
-test('validazione: nomina entrambe le soglie e distingue quella che autorizza a costruire', function () {
-  var r = generaPerBuCompilata('validazione');
+test('criteri di continuazione o chiusura: nomina entrambe le soglie e distingue quella che autorizza a costruire', function () {
+  var r = generaPerBuCompilata('criteri-decisione');
   assicura(/segnale di messaggio/i.test(r.md), 'manca il segnale di messaggio');
   assicura(/segnale di mercato/i.test(r.md), 'manca il segnale di mercato');
   assicura(/autorizza a costruire/i.test(r.md),
-    'il piano non dice quale soglia autorizza a costruire');
+    'il documento non dice quale soglia autorizza a costruire');
 });
 
-test('scheda: una BU vuota elenca tutti i campi critici tra le condizioni di stop', function () {
+test('bu one-page: una BU vuota elenca tutti i campi critici tra le condizioni di stop', function () {
   var ctx = creaContesto();
   var bu = ctx.BU.schema.nuovaBU('Vuota');
-  var md = ctx.BU.gen.trovaGeneratore('scheda').genera(bu);
+  var md = ctx.BU.gen.trovaGeneratore('bu-one-page').genera(bu);
   var stop = md.split(/## Cosa fermerebbe[^\n]*/)[1];
   assicura(stop, 'la scheda non contiene la sezione "cosa fermerebbe"');
   var critici = ctx.BU.schema.CAMPI.filter(function (d) { return d.critico; });
@@ -497,19 +513,50 @@ test('scheda: una BU vuota elenca tutti i campi critici tra le condizioni di sto
   });
 });
 
-test('apertura: cambiare "da dove apriamo" cambia davvero landing e campagna', function () {
+test('offerta pilota: mette a confronto servizio e prezzo standard con quelli del pilota', function () {
+  var r = generaPerBuCompilata('offerta-pilota');
+  assicura(r.md.indexOf(r.bu.campi.offerta.servizio.valore) !== -1, 'manca il servizio standard');
+  assicura(r.md.indexOf(r.bu.campi.pilota.servizio_pilota.valore) !== -1, 'manca il servizio del pilota');
+  assicura(r.md.indexOf(r.bu.campi.offerta.prezzo.valore) !== -1, 'manca il prezzo standard');
+  assicura(r.md.indexOf(r.bu.campi.pilota.prezzo_pilota.valore) !== -1, 'manca il prezzo del pilota');
+});
+
+test('criteri di ricerca prospect: non genera nomi di aziende o persone, solo criteri', function () {
+  var r = generaPerBuCompilata('criteri-prospect');
+  assicura(/non deve mai inventare aziende o persone/i.test(r.md),
+    'manca l\'avviso esplicito contro l\'invenzione di dati');
+  assicura(/50 nominativi/i.test(r.md), 'non menziona l\'obiettivo dei 50 nominativi');
+});
+
+test('dashboard KPI: riflette i valori inseriti in risultati, non solo la struttura', function () {
+  var ctx = creaContesto();
+  var bu = creaBuCompilata(ctx);
+  bu.risultati.vendite = '3';
+  bu.risultati.conversazioni_al_prezzo = '7';
+  var md = ctx.BU.gen.trovaGeneratore('dashboard-kpi').genera(bu);
+  assicura(md.indexOf('3') !== -1 && md.indexOf('7') !== -1,
+    'la dashboard non riporta i valori attuali di risultati');
+});
+
+test('pipeline commerciale: la soglia di mercato compare come fase della pipeline', function () {
+  var r = generaPerBuCompilata('pipeline-commerciale');
+  assicura(r.md.indexOf(r.bu.campi.test.soglia_mercato.valore) !== -1,
+    'la soglia di mercato non compare nella pipeline');
+});
+
+test('apertura: cambiare "da dove apriamo" cambia davvero landing e presentazione', function () {
   var ctx = creaContesto();
   var bu = creaBuCompilata(ctx);
   var land = ctx.BU.gen.trovaGeneratore('landing');
-  var camp = ctx.BU.gen.trovaGeneratore('messaggi-campagna');
+  var pres = ctx.BU.gen.trovaGeneratore('presentazione-commerciale');
 
   bu.campi.identita.apertura.valore = 'perdita';
-  var landA = land.genera(bu), campA = camp.genera(bu);
+  var landA = land.genera(bu), presA = pres.genera(bu);
   bu.campi.identita.apertura.valore = 'risultato';
-  var landB = land.genera(bu), campB = camp.genera(bu);
+  var landB = land.genera(bu), presB = pres.genera(bu);
 
   assicura(landA !== landB, 'la landing non cambia al variare dell\'apertura: il campo sarebbe decorativo');
-  assicura(campA !== campB, 'i messaggi campagna non cambiano al variare dell\'apertura');
+  assicura(presA !== presB, 'la presentazione commerciale non cambia al variare dell\'apertura');
 });
 
 test('apertura: dal risultato i blocchi problema aprono con la soluzione', function () {
