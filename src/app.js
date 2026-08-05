@@ -2,7 +2,8 @@
  * app.js
  * Avvio, routing (hash: #<idBU>/<vista>), sidebar, salvataggio differito,
  * backup/ripristino JSON, anteprima ed export Markdown della singola
- * business unit, cartella condivisa (un file per BU, vedi cartella.js).
+ * business unit, cartella condivisa su GitHub (un file per BU, vedi
+ * cartella.js): lettura sempre attiva, scrittura con token personale.
  *
  * Namespace globale: window.BU.app
  */
@@ -17,9 +18,8 @@
     elenco: [],
     buAttivaId: null,
     vista: 'compila',
-    cartellaCollegata: false,
-    dirHandle: null,
-    fileHandleDiBU: {} // buId -> { nomeFile, fileHandle }
+    usaCartella: false, // true quando l'elenco viene dalla cartella BU/ su GitHub
+    fileHandleDiBU: {} // buId -> { nomeFile, percorso, sha, downloadUrl }
   };
 
   var VISTE = ['compila', 'materiali', 'validazione'];
@@ -124,12 +124,15 @@
     renderSidebar();
     renderMain();
 
-    if (stato.cartellaCollegata) {
-      BU.cartella.creaFileBU(stato.dirHandle, bu).then(function (voce) {
+    if (stato.usaCartella && BU.cartella.haToken()) {
+      BU.cartella.creaFileBU(bu).then(function (voce) {
         stato.fileHandleDiBU[bu.id] = voce;
+        if (headerRefs && headerRefs.buId === bu.id) renderHeader(bu); // fa comparire "Salva su GitHub"
       }).catch(function (e) {
-        global.alert('La business unit è stata creata ma non salvata su file: ' + e.message);
+        global.alert('La business unit è stata creata solo in locale: ' + e.message);
       });
+    } else if (stato.usaCartella) {
+      global.alert('La business unit è stata creata solo in locale: serve un token GitHub per salvarla nella cartella condivisa (vedi la barra laterale).');
     }
   }
 
@@ -147,11 +150,15 @@
     renderMain();
 
     var voce = stato.fileHandleDiBU[id];
-    if (stato.cartellaCollegata && voce) {
+    if (voce) {
       delete stato.fileHandleDiBU[id];
-      BU.cartella.eliminaFile(stato.dirHandle, voce.nomeFile).catch(function (e) {
-        global.alert('La business unit è stata rimossa dall\'elenco ma il file non è stato eliminato: ' + e.message);
-      });
+      if (!BU.cartella.haToken()) {
+        global.alert('La business unit è stata rimossa solo dall\'elenco locale: serve un token GitHub per eliminarla anche dalla cartella condivisa.');
+      } else {
+        BU.cartella.eliminaFile(voce).catch(function (e) {
+          global.alert('La business unit è stata rimossa dall\'elenco ma il file su GitHub non è stato eliminato: ' + e.message);
+        });
+      }
     }
   }
 
@@ -210,20 +217,21 @@
   }
 
   // ---------------------------------------------------------------------
-  // Cartella condivisa — un file per BU, letto/scritto con la File System
-  // Access API (solo Chromium: Chrome, Edge). Se non collegata, l'app
-  // funziona come sempre sul localStorage del browser.
+  // Cartella condivisa — un file per BU dentro BU/ nel repository GitHub
+  // che ospita l'app (vedi cartella.js). La lettura è sempre attiva e non
+  // richiede nulla (il repo è pubblico); salvare/creare/eliminare richiede
+  // un token GitHub personale con accesso in scrittura al repo.
   // ---------------------------------------------------------------------
 
-  // Carica tutte le BU dalla cartella collegata e sostituisce l'elenco in
+  // Carica tutte le BU dalla cartella condivisa e sostituisce l'elenco in
   // memoria. I file che non si riescono a leggere vengono saltati (non
   // bloccano il caricamento delle altre BU), con un avviso in console.
   function caricaDaCartella() {
-    return BU.cartella.elencaFile(stato.dirHandle).then(function (voci) {
+    return BU.cartella.elencaFile().then(function (voci) {
       var nuovoElenco = [];
       var nuoveMappe = {};
       var letture = voci.map(function (voce) {
-        return BU.cartella.leggiBU(voce.fileHandle).then(function (bu) {
+        return BU.cartella.leggiBU(voce).then(function (bu) {
           nuovoElenco.push(bu);
           nuoveMappe[bu.id] = voce;
         }).catch(function (e) {
@@ -233,71 +241,36 @@
       return Promise.all(letture).then(function () {
         stato.elenco = nuovoElenco;
         stato.fileHandleDiBU = nuoveMappe;
+        stato.usaCartella = true;
         leggiHash();
         scriviHash();
         aggiornaControlliCartella();
         renderSidebar();
         renderMain();
       });
-    });
-  }
-
-  function collegaCartella() {
-    if (!BU.cartella.supportata()) return;
-    BU.cartella.collega().then(function (handle) {
-      stato.dirHandle = handle;
-      stato.cartellaCollegata = true;
-      return caricaDaCartella();
     }).catch(function (e) {
-      if (e && e.name === 'AbortError') return; // l'utente ha chiuso il selettore
-      global.alert('Impossibile collegare la cartella: ' + e.message);
-    });
-  }
-
-  function riconnettiCartella(handle) {
-    BU.cartella.richiediPermesso(handle).then(function (concesso) {
-      if (!concesso) {
-        global.alert('Permesso negato: la cartella resta scollegata.');
-        return;
-      }
-      stato.dirHandle = handle;
-      stato.cartellaCollegata = true;
-      return caricaDaCartella();
-    });
-  }
-
-  function scollegaCartella() {
-    if (!global.confirm('Scollegare la cartella BU? Si torna ai dati salvati in questo browser (localStorage).')) return;
-    BU.cartella.scollega().then(function () {
-      stato.dirHandle = null;
-      stato.cartellaCollegata = false;
-      stato.fileHandleDiBU = {};
-      stato.elenco = BU.store.carica();
-      leggiHash();
-      scriviHash();
       aggiornaControlliCartella();
-      renderSidebar();
-      renderMain();
+      throw e;
     });
   }
 
   function salvaSuFile(bu) {
     var voce = stato.fileHandleDiBU[bu.id];
-    if (!voce) return;
-    BU.cartella.scriviBU(voce.fileHandle, bu).then(function () {
-      aggiornaIndicatoreSalvataggio('Salvato su file alle ' + new Date().toLocaleTimeString('it-IT'));
+    if (!voce || !BU.cartella.haToken()) return;
+    BU.cartella.scriviBU(voce, bu).then(function (nuovaVoce) {
+      stato.fileHandleDiBU[bu.id] = nuovaVoce; // sha aggiornato: serve al prossimo salvataggio
+      aggiornaIndicatoreSalvataggio('Salvato su GitHub alle ' + new Date().toLocaleTimeString('it-IT'));
     }).catch(function (e) {
-      global.alert('Impossibile salvare il file "' + voce.nomeFile + '": ' + e.message);
+      global.alert('Impossibile salvare su GitHub: ' + e.message);
     });
   }
 
-  // Aggiorna testo e comportamento del controllo cartella nella sidebar
-  // senza ricostruire tutta la sidebar.
+  // Aggiorna testo e comportamento dei controlli della cartella condivisa
+  // nella sidebar (stato lettura + gestione token) senza ricostruire tutta
+  // la sidebar.
   function aggiornaControlliCartella() {
     var contenitore = document.getElementById('cartella-sezione');
     if (!contenitore) return;
-    var statoEl = document.getElementById('cartella-stato');
-    var bottone = document.getElementById('bottone-cartella');
 
     if (!BU.cartella.supportata()) {
       contenitore.style.display = 'none';
@@ -305,29 +278,35 @@
     }
     contenitore.style.display = '';
 
-    if (stato.cartellaCollegata) {
-      statoEl.textContent = 'Cartella collegata' + (stato.dirHandle && stato.dirHandle.name ? ': ' + stato.dirHandle.name : '');
-      bottone.textContent = 'Scollega cartella';
-      bottone.onclick = scollegaCartella;
-      return;
+    var statoEl = document.getElementById('cartella-stato');
+    statoEl.textContent = stato.usaCartella
+      ? 'Condiviso via GitHub (' + stato.elenco.length + ' business unit)'
+      : 'Dati locali in questo browser (GitHub non ancora letto)';
+
+    var inputToken = document.getElementById('input-token-github');
+    var bottoneToken = document.getElementById('bottone-token');
+
+    if (BU.cartella.haToken()) {
+      inputToken.style.display = 'none';
+      bottoneToken.textContent = 'Rimuovi token';
+      bottoneToken.onclick = function () {
+        if (!global.confirm('Rimuovere il token salvato? Non potrai più salvare su GitHub da questo browser finché non ne inserisci uno nuovo.')) return;
+        BU.cartella.rimuoviToken();
+        aggiornaControlliCartella();
+        renderMain(); // il pulsante "Salva su GitHub" nell'header dipende dal token
+      };
+    } else {
+      inputToken.style.display = '';
+      bottoneToken.textContent = 'Salva token';
+      bottoneToken.onclick = function () {
+        var valore = inputToken.value.trim();
+        if (!valore) return;
+        BU.cartella.salvaToken(valore);
+        inputToken.value = '';
+        aggiornaControlliCartella();
+        renderMain();
+      };
     }
-
-    statoEl.textContent = 'Nessuna cartella collegata';
-    bottone.textContent = 'Collega cartella BU';
-    bottone.onclick = collegaCartella;
-
-    BU.cartella.ripristina().then(function (risultato) {
-      if (!risultato || stato.cartellaCollegata) return; // niente di salvato, o collegata nel frattempo
-      if (risultato.permesso === 'granted') {
-        stato.dirHandle = risultato.handle;
-        stato.cartellaCollegata = true;
-        caricaDaCartella();
-        return;
-      }
-      statoEl.textContent = 'Cartella collegata in precedenza, permesso da confermare';
-      bottone.textContent = 'Riconnetti cartella BU';
-      bottone.onclick = function () { riconnettiCartella(risultato.handle); };
-    });
   }
 
   function costruisciMarkdownBU(bu) {
@@ -499,11 +478,11 @@
 
     var rigaAzioni = [badgeCompletezza, bottoneEsporta];
     var bottoneSalva = null;
-    if (stato.cartellaCollegata && stato.fileHandleDiBU[bu.id]) {
+    if (stato.fileHandleDiBU[bu.id] && BU.cartella.haToken()) {
       bottoneSalva = BU.ui.el('button', {
         type: 'button', class: 'pulsante pulsante--primario',
         onclick: function () { salvaSuFile(bu); }
-      }, ['Salva su file']);
+      }, ['Salva su GitHub']);
       rigaAzioni.push(bottoneSalva);
     }
 
@@ -568,6 +547,15 @@
     inputFile.addEventListener('change', function (e) {
       if (e.target.files && e.target.files[0]) ripristinaBackupDaFile(e.target.files[0]);
     });
+
+    var bottoneAggiorna = document.getElementById('bottone-aggiorna-cartella');
+    if (bottoneAggiorna) {
+      bottoneAggiorna.addEventListener('click', function () {
+        caricaDaCartella().catch(function (e) {
+          global.alert('Impossibile aggiornare da GitHub: ' + e.message);
+        });
+      });
+    }
   }
 
   function init() {
@@ -578,6 +566,12 @@
     renderSidebar();
     renderMain();
     aggiornaControlliCartella();
+
+    if (BU.cartella.supportata()) {
+      caricaDaCartella().catch(function (e) {
+        console.warn('BU Blueprint: impossibile leggere da GitHub, resto sui dati locali: ' + e.message);
+      });
+    }
 
     global.addEventListener('beforeunload', function () {
       if (timerSalvataggio) {

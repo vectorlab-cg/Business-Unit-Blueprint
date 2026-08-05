@@ -22,6 +22,23 @@ aprire il file. Fai backup regolari con **"Esporta backup JSON"** nella
 barra laterale — è l'unico modo di spostare i dati su un'altra macchina o di
 recuperarli se svuoti la cache del browser.
 
+### Cartella condivisa (opzionale)
+
+Se apri l'app da un browser con `fetch` (praticamente tutti), nella barra
+laterale trovi anche una sezione che legge le business unit dalla cartella
+`BU/` di questo stesso repository su GitHub (creata automaticamente al primo
+salvataggio), tramite le API REST di GitHub — niente server aggiuntivo,
+niente configurazione di cartelle locali.
+La lettura funziona sempre, senza login: il repo è pubblico. Per **salvare**
+serve invece un tuo [token GitHub personale](https://github.com/settings/tokens)
+(permesso `repo` o, per un fine-grained token, accesso in scrittura ai
+contenuti di questo repo) da incollare nell'apposito campo — resta solo nel
+`localStorage` del tuo browser, non è mai scritto nel codice: un token
+condiviso in un sito pubblico sarebbe leggibile da chiunque. Chi non ha un
+token può comunque leggere tutte le BU condivise, semplicemente non può
+salvare le proprie modifiche in cartella (restano comunque in locale). Vedi
+[`src/cartella.js`](src/cartella.js).
+
 ## Un esempio
 
 [`esempio/vectorlab-forge.json`](esempio/vectorlab-forge.json) è una vera
@@ -43,11 +60,13 @@ buona conferma dal vivo del perché quella sezione non ha campi critici.
 Per ogni business unit:
 
 - **Compila** — questionario per sezioni (Identità, Mercato, Offerta,
-  Pilota, Risorse, Test) più le leve. Ogni campo ha un valore, uno stato
-  (`ipotesi | da_verificare | verificata | da_revisionare`) e una prova.
-  Un campo segnato "verificata" senza prova compilata viene trattato dal
-  sistema come "da verificare", e l'interfaccia lo segnala — vedi
-  [docs/MODELLO.md](docs/MODELLO.md).
+  Pilota, Risorse, Test) più le leve. Ogni campo ha un valore e uno stato
+  (`ipotesi | generato_da_ia | mandatorio`) — vedi
+  [docs/MODELLO.md](docs/MODELLO.md). Alcuni materiali "interni" riportano
+  questo stato accanto al valore nel Markdown generato (es. "_(Mandatorio)_"),
+  in modo che chi legge sappia a colpo d'occhio cosa è deciso e cosa no; i
+  materiali destinati a un cliente (landing, presentazione commerciale,
+  proposta economica, script discovery call) non lo riportano mai.
 - **Materiali** — un blocco per generatore (vedi sotto), con stato di
   revisione, generazione/rigenerazione e testo modificabile a mano.
 - **Validazione** — risultati del test (con le metriche che decidono
@@ -128,7 +147,8 @@ src/
   store.js                  localStorage, export/import JSON
   render.js                 helper condivisi dai generatori (escaping, tabelle, segnaposto)
   ui.js                     le tre viste (Compila, Materiali, Validazione)
-  app.js                    avvio, routing, sidebar, salvataggio differito
+  app.js                    avvio, routing, sidebar, salvataggio differito, cartella condivisa
+  cartella.js                lettura/scrittura BU tramite le API GitHub Contents
   gen/
     _registry.js             BU.registraGeneratore(...)
     01-bu-one-page.js
@@ -145,6 +165,7 @@ src/
     12-pipeline-commerciale.js
     13-dashboard-kpi.js
     14-criteri-decisione.js
+    15-swot.js
 test/
   smoke.js                  test senza dipendenze — node test/smoke.js
 docs/
@@ -168,8 +189,11 @@ Nessuna dipendenza: carica i sorgenti in un contesto `vm` di Node con
 unicità dei generatori, esistenza nello schema di ogni campo richiesto,
 generazione con una BU compilata (niente `undefined`, niente `[MANCA:`
 residui), generazione con una BU vuota (nessuna eccezione, i buchi
-segnalati), la regola "verificata senza prova ricade in da_verificare", e la
-migrazione di dati salvati con uno schema precedente.
+segnalati), il modello a tre stati del campo (`ipotesi | generato_da_ia |
+mandatorio`) e la sua annotazione nel Markdown dei materiali interni (mai in
+quelli esterni), la migrazione di dati salvati con uno schema precedente, e
+la cartella condivisa su GitHub (lettura, scrittura, creazione, eliminazione)
+contro un repository finto simulato via mock di `fetch`.
 
 ## Decisioni prese in autonomia
 
@@ -234,7 +258,7 @@ La specifica lasciava alcuni dettagli aperti. Scelte fatte, e perché:
   apposta per abbassare la soglia d'ingresso. Nessun campo è critico: è un
   percorso opzionale. Il "prezzo provvisorio" richiesto separatamente nella
   lista originale non ha un campo dedicato: coincide con `offerta.prezzo`
-  finché il suo stato non è "verificata" — aggiungerne uno avrebbe duplicato
+  finché il suo stato resta "ipotesi" — aggiungerne uno avrebbe duplicato
   un dato che il sistema ha già.
 - **`mercato.differenziazione_competitiva`** (nuovo campo, critico): "cosa
   fa oggi al posto vostro" (`alternativa_attuale`) non è la stessa domanda
@@ -249,3 +273,24 @@ La specifica lasciava alcuni dettagli aperti. Scelte fatte, e perché:
   concorrenza diretta sì, trend di mercato e rischi macro no: lo strumento
   non ha dati esterni) — è una SWOT onesta sui dati che il sistema conosce,
   non una SWOT completa.
+- **Stato del campo a tre valori** (`ipotesi | generato_da_ia | mandatorio`),
+  al posto delle quattro precedenti con la regola "verificata senza prova
+  ricade in da_verificare": il campo `prova` è stato eliminato insieme alla
+  regola. `generato_da_ia` indica **provenienza** (il testo viene da una
+  sessione assistita da IA, tipicamente la condensazione di un'intervista),
+  non affidabilità — non sostituisce un giudizio umano sulla qualità del
+  contenuto. I materiali interni riportano lo stato nel Markdown accanto al
+  valore; quelli destinati a un cliente no, per non far trapelare metadati
+  interni in un testo che parte così com'è. Vedi [docs/MODELLO.md](docs/MODELLO.md).
+- **Cartella condivisa via API GitHub invece che via file locale**: il primo
+  design (File System Access API + cartella su OneDrive condivisa) è stato
+  abbandonato perché non tutti i browser interni la supportano (Brave, in
+  particolare, non espone `showDirectoryPicker`). Le business unit condivise
+  vivono invece come file JSON nella cartella `BU/` dello stesso repository
+  pubblico che ospita l'app, letti/scritti tramite le API REST di GitHub
+  direttamente dal browser: la lettura non richiede login, la scrittura
+  richiede un token personale che resta solo nel `localStorage` di chi lo
+  inserisce. Restare nello stesso repo pubblico (invece che spostare i dati
+  in uno privato) è stata una scelta esplicita, con il compromesso — dati di
+  business unit permanentemente visibili pubblicamente — dichiarato e
+  accettato prima di procedere.

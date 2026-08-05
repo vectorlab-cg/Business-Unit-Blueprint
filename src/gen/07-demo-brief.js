@@ -40,7 +40,7 @@
     righe.push(render.daScrivere('schermate o passaggi della demo/mockup, in ordine'));
     righe.push('');
     righe.push('## Cosa non deve includere');
-    righe.push(render.testoCampo(bu, 'offerta', 'escluso'));
+    righe.push(render.testoCampoConStato(bu, 'offerta', 'escluso'));
     righe.push('');
     return righe.join('\n');
   }

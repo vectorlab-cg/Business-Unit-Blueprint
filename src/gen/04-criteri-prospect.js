@@ -57,8 +57,8 @@
     righe.push('questi criteri, non generati qui._');
     righe.push('');
     righe.push('## Chi cercare');
-    righe.push('- Titolo/ruolo: ' + render.testoCampo(bu, 'mercato', 'decisore'));
-    righe.push('- Tipo di azienda: ' + render.testoCampo(bu, 'mercato', 'cliente_ideale'));
+    righe.push('- Titolo/ruolo: ' + render.testoCampoConStato(bu, 'mercato', 'decisore'));
+    righe.push('- Tipo di azienda: ' + render.testoCampoConStato(bu, 'mercato', 'cliente_ideale'));
     righe.push('');
     righe.push('## Segnali da cercare (parole chiave)');
     righe.push(segnaliDaCercare(bu));

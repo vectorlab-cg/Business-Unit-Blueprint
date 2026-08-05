@@ -10,19 +10,26 @@
 
   var BU = global.BU = global.BU || {};
 
-  var VERSIONE_SCHEMA = 1;
+  var VERSIONE_SCHEMA = 2;
 
   // ---------------------------------------------------------------------
   // Enumerazioni
   // ---------------------------------------------------------------------
 
-  var STATI_CAMPO = ['ipotesi', 'da_verificare', 'verificata', 'da_revisionare'];
+  // Stato di un campo. Non è un giudizio di affidabilità con verifica
+  // automatica (schema v1 aveva "verificata"/prova) — sono tre etichette
+  // indipendenti:
+  //   ipotesi         valore non ancora deciso/confermato
+  //   generato_da_ia  la provenienza del testo (nato da una sessione
+  //                   assistita da IA, non ancora riscritto/confermato da
+  //                   una persona) — indipendente da quanto sia vero
+  //   mandatorio      valore definitivo, non va cambiato senza motivo
+  var STATI_CAMPO = ['ipotesi', 'generato_da_ia', 'mandatorio'];
 
   var STATI_CAMPO_ETICHETTE = {
     ipotesi: 'Ipotesi',
-    da_verificare: 'Da verificare',
-    verificata: 'Verificata',
-    da_revisionare: 'Da revisionare'
+    generato_da_ia: 'Generato da IA',
+    mandatorio: 'Mandatorio'
   };
 
   var STATI_BU = [
@@ -61,7 +68,7 @@
   // Da quale lato apre la comunicazione. È una scelta per business unit, non
   // per leva: la leva contiene già entrambi i lati (fatto_osservabile è la
   // perdita, come_lo_elimini è il risultato). Nasce come ipotesi e diventa
-  // verificata solo quando un test di campagna dice quale dei due converte.
+  // mandatoria solo quando un test di campagna dice quale dei due converte.
   var APERTURE = ['perdita', 'risultato'];
 
   var APERTURE_ETICHETTE = {
@@ -206,7 +213,7 @@
   }
 
   function nuovoCampo(tipo) {
-    return { valore: valoreVuoto(tipo), stato: 'ipotesi', prova: '' };
+    return { valore: valoreVuoto(tipo), stato: 'ipotesi' };
   }
 
   function nuovaLeva() {
@@ -280,7 +287,6 @@
   // Regole
   // ---------------------------------------------------------------------
 
-  // Regola 1: "verificata" senza prova ricade in "da_verificare".
   // Apertura scelta per questa BU. Se non è stata decisa si assume 'perdita',
   // ma `aperturaDecisa` permette ai generatori di dirlo invece di nasconderlo.
   function apertura(bu) {
@@ -294,11 +300,11 @@
     return !!(campo && APERTURE.indexOf(campo.valore) !== -1);
   }
 
+  // Uno stato fuori dai tre validi (es. dati salvati con lo schema v1:
+  // da_verificare/verificata/da_revisionare) ricade su "ipotesi" invece di
+  // propagare un valore sconosciuto nell'interfaccia o nei generatori.
   function statoEffettivoCampo(campo) {
     if (!campo) return 'ipotesi';
-    if (campo.stato === 'verificata' && !(campo.prova && String(campo.prova).trim())) {
-      return 'da_verificare';
-    }
     return STATI_CAMPO.indexOf(campo.stato) !== -1 ? campo.stato : 'ipotesi';
   }
 
@@ -362,8 +368,11 @@
       } else {
         if (typeof grezzo.valore === 'string') out.valore = grezzo.valore;
       }
+      // Stati dello schema v1 (da_verificare/verificata/da_revisionare) non
+      // sono più validi: non passano il controllo, il campo resta "ipotesi"
+      // (il default già impostato da nuovoCampo). Il vecchio campo `prova`
+      // non esiste più nello schema: viene letto e scartato, non riportato.
       if (STATI_CAMPO.indexOf(grezzo.stato) !== -1) out.stato = grezzo.stato;
-      if (typeof grezzo.prova === 'string') out.prova = grezzo.prova;
     }
     return out;
   }

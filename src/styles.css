@@ -14,8 +14,9 @@
   --accent-testo: #0d1117;
 
   --ipotesi: #6b7684;
-  --da-verificare: #d9a441;
-  --verificata: #3fb27f;
+  --generato-ia: #9b7fe0;
+  --mandatorio: #3fb27f;
+  --avviso: #d9a441;
   --da-revisionare: #e2574c;
   --critico: #e2574c;
 
@@ -176,6 +177,21 @@ textarea {
 .cartella-stato {
   color: var(--text-muted);
   font-size: 11px;
+}
+
+.token-riga {
+  display: flex;
+  gap: 6px;
+}
+
+.token-input {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-input);
+  border: 1px solid var(--border-forte);
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 12px;
 }
 
 /* ----------------------------------------------------------------- */
@@ -351,9 +367,8 @@ textarea {
 }
 
 .campo--ipotesi { border-left-color: var(--ipotesi); }
-.campo--da_verificare { border-left-color: var(--da-verificare); }
-.campo--verificata { border-left-color: var(--verificata); }
-.campo--da_revisionare { border-left-color: var(--da-revisionare); }
+.campo--generato_da_ia { border-left-color: var(--generato-ia); }
+.campo--mandatorio { border-left-color: var(--mandatorio); }
 
 .campo--critico .campo-etichetta::after {
   content: '';
@@ -388,7 +403,7 @@ textarea {
   margin: 3px 0 6px;
 }
 
-.campo-valore, .campo-prova {
+.campo-valore {
   width: 100%;
   background: var(--bg-input);
   border: 1px solid var(--border);
@@ -406,16 +421,10 @@ textarea {
 .campo-valore--durata-testo { flex: 1; }
 .campo-valore--durata-data { width: 160px; }
 
-.campo-prova {
-  margin-top: 6px;
-  font-size: 12px;
-  border-style: dashed;
-}
-
 .campo-avviso {
   display: none;
   margin-top: 6px;
-  color: var(--da-verificare);
+  color: var(--avviso);
   font-size: 11px;
 }
 
@@ -533,9 +542,9 @@ textarea {
   margin-top: 10px;
   padding: 8px 10px;
   background: rgba(217, 164, 65, 0.12);
-  border: 1px solid var(--da-verificare);
+  border: 1px solid var(--avviso);
   border-radius: 4px;
-  color: var(--da-verificare);
+  color: var(--avviso);
   font-size: 12px;
 }
 

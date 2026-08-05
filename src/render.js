@@ -91,6 +91,20 @@
     return BU.schema.STATI_CAMPO_ETICHETTE[stato] || stato;
   }
 
+  // Testo del campo con lo stato annotato in coda — "valore _(Ipotesi)_" —
+  // per i materiali a uso interno, dove sapere se una riga è ipotesi,
+  // generata da IA o mandatoria conta quanto il valore stesso. Non va usato
+  // nei materiali pensati per uscire così come sono verso un cliente (es.
+  // landing, presentazione commerciale, template proposta economica): lì lo
+  // stato interno del dato non è cosa da mostrare.
+  function testoCampoConStato(bu, sezione, chiave) {
+    var def = BU.schema.trovaCampoDef(sezione, chiave);
+    var campo = BU.schema.ottieniCampo(bu, sezione, chiave);
+    var testo = testoCampo(bu, sezione, chiave);
+    if (!def || !BU.schema.campoHaValore(campo, def.tipo)) return testo;
+    return testo + ' _(' + etichettaStatoCampo(campo) + ')_';
+  }
+
   // Toglie un punto/esclamativo/interrogativo finale. Serve per incollare il
   // testo di un campo (che l'utente scrive spesso come frase compiuta, punto
   // incluso) dentro un'altra frase composta da un generatore, senza
@@ -112,6 +126,7 @@
     righeLista: righeLista,
     listaMarkdown: listaMarkdown,
     etichettaStatoCampo: etichettaStatoCampo,
+    testoCampoConStato: testoCampoConStato,
     senzaPuntoFinale: senzaPuntoFinale
   };
 

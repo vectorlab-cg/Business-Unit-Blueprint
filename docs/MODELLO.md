@@ -36,31 +36,40 @@ Ogni campo (`BU.schema.CAMPI`) appartiene a una sezione (`identita`,
   `etichetteOpzioni` nella definizione del campo); in COMPILA è un `<select>`
   con "— non deciso —" come default. Usato oggi solo da `identita.apertura`.
 
-Ogni campo, qualunque il tipo, ha sempre le stesse tre proprietà:
+Ogni campo, qualunque il tipo, ha sempre le stesse due proprietà:
 
 ```
-{ valore, stato, prova }
+{ valore, stato }
 ```
 
-`stato` è uno tra `ipotesi | da_verificare | verificata | da_revisionare`.
-`prova` è testo libero (fonte, dato, citazione).
+`stato` è uno tra `ipotesi | generato_da_ia | mandatorio`:
+
+- **`ipotesi`** — non ancora verificato, può cambiare. Stato di default per
+  ogni campo nuovo.
+- **`generato_da_ia`** — indica **provenienza**, non affidabilità: il testo
+  viene da una sessione assistita da IA (es. condensazione di un'intervista)
+  e non è stato ancora riscritto/confermato a mano. Non dice se il contenuto
+  è giusto o sbagliato, solo da dove viene.
+- **`mandatorio`** — deciso, non negoziabile: non va cambiato senza una
+  decisione esplicita a monte (es. un vincolo di prodotto o di prezzo già
+  fissato altrove).
 
 I campi con `critico: true` nella definizione sono quelli la cui assenza
 finisce nella sezione "Cosa fermerebbe questa business unit" del generatore
 BU One-Page.
 
-### La regola sullo stato effettivo
+### Stato riportato nel Markdown
 
-Un campo `verificata` senza `prova` compilata **non è considerato
-verificato** da nessuna parte del sistema: `BU.schema.statoEffettivoCampo(campo)`
-lo declassa a `da_verificare`, e questo stato effettivo — non quello grezzo
-salvato — è ciò che l'interfaccia colora, ciò che i generatori leggono, ciò
-che conta per "stato della conoscenza". Il valore grezzo (`verificata`) resta
-salvato così com'è: se l'utente compila la prova più tardi, il campo torna
-verificato senza dover ritoccare il selettore.
-
-Motivo: senza questo vincolo qualunque campo tende a scivolare verso
-"verificata" per ottimismo, e la scheda finisce per mentire.
+Alcuni generatori — quelli "interni" (letti da chi lavora sulla BU, mai
+spediti così a un cliente o pubblicati) — riportano lo stato accanto al
+valore del campo, tramite `render.testoCampoConStato()`: es. "600€ al mese
+_(Mandatorio)_" oppure "risolve X per Y _(Generato da IA)_". Serve a chi
+legge il materiale per sapere a colpo d'occhio cosa è già deciso e cosa è
+ancora da verificare o da riscrivere. `render.testoCampo()` (senza stato)
+resta l'helper per i materiali *esterni* (landing, presentazione
+commerciale, template proposta economica, script discovery call): un cliente
+non deve mai vedere un'annotazione interna come "(Generato da IA)" nel testo
+che riceve.
 
 ## Apertura
 
@@ -75,11 +84,10 @@ raccontati. Un test verifica che landing e presentazione generate siano
 effettivamente diverse fra le due impostazioni — se qualcuno rende il campo
 inerte, la suite diventa rossa.
 
-Come ogni altro campo ha `stato` e `prova`, e nasce `ipotesi`. Non è una
-decisione da prendere a tavolino: è una delle poche domande a cui un test di
-campagna risponde bene e in fretta, mettendo in gara due angoli sullo stesso
-pubblico. Diventa `verificata` quando il test lo dice, con la prova che lo
-dimostra.
+Come ogni altro campo ha `stato`, e nasce `ipotesi`. Non è una decisione da
+prendere a tavolino: è una delle poche domande a cui un test di campagna
+risponde bene e in fretta, mettendo in gara due angoli sullo stesso pubblico.
+Diventa `mandatorio` quando il test lo dice.
 
 Se il campo è vuoto i generatori assumono `perdita` e **lo dichiarano nel testo**
 invece di nasconderlo.
@@ -94,7 +102,7 @@ meno di 3). Struttura:
 { id, fatto_osservabile, come_lo_chiama_lui, come_lo_chiami_tu, come_lo_elimini }
 ```
 
-Le leve non hanno `stato`/`prova`: sono l'unità grezza da cui i generatori
+Le leve non hanno `stato`: sono l'unità grezza da cui i generatori
 derivano blocco problema, riga di contrasto, angolo di campagna, FAQ e
 ipotesi da testare. Non hanno una casa in una sezione di `campi` perché non
 sono un "campo" nel senso sopra — sono una lista propria (`bu.leve`).
@@ -122,7 +130,7 @@ abbassare la soglia d'ingresso del primo cliente. Per questo ha un
 `servizio_pilota` proprio, non solo un prezzo diverso.
 
 Non va confuso con il "prezzo provvisorio" dell'offerta standard: quello
-è semplicemente `offerta.prezzo` finché il suo stato non è `verificata` —
+è semplicemente `offerta.prezzo` finché il suo stato resta `ipotesi` —
 non serve un campo a parte, lo stato del campo lo dice già.
 
 Nessun campo di questa sezione è critico: il pilota è un percorso

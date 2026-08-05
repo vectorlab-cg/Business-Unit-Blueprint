@@ -97,12 +97,8 @@
 
     var divCampo = el('div', { class: 'campo ' + classeStatoCampo(campo) + (def.critico ? ' campo--critico' : '') });
 
-    var avviso = el('div', { class: 'campo-avviso' }, ['Segnata "verificata" ma senza prova: trattata come "da verificare".']);
-    avviso.style.display = (campo.stato === 'verificata' && !(campo.prova && campo.prova.trim())) ? 'block' : 'none';
-
     function aggiornaVisivo() {
       divCampo.className = 'campo ' + classeStatoCampo(campo) + (def.critico ? ' campo--critico' : '');
-      avviso.style.display = (campo.stato === 'verificata' && !(campo.prova && campo.prova.trim())) ? 'block' : 'none';
     }
 
     var intestazione = el('div', { class: 'campo-intestazione' }, [
@@ -175,18 +171,6 @@
       });
       divCampo.appendChild(inputValore);
     }
-
-    divCampo.appendChild(el('input', {
-      type: 'text', class: 'campo-prova', placeholder: 'Prova (fonte, dato, citazione)',
-      value: campo.prova,
-      oninput: function (e) {
-        campo.prova = e.target.value;
-        aggiornaVisivo();
-        segnalaModifica();
-      }
-    }));
-
-    divCampo.appendChild(avviso);
 
     return divCampo;
   }

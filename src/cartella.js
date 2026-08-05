@@ -1,12 +1,16 @@
 /*
  * cartella.js
- * Condivisione tramite cartella locale (es. dentro OneDrive): un file JSON
- * per business unit, letto e scritto con la File System Access API.
+ * Condivisione tramite il repository GitHub che ospita l'app: un file JSON
+ * per business unit dentro la cartella BU/ del repo, letto e scritto con
+ * le API REST di GitHub (fetch diretto dal browser, CORS incluso).
  *
- * Richiede un browser Chromium (Chrome, Edge). Su browser che non la
- * supportano, BU.cartella.supportata() torna false e il resto dell'app
- * ricade sul localStorage classico — questa non è una dipendenza, è una
- * capacità opzionale rilevata a runtime.
+ * La lettura non richiede autenticazione (il repo è pubblico). Scrivere
+ * (salvare, creare, eliminare) richiede il token GitHub personale di chi
+ * usa l'app — mai un token condiviso nel codice: su un sito pubblico
+ * chiunque potrebbe leggerlo. Il token resta solo nel localStorage di chi
+ * lo inserisce e viaggia solo verso api.github.com. Chi salva deve avere
+ * comunque accesso in scrittura al repo: è GitHub stesso, non l'app, a
+ * decidere chi può.
  *
  * Namespace globale: window.BU.cartella
  */
@@ -15,137 +19,111 @@
 
   var BU = global.BU = global.BU || {};
 
-  var DB_NOME = 'bu-blueprint-cartella';
-  var DB_VERSIONE = 1;
-  var NOME_OBJECT_STORE = 'handle';
-  var CHIAVE_HANDLE = 'cartellaBU';
+  var OWNER = 'vectorlab-cg';
+  var REPO = 'Business-Unit-Blueprint';
+  var CARTELLA = 'BU';
+  var BRANCH = 'main';
+  var CHIAVE_TOKEN = 'bu-blueprint:github-token';
 
   function supportata() {
-    return typeof global.showDirectoryPicker === 'function' && typeof global.indexedDB !== 'undefined';
+    return typeof global.fetch === 'function';
   }
 
   // -----------------------------------------------------------------
-  // IndexedDB: persiste l'handle della cartella fra una sessione e l'altra.
-  // localStorage non basta perché un FileSystemDirectoryHandle non è una
-  // stringa: IndexedDB lo accetta perché usa la structured clone algorithm.
+  // Token — solo localStorage locale, mai nel codice o altrove.
   // -----------------------------------------------------------------
 
-  function apriDB() {
-    return new Promise(function (resolve, reject) {
-      var richiesta = global.indexedDB.open(DB_NOME, DB_VERSIONE);
-      richiesta.onupgradeneeded = function () {
-        richiesta.result.createObjectStore(NOME_OBJECT_STORE);
-      };
-      richiesta.onsuccess = function () { resolve(richiesta.result); };
-      richiesta.onerror = function () { reject(richiesta.error); };
-    });
-  }
-
-  function salvaHandleInDB(handle) {
-    return apriDB().then(function (db) {
-      return new Promise(function (resolve, reject) {
-        var tx = db.transaction(NOME_OBJECT_STORE, 'readwrite');
-        tx.objectStore(NOME_OBJECT_STORE).put(handle, CHIAVE_HANDLE);
-        tx.oncomplete = function () { resolve(); };
-        tx.onerror = function () { reject(tx.error); };
-      });
-    });
-  }
-
-  function leggiHandleDaDB() {
-    return apriDB().then(function (db) {
-      return new Promise(function (resolve, reject) {
-        var tx = db.transaction(NOME_OBJECT_STORE, 'readonly');
-        var richiesta = tx.objectStore(NOME_OBJECT_STORE).get(CHIAVE_HANDLE);
-        richiesta.onsuccess = function () { resolve(richiesta.result || null); };
-        richiesta.onerror = function () { reject(richiesta.error); };
-      });
-    });
-  }
-
-  function rimuoviHandleDaDB() {
-    return apriDB().then(function (db) {
-      return new Promise(function (resolve, reject) {
-        var tx = db.transaction(NOME_OBJECT_STORE, 'readwrite');
-        tx.objectStore(NOME_OBJECT_STORE).delete(CHIAVE_HANDLE);
-        tx.oncomplete = function () { resolve(); };
-        tx.onerror = function () { reject(tx.error); };
-      });
-    });
-  }
-
-  // -----------------------------------------------------------------
-  // Collegamento
-  // -----------------------------------------------------------------
-
-  // Apre il selettore di cartelle nativo (richiede un click dell'utente) e
-  // ricorda la scelta per le prossime sessioni.
-  function collega() {
-    return global.showDirectoryPicker({ mode: 'readwrite' }).then(function (handle) {
-      return salvaHandleInDB(handle).then(function () { return handle; });
-    });
-  }
-
-  // Recupera l'ultima cartella collegata, se c'è. Restituisce
-  // { handle, permesso } dove permesso è 'granted' | 'prompt' | 'denied',
-  // oppure null se non è mai stata collegata una cartella. Non chiede mai
-  // il permesso da sola (richiederebbe un gesto dell'utente): quello lo fa
-  // richiediPermesso, da chiamare in risposta a un click.
-  function ripristina() {
-    return leggiHandleDaDB().then(function (handle) {
-      if (!handle) return null;
-      return handle.queryPermission({ mode: 'readwrite' }).then(function (permesso) {
-        return { handle: handle, permesso: permesso };
-      });
-    });
-  }
-
-  function richiediPermesso(handle) {
-    return handle.requestPermission({ mode: 'readwrite' }).then(function (permesso) {
-      return permesso === 'granted';
-    });
-  }
-
-  function scollega() {
-    return rimuoviHandleDaDB();
-  }
-
-  // -----------------------------------------------------------------
-  // File dentro la cartella: un file JSON per business unit.
-  // -----------------------------------------------------------------
-
-  function elencaFile(dirHandle) {
-    var voci = [];
-    var iteratore = dirHandle.values();
-    function passo(risultato) {
-      if (risultato.done) return voci;
-      var voce = risultato.value;
-      if (voce.kind === 'file' && /\.json$/i.test(voce.name)) {
-        voci.push({ nomeFile: voce.name, fileHandle: voce });
-      }
-      return iteratore.next().then(passo);
+  function leggiToken() {
+    try {
+      return global.localStorage.getItem(CHIAVE_TOKEN) || '';
+    } catch (e) {
+      return '';
     }
-    return iteratore.next().then(passo);
   }
 
-  // Un file di cartella ha la stessa forma di un export JSON (un array con
-  // una sola business unit dentro): si riusano store.esportaJSON/importaJSON
+  function salvaToken(token) {
+    try {
+      global.localStorage.setItem(CHIAVE_TOKEN, token || '');
+    } catch (e) { /* localStorage non disponibile: il token resta solo in memoria per questa pagina */ }
+  }
+
+  function rimuoviToken() {
+    try {
+      global.localStorage.removeItem(CHIAVE_TOKEN);
+    } catch (e) { /* niente da fare */ }
+  }
+
+  function haToken() {
+    return !!leggiToken();
+  }
+
+  // -----------------------------------------------------------------
+  // UTF-8 <-> base64. L'API di GitHub vuole il contenuto in base64;
+  // btoa/atob da soli lavorano solo su Latin-1 e romperebbero à, è, ecc.
+  // -----------------------------------------------------------------
+
+  function utf8InBase64(testo) {
+    var bytes = new global.TextEncoder().encode(testo);
+    var binario = '';
+    for (var i = 0; i < bytes.length; i++) binario += String.fromCharCode(bytes[i]);
+    return global.btoa(binario);
+  }
+
+  // -----------------------------------------------------------------
+  // Chiamate all'API
+  // -----------------------------------------------------------------
+
+  function intestazioni() {
+    var h = { 'Accept': 'application/vnd.github+json' };
+    var token = leggiToken();
+    if (token) h.Authorization = 'token ' + token;
+    return h;
+  }
+
+  function urlContenuti(percorso) {
+    return 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/' + percorso;
+  }
+
+  function verificaRisposta(risposta) {
+    if (risposta.ok) return risposta;
+    return risposta.json().catch(function () { return {}; }).then(function (corpo) {
+      var messaggio = corpo && corpo.message ? corpo.message : risposta.statusText;
+      throw new Error('GitHub (' + risposta.status + '): ' + messaggio);
+    });
+  }
+
+  // -----------------------------------------------------------------
+  // File dentro BU/: un file JSON per business unit. Ogni voce porta lo
+  // sha corrente del file, richiesto da GitHub per aggiornarlo o
+  // eliminarlo senza sovrascrivere alla cieca una modifica altrui.
+  // -----------------------------------------------------------------
+
+  function elencaFile() {
+    return global.fetch(urlContenuti(CARTELLA), { headers: intestazioni() }).then(function (risposta) {
+      if (risposta.status === 404) return []; // la cartella non esiste ancora nel repo
+      // verificaRisposta può restituire la risposta direttamente (non è
+      // un thenable) oppure una Promise che rigetta: Promise.resolve
+      // normalizza i due casi prima di incatenare .then.
+      return Promise.resolve(verificaRisposta(risposta)).then(function (r) { return r.json(); });
+    }).then(function (voci) {
+      return (Array.isArray(voci) ? voci : [])
+        .filter(function (v) { return v.type === 'file' && /\.json$/i.test(v.name); })
+        .map(function (v) { return { nomeFile: v.name, percorso: v.path, sha: v.sha, downloadUrl: v.download_url }; });
+    });
+  }
+
+  // Un file ha la stessa forma di un export JSON (un array con una sola
+  // business unit dentro): si riusano store.esportaJSON/importaJSON
   // invece di inventare un secondo formato.
-  function leggiBU(fileHandle) {
-    return fileHandle.getFile().then(function (file) {
-      return file.text();
-    }).then(function (testo) {
-      var elenco = BU.store.importaJSON(testo);
-      if (!elenco.length) throw new Error('Il file "' + fileHandle.name + '" non contiene una business unit.');
-      return elenco[0];
-    });
-  }
-
-  function scriviBU(fileHandle, bu) {
-    var testo = BU.store.esportaJSON([bu]);
-    return fileHandle.createWritable().then(function (scrittore) {
-      return scrittore.write(testo).then(function () { return scrittore.close(); });
-    });
+  function leggiBU(voce) {
+    return global.fetch(voce.downloadUrl, { headers: intestazioni() })
+      .then(function (r) { return verificaRisposta(r); })
+      .then(function (r) { return r.text(); })
+      .then(function (testo) {
+        var elenco = BU.store.importaJSON(testo);
+        if (!elenco.length) throw new Error('Il file "' + voce.nomeFile + '" non contiene una business unit.');
+        return elenco[0];
+      });
   }
 
   function nomeFileDa(bu) {
@@ -158,25 +136,66 @@
     return (slug || 'business-unit') + '-' + suffisso + '.json';
   }
 
-  function creaFileBU(dirHandle, bu) {
-    var nomeFile = nomeFileDa(bu);
-    return dirHandle.getFileHandle(nomeFile, { create: true }).then(function (fileHandle) {
-      return scriviBU(fileHandle, bu).then(function () {
-        return { nomeFile: nomeFile, fileHandle: fileHandle };
+  // Crea o aggiorna il file di una BU. Se `voce` è null crea un file nuovo
+  // (nome derivato da nomeFileDa); se è la voce di un file esistente lo
+  // aggiorna (serve il suo sha corrente). Restituisce la voce aggiornata,
+  // col nuovo sha — indispensabile per il prossimo salvataggio.
+  function scriviBU(voce, bu) {
+    var nomeFile = voce ? voce.nomeFile : nomeFileDa(bu);
+    var corpo = {
+      message: 'BU Blueprint: salva "' + bu.nome + '"',
+      content: utf8InBase64(BU.store.esportaJSON([bu])),
+      branch: BRANCH
+    };
+    if (voce && voce.sha) corpo.sha = voce.sha;
+
+    var intestazioniScrittura = intestazioni();
+    intestazioniScrittura['Content-Type'] = 'application/json';
+
+    return global.fetch(urlContenuti(CARTELLA + '/' + nomeFile), {
+      method: 'PUT',
+      headers: intestazioniScrittura,
+      body: JSON.stringify(corpo)
+    }).then(function (r) { return verificaRisposta(r); })
+      .then(function (r) { return r.json(); })
+      .then(function (risposta) {
+        return {
+          nomeFile: nomeFile,
+          percorso: risposta.content.path,
+          sha: risposta.content.sha,
+          downloadUrl: risposta.content.download_url
+        };
       });
-    });
   }
 
-  function eliminaFile(dirHandle, nomeFile) {
-    return dirHandle.removeEntry(nomeFile);
+  function creaFileBU(bu) {
+    return scriviBU(null, bu);
+  }
+
+  function eliminaFile(voce) {
+    var intestazioniScrittura = intestazioni();
+    intestazioniScrittura['Content-Type'] = 'application/json';
+
+    return global.fetch(urlContenuti(voce.percorso), {
+      method: 'DELETE',
+      headers: intestazioniScrittura,
+      body: JSON.stringify({
+        message: 'BU Blueprint: elimina "' + voce.nomeFile + '"',
+        sha: voce.sha,
+        branch: BRANCH
+      })
+    }).then(function (r) { return verificaRisposta(r); });
   }
 
   BU.cartella = {
+    OWNER: OWNER,
+    REPO: REPO,
+    CARTELLA: CARTELLA,
     supportata: supportata,
-    collega: collega,
-    ripristina: ripristina,
-    richiediPermesso: richiediPermesso,
-    scollega: scollega,
+    leggiToken: leggiToken,
+    salvaToken: salvaToken,
+    rimuoviToken: rimuoviToken,
+    haToken: haToken,
     elencaFile: elencaFile,
     leggiBU: leggiBU,
     scriviBU: scriviBU,

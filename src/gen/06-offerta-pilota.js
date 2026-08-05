@@ -12,8 +12,8 @@
 
   function confronto(bu, sezioneStandard, chiaveStandard, sezionePilota, chiavePilota) {
     return [
-      '- Standard: ' + render.testoCampo(bu, sezioneStandard, chiaveStandard),
-      '- Pilota: ' + render.testoCampo(bu, sezionePilota, chiavePilota)
+      '- Standard: ' + render.testoCampoConStato(bu, sezioneStandard, chiaveStandard),
+      '- Pilota: ' + render.testoCampoConStato(bu, sezionePilota, chiavePilota)
     ].join('\n');
   }
 

@@ -20,9 +20,13 @@
     <button type="button" id="bottone-ripristina-backup" class="pulsante pulsante--secondario">Ripristina backup JSON</button>
     <input type="file" id="input-ripristina-backup" accept="application/json,.json" style="display:none">
     <div id="cartella-sezione">
-      <div id="cartella-stato" class="cartella-stato">Nessuna cartella collegata</div>
-      <button type="button" id="bottone-cartella" class="pulsante pulsante--secondario">Collega cartella BU</button>
-      <div class="avviso-compatibilita">Cartella condivisa: richiede Chrome o Edge (Chromium). Non funziona su Firefox o Safari.</div>
+      <div id="cartella-stato" class="cartella-stato">Dati locali in questo browser</div>
+      <button type="button" id="bottone-aggiorna-cartella" class="pulsante pulsante--secondario">Aggiorna da GitHub</button>
+      <div class="token-riga">
+        <input type="password" id="input-token-github" class="token-input" placeholder="Token GitHub (per salvare)">
+        <button type="button" id="bottone-token" class="pulsante pulsante--secondario">Salva token</button>
+      </div>
+      <div class="avviso-compatibilita">La lettura è sempre condivisa (repo pubblico). Per salvare/creare/eliminare serve un tuo Personal Access Token GitHub (repo scope, permesso di scrittura su questo repository) — resta solo in questo browser.</div>
     </div>
   </div>
   <div id="indicatore-salvataggio"></div>

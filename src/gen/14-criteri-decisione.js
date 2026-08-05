@@ -19,7 +19,7 @@
       var campo = schema.ottieniCampo(bu, def.sezione, def.chiave);
       if (!schema.campoHaValore(campo, def.tipo)) return;
       var statoEff = schema.statoEffettivoCampo(campo);
-      if (statoEff === 'verificata') return;
+      if (statoEff === 'mandatorio') return;
       righe.push(def.etichetta + ': ' + render.testoCampo(bu, def.sezione, def.chiave) +
         ' _(' + render.etichettaStatoCampo(campo) + ')_');
     });
@@ -32,7 +32,7 @@
         (elimini || render.manca('come lo elimini')) + '" lo risolve davvero.');
     });
 
-    if (!righe.length) return 'Nessuna: tutti i campi compilati risultano già verificati.';
+    if (!righe.length) return 'Nessuna: tutti i campi compilati sono già segnati come mandatori.';
     return render.elencoPuntato(righe);
   }
 

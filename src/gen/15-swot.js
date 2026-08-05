@@ -20,7 +20,7 @@
     if (persone) righe.push(persone.length + ' persone nel team: ' + persone.join('; '));
     var meccanismo = schema.ottieniCampo(bu, 'identita', 'meccanismo');
     if (schema.campoHaValore(meccanismo, 'testo')) {
-      righe.push('Meccanismo distintivo: ' + render.testoCampo(bu, 'identita', 'meccanismo'));
+      righe.push('Meccanismo distintivo: ' + render.testoCampoConStato(bu, 'identita', 'meccanismo'));
     }
     if (!righe.length) return render.manca('almeno una competenza presente o il meccanismo');
     return render.elencoPuntato(righe);
@@ -28,7 +28,7 @@
 
   // Stessa logica di "cosa fermerebbe questa business unit" (BU One-Page),
   // riletta come debolezze: campi critici mancanti, leve senza soluzione,
-  // prezzo non verificato, competenze mancanti elencate una per una.
+  // prezzo non mandatorio, competenze mancanti elencate una per una.
   function debolezze(bu) {
     var righe = [];
 
@@ -52,8 +52,8 @@
     });
 
     var campoPrezzo = schema.ottieniCampo(bu, 'offerta', 'prezzo');
-    if (schema.campoHaValore(campoPrezzo, 'testo') && schema.statoEffettivoCampo(campoPrezzo) !== 'verificata') {
-      righe.push('Prezzo non verificato (stato: ' + render.etichettaStatoCampo(campoPrezzo) + ').');
+    if (schema.campoHaValore(campoPrezzo, 'testo') && schema.statoEffettivoCampo(campoPrezzo) !== 'mandatorio') {
+      righe.push('Prezzo non mandatorio (stato: ' + render.etichettaStatoCampo(campoPrezzo) + ').');
     }
 
     if (!righe.length) return 'Nessuna debolezza rilevata dai dati compilati al momento.';
@@ -69,7 +69,7 @@
     });
     var contesto = schema.ottieniCampo(bu, 'mercato', 'contesto_decisore');
     if (schema.campoHaValore(contesto, 'testo')) {
-      righe.push('Momento del decisore: ' + render.testoCampo(bu, 'mercato', 'contesto_decisore'));
+      righe.push('Momento del decisore: ' + render.testoCampoConStato(bu, 'mercato', 'contesto_decisore'));
     }
     var elenco = righe.length ? render.elencoPuntato(righe) : render.manca('almeno una leva o il contesto del decisore');
     return elenco + '\n\n' + render.daScrivere('trend di mercato più ampi che rendono questo il momento giusto — lo strumento non ha dati esterni, va aggiunto a mano');
@@ -77,8 +77,8 @@
 
   function minacce(bu) {
     var righe = [
-      'Alternativa attuale: ' + render.testoCampo(bu, 'mercato', 'alternativa_attuale'),
-      'Perché potrebbero non scegliervi: ' + render.testoCampo(bu, 'mercato', 'differenziazione_competitiva')
+      'Alternativa attuale: ' + render.testoCampoConStato(bu, 'mercato', 'alternativa_attuale'),
+      'Perché potrebbero non scegliervi: ' + render.testoCampoConStato(bu, 'mercato', 'differenziazione_competitiva')
     ];
     return render.elencoPuntato(righe) + '\n\n' +
       render.daScrivere('rischi macro (nuovi entranti, normative, dipendenze) — lo strumento non ha dati esterni, va aggiunto a mano');

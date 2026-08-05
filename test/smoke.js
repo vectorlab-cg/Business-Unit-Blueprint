@@ -61,6 +61,12 @@ function creaContesto() {
   sandbox.window = sandbox;
   sandbox.console = console;
   sandbox.localStorage = creaLocalStorageFinto();
+  // TextEncoder/TextDecoder/btoa/atob servono a cartella.js per il base64
+  // UTF-8; sono globali in Node ma non attraversano da soli il contesto vm.
+  sandbox.TextEncoder = TextEncoder;
+  sandbox.TextDecoder = TextDecoder;
+  sandbox.btoa = btoa;
+  sandbox.atob = atob;
   vm.createContext(sandbox);
   FILE_SORGENTE.forEach(function (relativo) {
     var percorso = path.join(RADICE, relativo);
@@ -120,28 +126,27 @@ function creaBuCompilata(sandbox) {
   var schema = sandbox.BU.schema;
   var bu = schema.nuovaBU('Ricambi su misura');
 
-  function imposta(sezione, chiave, valore, stato, prova) {
+  function imposta(sezione, chiave, valore, stato) {
     var campo = bu.campi[sezione][chiave];
     campo.valore = valore;
     campo.stato = stato || 'ipotesi';
-    campo.prova = prova || '';
   }
 
-  imposta('identita', 'descrizione', 'Produciamo ricambi meccanici su misura per linee di imballaggio ferme.', 'verificata', 'Interviste con 5 responsabili manutenzione.');
+  imposta('identita', 'descrizione', 'Produciamo ricambi meccanici su misura per linee di imballaggio ferme.', 'mandatorio');
   imposta('identita', 'apertura', 'perdita', 'ipotesi');
   imposta('identita', 'meccanismo', 'Inseriamo un tecnico in stabilimento che rileva la quota e consegna il pezzo entro 48 ore.', 'ipotesi');
 
-  imposta('mercato', 'cliente_ideale', 'PMI manifatturiere 50-200 dipendenti con linee automatizzate.', 'verificata', 'Elenco 40 aziende contattate.');
+  imposta('mercato', 'cliente_ideale', 'PMI manifatturiere 50-200 dipendenti con linee automatizzate.', 'mandatorio');
   imposta('mercato', 'decisore', 'Responsabile di manutenzione.', 'ipotesi');
   imposta('mercato', 'contesto_decisore', 'Ha una linea ferma e un fornitore che risponde in due settimane.', 'ipotesi');
-  imposta('mercato', 'alternativa_attuale', 'Aspettano il ricambio originale dal produttore della macchina.', 'da_verificare');
+  imposta('mercato', 'alternativa_attuale', 'Aspettano il ricambio originale dal produttore della macchina.', 'generato_da_ia');
   imposta('mercato', 'differenziazione_competitiva', 'Gli altri produttori di ricambi custom hanno tempi di 1-2 settimane, noi consegniamo in 48 ore.', 'ipotesi');
 
   imposta('offerta', 'servizio', 'Rilievo, disegno CAD e produzione del pezzo di ricambio.', 'ipotesi');
   imposta('offerta', 'unita_vendita', 'Un pezzo di ricambio urgente.', 'ipotesi');
-  imposta('offerta', 'risultato_promesso', 'Linea riavviata entro 48 ore invece di due settimane.', 'verificata', 'Tre casi cronometrati.');
+  imposta('offerta', 'risultato_promesso', 'Linea riavviata entro 48 ore invece di due settimane.', 'mandatorio');
   imposta('offerta', 'escluso', 'Manutenzione ordinaria e assistenza da remoto.', 'ipotesi');
-  imposta('offerta', 'prezzo', '800-1500 euro a pezzo.', 'da_revisionare');
+  imposta('offerta', 'prezzo', '800-1500 euro a pezzo.', 'ipotesi');
   imposta('offerta', 'modalita_vendita', 'Preventivo telefonico, conferma via email.', 'ipotesi');
   imposta('offerta', 'tempi', '48 ore dalla conferma.', 'ipotesi');
 
@@ -242,20 +247,23 @@ test('schema: nuovaBU produce una struttura completa', function () {
   });
 });
 
-test('regola: verificata senza prova ricade in da_verificare', function () {
-  var campo = { valore: 'x', stato: 'verificata', prova: '' };
-  assicuraUguale(schema.statoEffettivoCampo(campo), 'da_verificare');
-  campo.prova = '   ';
-  assicuraUguale(schema.statoEffettivoCampo(campo), 'da_verificare');
-  campo.prova = 'fonte solida';
-  assicuraUguale(schema.statoEffettivoCampo(campo), 'verificata');
-});
-
-test('regola: stati diversi da verificata restano invariati', function () {
-  ['ipotesi', 'da_verificare', 'da_revisionare'].forEach(function (s) {
-    var campo = { valore: 'x', stato: s, prova: '' };
+test('regola: i tre stati validi restano invariati', function () {
+  ['ipotesi', 'generato_da_ia', 'mandatorio'].forEach(function (s) {
+    var campo = { valore: 'x', stato: s };
     assicuraUguale(schema.statoEffettivoCampo(campo), s);
   });
+});
+
+test('regola: uno stato dello schema v1 (non più valido) ricade su ipotesi', function () {
+  ['verificata', 'da_verificare', 'da_revisionare', 'qualcosa-di-inventato'].forEach(function (s) {
+    var campo = { valore: 'x', stato: s };
+    assicuraUguale(schema.statoEffettivoCampo(campo), 'ipotesi', 'stato non valido "' + s + '" non ricade su ipotesi');
+  });
+});
+
+test('regola: il campo prova non esiste più — nuovoCampo non lo crea', function () {
+  var campo = schema.nuovoCampo('testo');
+  assicuraUguale(Object.prototype.hasOwnProperty.call(campo, 'prova'), false);
 });
 
 test('migrazione: una BU con schema precedente viene normalizzata senza perdite', function () {
@@ -264,6 +272,7 @@ test('migrazione: una BU con schema precedente viene normalizzata senza perdite'
     nome: 'BU storica',
     stato: 'test_attivo',
     campi: {
+      // "verificata" e "prova" appartengono allo schema v1: non esistono più.
       identita: { descrizione: { valore: 'Vecchia descrizione', stato: 'verificata', prova: 'fonte' } },
       mercato: { decisore: { valore: 'CFO' } },
       risorse: {
@@ -289,8 +298,9 @@ test('migrazione: una BU con schema precedente viene normalizzata senza perdite'
   assicuraUguale(bu.id, 'bu-vecchia-1', 'id non preservato');
   assicuraUguale(bu.nome, 'BU storica', 'nome non preservato');
   assicuraUguale(bu.stato, 'test_attivo', 'stato non preservato');
-  assicuraUguale(bu.campi.identita.descrizione.valore, 'Vecchia descrizione');
-  assicuraUguale(bu.campi.identita.descrizione.stato, 'verificata');
+  assicuraUguale(bu.campi.identita.descrizione.valore, 'Vecchia descrizione', 'valore del campo non preservato');
+  assicuraUguale(bu.campi.identita.descrizione.stato, 'ipotesi', '"verificata" (schema v1) non ricade su "ipotesi"');
+  assicuraUguale(Object.prototype.hasOwnProperty.call(bu.campi.identita.descrizione, 'prova'), false, 'il campo "prova" (schema v1) non doveva sopravvivere');
   assicuraUguale(bu.campi.mercato.decisore.valore, 'CFO');
 
   // campi non presenti nella BU vecchia devono comunque esistere con default
@@ -483,21 +493,10 @@ test('landing: la CTA coincide con il campo azione_richiesta', function () {
     'la CTA nell\'hero non e\' il valore del campo azione_richiesta');
 });
 
-test('landing: la sezione prove non espone le note interne di verifica', function () {
+test('landing: la sezione prove resta sempre da scrivere a mano (mai dedotta dai campi)', function () {
   var r = generaPerBuCompilata('landing');
   var testo = sezione(r.md, '## 5. Prove');
-  var prove = [];
-  ['identita', 'mercato', 'offerta', 'risorse', 'test'].forEach(function (sez) {
-    Object.keys(r.bu.campi[sez] || {}).forEach(function (chiave) {
-      var p = r.bu.campi[sez][chiave].prova;
-      if (p && String(p).trim()) prove.push(String(p).trim());
-    });
-  });
-  assicura(prove.length > 0, 'la fixture non ha campi con prova: il test non proverebbe nulla');
-  prove.forEach(function (p) {
-    assicura(testo.indexOf(p) === -1,
-      'la sezione prove pubblica una nota interna di verifica: "' + p + '"');
-  });
+  assicura(testo.indexOf('[DA SCRIVERE:') !== -1, 'la sezione prove dovrebbe restare esplicitamente da scrivere');
 });
 
 test('presentazione commerciale: la slide problema cambia in base alle leve', function () {
@@ -625,6 +624,29 @@ test('swot: opportunità e minacce segnalano esplicitamente cosa resta da scrive
   assicura(minacce.indexOf('[DA SCRIVERE:') !== -1, 'le minacce non segnalano la parte che richiede giudizio');
 });
 
+test('stato campo nel markdown: un materiale interno annota ipotesi/generato da IA/mandatorio', function () {
+  var r = generaPerBuCompilata('bu-one-page');
+  // descrizione è mandatorio, alternativa_attuale è generato_da_ia nella fixture.
+  assicura(r.md.indexOf('_(Mandatorio)_') !== -1, 'nessuna annotazione "Mandatorio" nel materiale');
+  var sezionePerChi = sezione(r.md, '## Per chi');
+  assicura(sezionePerChi.indexOf('_(Generato da IA)_') !== -1, 'l\'alternativa attuale (generato_da_ia) non è annotata nel materiale');
+});
+
+test('stato campo nel markdown: i materiali esterni (landing) non annotano lo stato interno', function () {
+  var r = generaPerBuCompilata('landing');
+  assicura(r.md.indexOf('_(Mandatorio)_') === -1, 'la landing non dovrebbe esporre annotazioni di stato interno');
+  assicura(r.md.indexOf('_(Generato da IA)_') === -1, 'la landing non dovrebbe esporre annotazioni di stato interno');
+});
+
+test('problem statement: "cosa è già mandatorio" elenca solo i campi mandatori, col loro valore', function () {
+  var r = generaPerBuCompilata('problem-statement');
+  var sezioneMandatori = sezione(r.md, '## Cosa è già mandatorio');
+  assicura(sezioneMandatori.indexOf(r.bu.campi.identita.descrizione.valore) !== -1,
+    'la descrizione (mandatoria nella fixture) non compare tra i dati consolidati');
+  assicura(sezioneMandatori.indexOf(r.bu.campi.offerta.servizio.valore) === -1,
+    'il servizio (ipotesi nella fixture, non mandatorio) non dovrebbe comparire tra i dati consolidati');
+});
+
 test('leve: il campo tipo dello schema v1 non sopravvive alla normalizzazione', function () {
   var ctx = creaContesto();
   var bu = ctx.BU.schema.normalizzaBU({
@@ -635,68 +657,91 @@ test('leve: il campo tipo dello schema v1 non sopravvive alla normalizzazione', 
 });
 
 // ---------------------------------------------------------------------
-// Test: cartella condivisa (src/cartella.js), con un mock minimale di
-// FileSystemDirectoryHandle/FileSystemFileHandle — nessuna API di browser
-// è disponibile in Node, quindi si testa la logica contro un finto
-// filesystem in memoria con la stessa forma (values/getFileHandle/
-// removeEntry, getFile/createWritable).
+// Test: cartella condivisa su GitHub (src/cartella.js), con un mock
+// minimale di fetch — nessuna rete vera: simula le risposte dell'API
+// contenuti di GitHub (elenco cartella, lettura raw, PUT, DELETE) contro
+// un repository finto in memoria.
 // ---------------------------------------------------------------------
 
-function creaCartellaFinta(fileIniziali) {
-  var file = {}; // nomeFile -> { testo }
-  Object.keys(fileIniziali || {}).forEach(function (nome) {
-    file[nome] = { testo: fileIniziali[nome] };
-  });
-
-  function creaFileHandleFinto(nomeFile) {
-    return {
-      kind: 'file',
-      name: nomeFile,
-      getFile: function () {
-        return Promise.resolve({ text: function () { return Promise.resolve(file[nomeFile].testo); } });
-      },
-      createWritable: function () {
-        var buffer = { testo: '' };
-        return Promise.resolve({
-          write: function (testo) { buffer.testo = testo; return Promise.resolve(); },
-          close: function () { file[nomeFile].testo = buffer.testo; return Promise.resolve(); }
-        });
-      }
-    };
-  }
-
+function rispostaJson(status, corpo) {
   return {
-    name: 'CartellaFinta',
-    values: function () {
-      var nomi = Object.keys(file);
-      var i = 0;
-      return {
-        next: function () {
-          if (i >= nomi.length) return Promise.resolve({ done: true });
-          var handle = creaFileHandleFinto(nomi[i]);
-          i += 1;
-          return Promise.resolve({ done: false, value: handle });
-        }
-      };
-    },
-    getFileHandle: function (nome, opzioni) {
-      if (!file[nome]) {
-        if (!opzioni || !opzioni.create) return Promise.reject(new Error('File non trovato: ' + nome));
-        file[nome] = { testo: '' };
-      }
-      return Promise.resolve(creaFileHandleFinto(nome));
-    },
-    removeEntry: function (nome) {
-      delete file[nome];
-      return Promise.resolve();
-    },
-    _file: file
+    ok: status >= 200 && status < 300,
+    status: status,
+    statusText: String(status),
+    json: function () { return Promise.resolve(corpo); },
+    text: function () { return Promise.resolve(JSON.stringify(corpo)); }
   };
 }
 
-test('cartella: supportata() è false in un contesto senza File System Access API', function () {
+function rispostaTesto(status, testo) {
+  return {
+    ok: status >= 200 && status < 300,
+    status: status,
+    statusText: String(status),
+    json: function () { return Promise.resolve({}); },
+    text: function () { return Promise.resolve(testo); }
+  };
+}
+
+// repoFinto: { 'BU/nome.json': 'testo del file', ... }. Simula solo le
+// forme di richiesta usate da cartella.js, non l'intera API di GitHub.
+function creaFetchFinto(repoFinto) {
+  var contatoreSha = 0;
+  return function (url, opzioni) {
+    opzioni = opzioni || {};
+    var metodo = opzioni.method || 'GET';
+
+    if (metodo === 'GET' && /\/contents\/BU$/.test(url)) {
+      var percorsi = Object.keys(repoFinto).filter(function (p) { return p.indexOf('BU/') === 0; });
+      if (!percorsi.length) return Promise.resolve(rispostaJson(404, { message: 'Not Found' }));
+      var voci = percorsi.map(function (percorso) {
+        var nomeFile = percorso.slice(3);
+        return { type: 'file', name: nomeFile, path: percorso, sha: 'sha-' + nomeFile, download_url: 'https://raw.test/' + percorso };
+      });
+      return Promise.resolve(rispostaJson(200, voci));
+    }
+
+    if (metodo === 'GET' && url.indexOf('https://raw.test/') === 0) {
+      var percorsoLettura = url.slice('https://raw.test/'.length);
+      if (!(percorsoLettura in repoFinto)) return Promise.resolve(rispostaTesto(404, ''));
+      return Promise.resolve(rispostaTesto(200, repoFinto[percorsoLettura]));
+    }
+
+    if (metodo === 'PUT') {
+      var corpoPut = JSON.parse(opzioni.body);
+      var percorsoPut = url.split('/contents/')[1];
+      var binarioPut = Buffer.from(corpoPut.content, 'base64');
+      repoFinto[percorsoPut] = binarioPut.toString('utf8');
+      contatoreSha += 1;
+      var nomeFilePut = percorsoPut.slice(3);
+      return Promise.resolve(rispostaJson(200, {
+        content: { path: percorsoPut, sha: 'sha-' + nomeFilePut + '-v' + contatoreSha, download_url: 'https://raw.test/' + percorsoPut }
+      }));
+    }
+
+    if (metodo === 'DELETE') {
+      var corpoDel = JSON.parse(opzioni.body);
+      var percorsoDel = url.split('/contents/')[1];
+      if (!corpoDel.sha) return Promise.resolve(rispostaJson(422, { message: 'sha mancante' }));
+      delete repoFinto[percorsoDel];
+      return Promise.resolve(rispostaJson(200, {}));
+    }
+
+    return Promise.reject(new Error('URL non gestito dal fetch finto: ' + metodo + ' ' + url));
+  };
+}
+
+function creaContestoConFetch(repoFinto) {
   var ctx = creaContesto();
-  assicuraUguale(ctx.BU.cartella.supportata(), false);
+  ctx.fetch = creaFetchFinto(repoFinto || {});
+  return ctx;
+}
+
+test('cartella: supportata() segue la presenza di fetch', function () {
+  var ctx = creaContesto();
+  assicuraUguale(ctx.BU.cartella.supportata(), false, 'senza fetch dovrebbe essere false');
+  ctx.fetch = function () {};
+  assicuraUguale(ctx.BU.cartella.supportata(), true, 'con fetch dovrebbe essere true');
 });
 
 test('cartella: nomeFileDa produce uno slug sicuro con suffisso dall\'id', function () {
@@ -708,50 +753,80 @@ test('cartella: nomeFileDa produce uno slug sicuro con suffisso dall\'id', funct
   assicura(nome.indexOf(suffissoAtteso) !== -1, 'il nome file non include il suffisso dell\'id');
 });
 
-test('cartella: elencaFile trova solo i .json e ignora altri file', function () {
+test('cartella: token — assente di default, salvato/rimosso tramite localStorage', function () {
   var ctx = creaContesto();
-  var cartella = creaCartellaFinta({ 'a.json': '{}', 'note.txt': 'ciao', 'b.json': '{}' });
-  return ctx.BU.cartella.elencaFile(cartella).then(function (voci) {
+  assicuraUguale(ctx.BU.cartella.haToken(), false);
+  ctx.BU.cartella.salvaToken('ghp_finto123');
+  assicuraUguale(ctx.BU.cartella.haToken(), true);
+  assicuraUguale(ctx.BU.cartella.leggiToken(), 'ghp_finto123');
+  ctx.BU.cartella.rimuoviToken();
+  assicuraUguale(ctx.BU.cartella.haToken(), false);
+});
+
+test('cartella: elencaFile trova solo i .json dentro BU/ e ignora il resto', function () {
+  var ctx = creaContestoConFetch({ 'BU/a.json': '{}', 'BU/b.json': '{}', 'altro/c.json': '{}' });
+  return ctx.BU.cartella.elencaFile().then(function (voci) {
     var nomi = voci.map(function (v) { return v.nomeFile; }).sort();
-    assicuraUguale(nomi.length, 2, 'dovrebbe trovare solo i due .json');
+    assicuraUguale(nomi.length, 2, 'dovrebbe trovare solo i due dentro BU/');
     assicuraUguale(nomi[0], 'a.json');
     assicuraUguale(nomi[1], 'b.json');
   });
 });
 
-test('cartella: scrivi poi leggi la stessa BU, andata e ritorno senza perdite', function () {
-  var ctx = creaContesto();
+test('cartella: elencaFile su cartella inesistente (404) restituisce un elenco vuoto, non un errore', function () {
+  var ctx = creaContestoConFetch({});
+  return ctx.BU.cartella.elencaFile().then(function (voci) {
+    assicuraUguale(voci.length, 0);
+  });
+});
+
+test('cartella: scrivi poi leggi la stessa BU, andata e ritorno senza perdite (incluso UTF-8)', function () {
+  var ctx = creaContestoConFetch({});
   var bu = creaBuCompilata(ctx);
-  var cartella = creaCartellaFinta({});
-  return cartella.getFileHandle('test.json', { create: true }).then(function (fileHandle) {
-    return ctx.BU.cartella.scriviBU(fileHandle, bu).then(function () {
-      return ctx.BU.cartella.leggiBU(fileHandle);
-    });
+  bu.campi.identita.descrizione.valore = 'Città più efficienti, però più costose: è così.';
+  return ctx.BU.cartella.creaFileBU(bu).then(function (voce) {
+    return ctx.BU.cartella.leggiBU(voce);
   }).then(function (riletta) {
     assicuraUguale(riletta.id, bu.id);
-    assicuraUguale(riletta.campi.identita.descrizione.valore, bu.campi.identita.descrizione.valore);
+    assicuraUguale(riletta.campi.identita.descrizione.valore, bu.campi.identita.descrizione.valore,
+      'i caratteri accentati non sono sopravvissuti al giro base64');
     assicuraUguale(riletta.leve.length, bu.leve.length);
   });
 });
 
-test('cartella: creaFileBU crea il file con il nome atteso e lo rende leggibile', function () {
-  var ctx = creaContesto();
+test('cartella: creaFileBU usa nomeFileDa e il file è subito rileggibile', function () {
+  var ctx = creaContestoConFetch({});
   var bu = ctx.BU.schema.nuovaBU('Nuova dalla cartella');
-  var cartella = creaCartellaFinta({});
-  return ctx.BU.cartella.creaFileBU(cartella, bu).then(function (voce) {
+  return ctx.BU.cartella.creaFileBU(bu).then(function (voce) {
     assicuraUguale(voce.nomeFile, ctx.BU.cartella.nomeFileDa(bu));
-    assicura(!!cartella._file[voce.nomeFile], 'il file non risulta creato nella cartella finta');
-    return ctx.BU.cartella.leggiBU(voce.fileHandle);
+    assicura(!!voce.sha, 'la voce restituita non ha lo sha');
+    return ctx.BU.cartella.leggiBU(voce);
   }).then(function (riletta) {
     assicuraUguale(riletta.nome, 'Nuova dalla cartella');
   });
 });
 
-test('cartella: eliminaFile rimuove il file dalla cartella', function () {
-  var ctx = creaContesto();
-  var cartella = creaCartellaFinta({ 'da-rimuovere.json': '{}' });
-  return ctx.BU.cartella.eliminaFile(cartella, 'da-rimuovere.json').then(function () {
-    return ctx.BU.cartella.elencaFile(cartella);
+test('cartella: scriviBU su un file esistente aggiorna lo sha (necessario per il salvataggio successivo)', function () {
+  var ctx = creaContestoConFetch({});
+  var bu = ctx.BU.schema.nuovaBU('Da aggiornare');
+  return ctx.BU.cartella.creaFileBU(bu).then(function (voce1) {
+    bu.nome = 'Nome aggiornato';
+    return ctx.BU.cartella.scriviBU(voce1, bu).then(function (voce2) {
+      assicura(voce2.sha !== voce1.sha, 'lo sha dovrebbe cambiare dopo una scrittura');
+      return ctx.BU.cartella.leggiBU(voce2);
+    });
+  }).then(function (riletta) {
+    assicuraUguale(riletta.nome, 'Nome aggiornato');
+  });
+});
+
+test('cartella: eliminaFile rimuove il file dal repository finto', function () {
+  var ctx = creaContestoConFetch({});
+  var bu = ctx.BU.schema.nuovaBU('Da eliminare');
+  return ctx.BU.cartella.creaFileBU(bu).then(function (voce) {
+    return ctx.BU.cartella.eliminaFile(voce);
+  }).then(function () {
+    return ctx.BU.cartella.elencaFile();
   }).then(function (voci) {
     assicuraUguale(voci.length, 0, 'il file avrebbe dovuto essere rimosso');
   });

@@ -11,28 +11,20 @@
   var schema = BU.schema;
   var render = BU.render;
 
-  function campoConNota(bu, sezione, chiave) {
-    var def = schema.trovaCampoDef(sezione, chiave);
-    var campo = schema.ottieniCampo(bu, sezione, chiave);
-    var testo = render.testoCampo(bu, sezione, chiave);
-    if (!schema.campoHaValore(campo, def.tipo)) return testo;
-    return testo + ' _(' + render.etichettaStatoCampo(campo) + ')_';
-  }
-
   function sezionePerChi(bu) {
     return [
-      '- Cliente ideale: ' + campoConNota(bu, 'mercato', 'cliente_ideale'),
-      '- Decisore: ' + campoConNota(bu, 'mercato', 'decisore'),
-      '- Oggi fa così: ' + campoConNota(bu, 'mercato', 'alternativa_attuale')
+      '- Cliente ideale: ' + render.testoCampoConStato(bu, 'mercato', 'cliente_ideale'),
+      '- Decisore: ' + render.testoCampoConStato(bu, 'mercato', 'decisore'),
+      '- Oggi fa così: ' + render.testoCampoConStato(bu, 'mercato', 'alternativa_attuale')
     ].join('\n');
   }
 
   function sezioneOfferta(bu) {
     return [
-      '- Servizio: ' + campoConNota(bu, 'offerta', 'servizio'),
-      '- Risultato promesso: ' + campoConNota(bu, 'offerta', 'risultato_promesso'),
-      '- Prezzo: ' + campoConNota(bu, 'offerta', 'prezzo'),
-      '- Tempi: ' + campoConNota(bu, 'offerta', 'tempi')
+      '- Servizio: ' + render.testoCampoConStato(bu, 'offerta', 'servizio'),
+      '- Risultato promesso: ' + render.testoCampoConStato(bu, 'offerta', 'risultato_promesso'),
+      '- Prezzo: ' + render.testoCampoConStato(bu, 'offerta', 'prezzo'),
+      '- Tempi: ' + render.testoCampoConStato(bu, 'offerta', 'tempi')
     ].join('\n');
   }
 
@@ -43,8 +35,8 @@
       return render.manca('offerta pilota (vedi il generatore dedicato)');
     }
     return [
-      '- Servizio: ' + campoConNota(bu, 'pilota', 'servizio_pilota'),
-      '- Prezzo: ' + campoConNota(bu, 'pilota', 'prezzo_pilota'),
+      '- Servizio: ' + render.testoCampoConStato(bu, 'pilota', 'servizio_pilota'),
+      '- Prezzo: ' + render.testoCampoConStato(bu, 'pilota', 'prezzo_pilota'),
       '- Durata: ' + render.testoCampo(bu, 'pilota', 'durata_pilota')
     ].join('\n');
   }
@@ -80,8 +72,8 @@
     });
 
     var campoPrezzo = schema.ottieniCampo(bu, 'offerta', 'prezzo');
-    if (schema.campoHaValore(campoPrezzo, 'testo') && schema.statoEffettivoCampo(campoPrezzo) !== 'verificata') {
-      righe.push('Prezzo non verificato (stato: ' + render.etichettaStatoCampo(campoPrezzo) + ').');
+    if (schema.campoHaValore(campoPrezzo, 'testo') && schema.statoEffettivoCampo(campoPrezzo) !== 'mandatorio') {
+      righe.push('Prezzo non mandatorio (stato: ' + render.etichettaStatoCampo(campoPrezzo) + ').');
     }
 
     var presenti = render.righeLista(bu, 'risorse', 'competenze_presenti') || [];
@@ -108,9 +100,9 @@
       (schema.aperturaDecisa(bu) ? '' : ' _(non ancora decisa)_'));
     righe.push('');
     righe.push('## Cosa facciamo');
-    righe.push(render.testoCampo(bu, 'identita', 'descrizione'));
+    righe.push(render.testoCampoConStato(bu, 'identita', 'descrizione'));
     righe.push('');
-    righe.push(render.testoCampo(bu, 'identita', 'meccanismo'));
+    righe.push(render.testoCampoConStato(bu, 'identita', 'meccanismo'));
     righe.push('');
     righe.push('## Per chi');
     righe.push(sezionePerChi(bu));
