@@ -24,6 +24,7 @@
   function genera(bu) {
     var righe = [];
     righe.push('# Offerta pilota — ' + bu.nome);
+    righe.push(render.legendaStatiCampo());
     righe.push('');
     righe.push('_Versione ridotta dell\'offerta standard, pensata per abbassare la soglia d\'ingresso' );
     righe.push('del primo cliente (o dei primi clienti)._');

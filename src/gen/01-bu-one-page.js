@@ -98,6 +98,7 @@
     righe.push('Stato: ' + (schema.STATI_BU_ETICHETTE[bu.stato] || bu.stato) +
       ' · Apertura: ' + schema.APERTURE_ETICHETTE[schema.apertura(bu)] +
       (schema.aperturaDecisa(bu) ? '' : ' _(non ancora decisa)_'));
+    righe.push(render.legendaStatiCampo());
     righe.push('');
     righe.push('## Cosa facciamo');
     righe.push(render.testoCampoConStato(bu, 'identita', 'descrizione'));

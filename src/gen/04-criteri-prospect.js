@@ -50,6 +50,7 @@
   function genera(bu) {
     var righe = [];
     righe.push('# Criteri di ricerca prospect — ' + bu.nome);
+    righe.push(render.legendaStatiCampo());
     righe.push('');
     righe.push('_Questo documento produce i **criteri** di ricerca, non un elenco di nominativi: lo' );
     righe.push('strumento non ha accesso a dati esterni e non deve mai inventare aziende o persone.' );

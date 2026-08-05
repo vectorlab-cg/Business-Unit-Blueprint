@@ -20,8 +20,7 @@
       if (!schema.campoHaValore(campo, def.tipo)) return;
       var statoEff = schema.statoEffettivoCampo(campo);
       if (statoEff === 'mandatorio') return;
-      righe.push(def.etichetta + ': ' + render.testoCampo(bu, def.sezione, def.chiave) +
-        ' _(' + render.etichettaStatoCampo(campo) + ')_');
+      righe.push(def.etichetta + ': ' + render.testoCampoConStato(bu, def.sezione, def.chiave));
     });
 
     (bu.leve || []).forEach(function (leva) {
@@ -80,6 +79,7 @@
   function genera(bu) {
     var righe = [];
     righe.push('# Criteri di continuazione o chiusura — ' + bu.nome);
+    righe.push(render.legendaStatiCampo());
     righe.push('');
     righe.push('## Ipotesi da testare');
     righe.push(ipotesiDaTestare(bu));

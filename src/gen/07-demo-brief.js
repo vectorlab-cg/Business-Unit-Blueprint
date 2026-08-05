@@ -22,6 +22,7 @@
   function genera(bu) {
     var righe = [];
     righe.push('# Brief demo/mockup — ' + bu.nome);
+    righe.push(render.legendaStatiCampo());
     righe.push('');
     righe.push('_Questo non è il materiale finale: è il brief per chi costruisce la demo o il mockup._');
     righe.push('');

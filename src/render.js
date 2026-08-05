@@ -86,23 +86,52 @@
     return elencoPuntato(righe);
   }
 
-  function etichettaStatoCampo(campo) {
+  // Un'icona per stato: riconoscibile a colpo d'occhio anche nel markdown
+  // grezzo (non renderizzato), dove il colore non è disponibile.
+  var ICONE_STATO_CAMPO = {
+    ipotesi: '💭',
+    generato_da_ia: '🤖',
+    mandatorio: '🔒'
+  };
+
+  function iconaStatoCampo(campo) {
     var stato = BU.schema.statoEffettivoCampo(campo);
-    return BU.schema.STATI_CAMPO_ETICHETTE[stato] || stato;
+    return ICONE_STATO_CAMPO[stato] || '';
   }
 
-  // Testo del campo con lo stato annotato in coda — "valore _(Ipotesi)_" —
-  // per i materiali a uso interno, dove sapere se una riga è ipotesi,
-  // generata da IA o mandatoria conta quanto il valore stesso. Non va usato
-  // nei materiali pensati per uscire così come sono verso un cliente (es.
-  // landing, presentazione commerciale, template proposta economica): lì lo
-  // stato interno del dato non è cosa da mostrare.
+  // "🔒 Mandatorio" — icona ed etichetta insieme, così l'icona resta
+  // interpretabile anche da chi non conosce ancora la legenda.
+  function etichettaStatoCampo(campo) {
+    var stato = BU.schema.statoEffettivoCampo(campo);
+    var etichetta = BU.schema.STATI_CAMPO_ETICHETTE[stato] || stato;
+    return iconaStatoCampo(campo) + ' ' + etichetta;
+  }
+
+  // Testo del campo con lo stato annotato in coda come badge inline —
+  // "valore `🔒 Mandatorio`" — per i materiali a uso interno, dove sapere se
+  // una riga è ipotesi, generata da IA o mandatoria conta quanto il valore
+  // stesso. Il markdown a spaziatura fissa (backtick) resta un blocco
+  // visivamente separato dalla prosa anche senza un renderer markdown
+  // sottomano. Non va usato nei materiali pensati per uscire così come sono
+  // verso un cliente (es. landing, presentazione commerciale, template
+  // proposta economica): lì lo stato interno del dato non è cosa da
+  // mostrare.
   function testoCampoConStato(bu, sezione, chiave) {
     var def = BU.schema.trovaCampoDef(sezione, chiave);
     var campo = BU.schema.ottieniCampo(bu, sezione, chiave);
     var testo = testoCampo(bu, sezione, chiave);
     if (!def || !BU.schema.campoHaValore(campo, def.tipo)) return testo;
-    return testo + ' _(' + etichettaStatoCampo(campo) + ')_';
+    return testo + ' `' + etichettaStatoCampo(campo) + '`';
+  }
+
+  // Riga di legenda da inserire una volta in testa ai materiali interni che
+  // usano testoCampoConStato, così chi legge sa cosa significano le icone
+  // prima di incontrarle nel testo.
+  function legendaStatiCampo() {
+    return '_Stato dei dati: ' +
+      ICONE_STATO_CAMPO.ipotesi + ' ' + BU.schema.STATI_CAMPO_ETICHETTE.ipotesi + ' · ' +
+      ICONE_STATO_CAMPO.generato_da_ia + ' ' + BU.schema.STATI_CAMPO_ETICHETTE.generato_da_ia + ' · ' +
+      ICONE_STATO_CAMPO.mandatorio + ' ' + BU.schema.STATI_CAMPO_ETICHETTE.mandatorio + '_';
   }
 
   // Toglie un punto/esclamativo/interrogativo finale. Serve per incollare il
@@ -125,8 +154,10 @@
     testoCampo: testoCampo,
     righeLista: righeLista,
     listaMarkdown: listaMarkdown,
+    iconaStatoCampo: iconaStatoCampo,
     etichettaStatoCampo: etichettaStatoCampo,
     testoCampoConStato: testoCampoConStato,
+    legendaStatiCampo: legendaStatiCampo,
     senzaPuntoFinale: senzaPuntoFinale
   };
 

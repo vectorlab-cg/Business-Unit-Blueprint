@@ -63,13 +63,16 @@ BU One-Page.
 Alcuni generatori — quelli "interni" (letti da chi lavora sulla BU, mai
 spediti così a un cliente o pubblicati) — riportano lo stato accanto al
 valore del campo, tramite `render.testoCampoConStato()`: es. "600€ al mese
-_(Mandatorio)_" oppure "risolve X per Y _(Generato da IA)_". Serve a chi
-legge il materiale per sapere a colpo d'occhio cosa è già deciso e cosa è
-ancora da verificare o da riscrivere. `render.testoCampo()` (senza stato)
-resta l'helper per i materiali *esterni* (landing, presentazione
-commerciale, template proposta economica, script discovery call): un cliente
-non deve mai vedere un'annotazione interna come "(Generato da IA)" nel testo
-che riceve.
+`🔒 Mandatorio`" oppure "risolve X per Y `🤖 Generato da IA`". Ogni stato ha
+un'icona (💭 ipotesi, 🤖 generato da IA, 🔒 mandatorio) riconoscibile a colpo
+d'occhio anche nel markdown grezzo, non renderizzato, dove il colore non è
+disponibile; il badge `` `testo` `` (inline code) lo separa visivamente dalla
+prosa circostante. Ogni materiale interno apre con una riga di legenda
+(`render.legendaStatiCampo()`) che spiega le tre icone una volta sola, prima
+di incontrarle nel testo. `render.testoCampo()` (senza stato) resta l'helper
+per i materiali *esterni* (landing, presentazione commerciale, template
+proposta economica, script discovery call): un cliente non deve mai vedere
+un'annotazione interna come "🤖 Generato da IA" nel testo che riceve.
 
 ## Apertura
 

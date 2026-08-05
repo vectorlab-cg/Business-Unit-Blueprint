@@ -63,10 +63,12 @@ Per ogni business unit:
   Pilota, Risorse, Test) più le leve. Ogni campo ha un valore e uno stato
   (`ipotesi | generato_da_ia | mandatorio`) — vedi
   [docs/MODELLO.md](docs/MODELLO.md). Alcuni materiali "interni" riportano
-  questo stato accanto al valore nel Markdown generato (es. "_(Mandatorio)_"),
-  in modo che chi legge sappia a colpo d'occhio cosa è deciso e cosa no; i
-  materiali destinati a un cliente (landing, presentazione commerciale,
-  proposta economica, script discovery call) non lo riportano mai.
+  questo stato accanto al valore nel Markdown generato, con un'icona per
+  stato (💭 ipotesi, 🤖 generato da IA, 🔒 mandatorio) e una legenda in testa
+  al documento, in modo che chi legge capisca a colpo d'occhio cosa è deciso
+  e cosa no anche senza un renderer Markdown sottomano; i materiali destinati
+  a un cliente (landing, presentazione commerciale, proposta economica,
+  script discovery call) non lo riportano mai.
 - **Materiali** — un blocco per generatore (vedi sotto), con stato di
   revisione, generazione/rigenerazione e testo modificabile a mano.
 - **Validazione** — risultati del test (con le metriche che decidono

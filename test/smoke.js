@@ -624,18 +624,20 @@ test('swot: opportunità e minacce segnalano esplicitamente cosa resta da scrive
   assicura(minacce.indexOf('[DA SCRIVERE:') !== -1, 'le minacce non segnalano la parte che richiede giudizio');
 });
 
-test('stato campo nel markdown: un materiale interno annota ipotesi/generato da IA/mandatorio', function () {
+test('stato campo nel markdown: un materiale interno annota ipotesi/generato da IA/mandatorio con icona', function () {
   var r = generaPerBuCompilata('bu-one-page');
   // descrizione è mandatorio, alternativa_attuale è generato_da_ia nella fixture.
-  assicura(r.md.indexOf('_(Mandatorio)_') !== -1, 'nessuna annotazione "Mandatorio" nel materiale');
+  assicura(r.md.indexOf('`🔒 Mandatorio`') !== -1, 'nessuna annotazione "🔒 Mandatorio" nel materiale');
   var sezionePerChi = sezione(r.md, '## Per chi');
-  assicura(sezionePerChi.indexOf('_(Generato da IA)_') !== -1, 'l\'alternativa attuale (generato_da_ia) non è annotata nel materiale');
+  assicura(sezionePerChi.indexOf('`🤖 Generato da IA`') !== -1, 'l\'alternativa attuale (generato_da_ia) non è annotata nel materiale');
+  assicura(r.md.indexOf('Stato dei dati: 💭 Ipotesi · 🤖 Generato da IA · 🔒 Mandatorio') !== -1,
+    'manca la legenda delle icone di stato in testa al materiale');
 });
 
 test('stato campo nel markdown: i materiali esterni (landing) non annotano lo stato interno', function () {
   var r = generaPerBuCompilata('landing');
-  assicura(r.md.indexOf('_(Mandatorio)_') === -1, 'la landing non dovrebbe esporre annotazioni di stato interno');
-  assicura(r.md.indexOf('_(Generato da IA)_') === -1, 'la landing non dovrebbe esporre annotazioni di stato interno');
+  assicura(r.md.indexOf('🔒 Mandatorio') === -1, 'la landing non dovrebbe esporre annotazioni di stato interno');
+  assicura(r.md.indexOf('🤖 Generato da IA') === -1, 'la landing non dovrebbe esporre annotazioni di stato interno');
 });
 
 test('problem statement: "cosa è già mandatorio" elenca solo i campi mandatori, col loro valore', function () {

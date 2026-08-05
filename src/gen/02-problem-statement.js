@@ -55,6 +55,7 @@
   function genera(bu) {
     var righe = [];
     righe.push('# Problem Statement — ' + bu.nome);
+    righe.push(render.legendaStatiCampo());
     righe.push('');
     righe.push('## Chi ha il problema');
     righe.push(chiHaIlProblema(bu));

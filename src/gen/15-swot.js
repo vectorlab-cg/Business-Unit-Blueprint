@@ -87,6 +87,7 @@
   function genera(bu) {
     var righe = [];
     righe.push('# Analisi SWOT — ' + bu.nome);
+    righe.push(render.legendaStatiCampo());
     righe.push('');
     righe.push('_Forze e Debolezze sono ricavate dai dati compilati. Opportunità e Minacce sono' );
     righe.push('parziali: la parte che richiede un giudizio sul mercato resta segnata da scrivere,' );

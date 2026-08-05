@@ -21,6 +21,7 @@
   function genera(bu) {
     var righe = [];
     righe.push('# Ideal Customer Profile — ' + bu.nome);
+    righe.push(render.legendaStatiCampo());
     righe.push('');
     righe.push('## Profilo');
     righe.push(render.testoCampoConStato(bu, 'mercato', 'cliente_ideale'));
