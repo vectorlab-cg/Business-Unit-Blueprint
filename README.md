@@ -24,17 +24,19 @@ recuperarli se svuoti la cache del browser.
 
 ## Un esempio
 
-[`esempio/ricambi-su-misura.json`](esempio/ricambi-su-misura.json) è una
-business unit completa, generata con lo stesso codice dell'app (non scritta a
-mano): tutti i campi compilati, 4 leve, i 14 materiali generati per davvero,
-risultati del test e una decisione presa ("Continua"). Per caricarla, apri
-l'app e usa **"Ripristina backup JSON"** nella barra laterale — attenzione,
-sostituisce tutte le business unit locali, quindi usalo su un'installazione
-vuota o dopo aver fatto un backup delle tue.
+[`esempio/vectorlab-forge.json`](esempio/vectorlab-forge.json) è una vera
+business unit ("progetti a corpo" — software custom a prezzo e perimetro
+fissi), compilata tramite un'intervista reale e generata con lo stesso
+codice dell'app (non scritta a mano): 23/28 campi (82%), 4 leve, tutti e 15
+i materiali generati. Per caricarla, apri l'app e usa **"Ripristina backup
+JSON"** nella barra laterale — attenzione, sostituisce tutte le business
+unit locali, quindi usalo su un'installazione vuota o dopo aver fatto un
+backup delle tue.
 
-Un dettaglio non casuale: il campo **Prezzo** è segnato "Verificata" ma senza
-prova compilata, apposta, per mostrare dal vivo la regola non negoziabile —
-in COMPILA lo vedrai comunque colorato e trattato come "da verificare".
+La sezione **Pilota** è lasciata vuota di proposito: per questa BU non è
+un'offerta ridotta per abbassare la soglia d'ingresso, è una fase
+(*Software Discovery*) già consolidata e presente altrove nell'offerta —
+buona conferma dal vivo del perché quella sezione non ha campi critici.
 
 ## Le tre viste
 
