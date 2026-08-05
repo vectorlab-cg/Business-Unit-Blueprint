@@ -52,7 +52,7 @@ Per ogni business unit:
   davvero evidenziate) e la decisione finale: **Continua / Modifica /
   Ferma**, con motivazione e data.
 
-## I quattordici generatori
+## I quindici generatori
 
 Ognuno produce Markdown a partire dai dati compilati, senza mai nascondere i
 buchi: dove manca un dato compare `[MANCA: nome campo]`, dove serve
@@ -98,6 +98,10 @@ dati esterni: non inventa mai aziende, persone o numeri).
     test, le due soglie **separate** (segnale di messaggio ≠ segnale di
     mercato), costo di scoprire di aver sbagliato, criteri **Continua /
     Modifica / Ferma**.
+15. **Analisi SWOT** — Forze e Debolezze ricavate da risorse e dai campi
+    critici mancanti (meccaniche, non un'opinione); Opportunità e Minacce
+    parziali, con la parte che richiede un giudizio sul mercato segnata
+    `[DA SCRIVERE]` invece di inventata.
 
 Le due soglie del test non si confondono mai: il **segnale di messaggio**
 (il messaggio arriva) autorizza solo a telefonare; solo il **segnale di
@@ -109,7 +113,7 @@ leve — cambia davvero l'output di Landing e Presentazione commerciale, non
 solo esteticamente: un test verifica che il markdown generato sia
 effettivamente diverso fra le due impostazioni.
 
-Aggiungere un quindicesimo generatore costa un file e una riga in
+Aggiungere un sedicesimo generatore costa un file e una riga in
 `index.html`: [docs/AGGIUNGERE-UN-GENERATORE.md](docs/AGGIUNGERE-UN-GENERATORE.md).
 
 ## Struttura del progetto
@@ -230,3 +234,16 @@ La specifica lasciava alcuni dettagli aperti. Scelte fatte, e perché:
   lista originale non ha un campo dedicato: coincide con `offerta.prezzo`
   finché il suo stato non è "verificata" — aggiungerne uno avrebbe duplicato
   un dato che il sistema ha già.
+- **`mercato.differenziazione_competitiva`** (nuovo campo, critico): "cosa
+  fa oggi al posto vostro" (`alternativa_attuale`) non è la stessa domanda
+  di "perché scegliere voi e non un concorrente diretto" — la prima copre
+  lo status quo/non-consumo, la seconda la concorrenza vera. Segnalato da
+  un revisore esterno del progetto; senza questo campo l'Analisi SWOT
+  avrebbe Minacce vuote nella maggior parte dei casi.
+- **L'Analisi SWOT usa anche Risorse**, benché la richiesta iniziale la
+  escludesse: Forze e Debolezze coincidono quasi esattamente con competenze
+  presenti/mancanti — escluderle avrebbe lasciato quei due quadranti vuoti
+  o inventati. Opportunità e Minacce restano volutamente parziali (leve e
+  concorrenza diretta sì, trend di mercato e rischi macro no: lo strumento
+  non ha dati esterni) — è una SWOT onesta sui dati che il sistema conosce,
+  non una SWOT completa.

@@ -119,6 +119,7 @@ function creaBuCompilata(sandbox) {
   imposta('mercato', 'decisore', 'Responsabile di manutenzione.', 'ipotesi');
   imposta('mercato', 'contesto_decisore', 'Ha una linea ferma e un fornitore che risponde in due settimane.', 'ipotesi');
   imposta('mercato', 'alternativa_attuale', 'Aspettano il ricambio originale dal produttore della macchina.', 'da_verificare');
+  imposta('mercato', 'differenziazione_competitiva', 'Gli altri produttori di ricambi custom hanno tempi di 1-2 settimane, noi consegniamo in 48 ore.', 'ipotesi');
 
   imposta('offerta', 'servizio', 'Rilievo, disegno CAD e produzione del pezzo di ricambio.', 'ipotesi');
   imposta('offerta', 'unita_vendita', 'Un pezzo di ricambio urgente.', 'ipotesi');
@@ -357,9 +358,9 @@ test('store: importaJSON rifiuta JSON non valido con errore descrittivo', functi
 // Test: generatori
 // ---------------------------------------------------------------------
 
-test('generatori: sono registrati tutti e 14', function () {
+test('generatori: sono registrati tutti e 15', function () {
   var ctx = creaContesto();
-  assicuraUguale(ctx.BU.gen.elencaGeneratori().length, 14);
+  assicuraUguale(ctx.BU.gen.elencaGeneratori().length, 15);
 });
 
 test('generatori: ogni id registrato è unico', function () {
@@ -578,6 +579,34 @@ test('apertura: non decisa, il materiale lo dichiara invece di nasconderlo', fun
   var md = ctx.BU.gen.trovaGeneratore('landing').genera(bu);
   assicura(/non . stato compilato/i.test(md) || md.indexOf('non è stato compilato') !== -1,
     'con apertura vuota la landing non segnala di aver assunto un default');
+});
+
+test('swot: forze e debolezze vengono dai dati, non sono inventate', function () {
+  var r = generaPerBuCompilata('swot');
+  var forze = sezione(r.md, '## Forze');
+  var debolezze = sezione(r.md, '## Debolezze');
+  r.bu.campi.risorse.competenze_presenti.valore.forEach(function (c) {
+    assicura(forze.indexOf(c) !== -1, 'competenza presente "' + c + '" assente dalle Forze');
+  });
+  r.bu.campi.risorse.competenze_mancanti.valore.forEach(function (c) {
+    assicura(debolezze.indexOf(c) !== -1, 'competenza mancante "' + c + '" assente dalle Debolezze');
+  });
+});
+
+test('swot: minacce include la differenziazione competitiva, non solo l\'alternativa attuale', function () {
+  var r = generaPerBuCompilata('swot');
+  var minacce = sezione(r.md, '## Minacce');
+  assicura(minacce.indexOf(r.bu.campi.mercato.alternativa_attuale.valore) !== -1, 'manca alternativa attuale nelle minacce');
+  assicura(minacce.indexOf(r.bu.campi.mercato.differenziazione_competitiva.valore) !== -1,
+    'manca differenziazione competitiva nelle minacce');
+});
+
+test('swot: opportunità e minacce segnalano esplicitamente cosa resta da scrivere', function () {
+  var r = generaPerBuCompilata('swot');
+  var opportunita = sezione(r.md, '## Opportunità');
+  var minacce = sezione(r.md, '## Minacce');
+  assicura(opportunita.indexOf('[DA SCRIVERE:') !== -1, 'le opportunità non segnalano la parte che richiede giudizio');
+  assicura(minacce.indexOf('[DA SCRIVERE:') !== -1, 'le minacce non segnalano la parte che richiede giudizio');
 });
 
 test('leve: il campo tipo dello schema v1 non sopravvive alla normalizzazione', function () {

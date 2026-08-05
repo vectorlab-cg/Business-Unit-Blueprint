@@ -112,6 +112,9 @@
       aiuto: 'Cosa ha sulla scrivania quando arrivate.' },
     { sezione: 'mercato', chiave: 'alternativa_attuale', etichetta: 'Alternativa attuale', tipo: 'testo', critico: true,
       aiuto: 'Cosa fa oggi al posto vostro (la vera concorrenza).' },
+    { sezione: 'mercato', chiave: 'differenziazione_competitiva', etichetta: 'Perché voi e non un concorrente', tipo: 'testo', critico: true,
+      aiuto: 'Non "cosa fa oggi al posto vostro" (quello è alternativa attuale) — perché sceglierebbe voi ' +
+        'e non un concorrente diretto che offre qualcosa di simile.' },
 
     // OFFERTA
     { sezione: 'offerta', chiave: 'servizio', etichetta: 'Servizio', tipo: 'testo', critico: true,
