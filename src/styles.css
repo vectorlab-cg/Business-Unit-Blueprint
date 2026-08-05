@@ -164,6 +164,20 @@ textarea {
   font-size: 11px;
 }
 
+#cartella-sezione {
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cartella-stato {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
 /* ----------------------------------------------------------------- */
 /* Area principale */
 /* ----------------------------------------------------------------- */
@@ -613,4 +627,75 @@ textarea {
 .decisione-corrente {
   margin-top: 12px;
   color: var(--text-muted);
+}
+
+/* ----------------------------------------------------------------- */
+/* Overlay (anteprima Markdown) */
+/* ----------------------------------------------------------------- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 40px;
+}
+
+.anteprima-pannello {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-forte);
+  border-radius: 8px;
+  width: min(900px, 100%);
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.anteprima-intestazione {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.anteprima-titolo {
+  margin: 0;
+  font-size: 14px;
+}
+
+.anteprima-azioni {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.anteprima-testo {
+  flex: 1;
+  margin: 16px;
+  padding: 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  resize: none;
+  min-height: 300px;
+}
+
+/* ----------------------------------------------------------------- */
+/* Disclaimer piccolo (es. cartella condivisa: Chromium richiesto) */
+/* ----------------------------------------------------------------- */
+
+.avviso-compatibilita {
+  padding: 6px 10px;
+  color: var(--text-debole);
+  font-size: 10px;
+  line-height: 1.4;
 }

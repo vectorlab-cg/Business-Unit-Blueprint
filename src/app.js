@@ -1,7 +1,8 @@
 /*
  * app.js
  * Avvio, routing (hash: #<idBU>/<vista>), sidebar, salvataggio differito,
- * backup/ripristino JSON, export Markdown della singola business unit.
+ * backup/ripristino JSON, anteprima ed export Markdown della singola
+ * business unit, cartella condivisa (un file per BU, vedi cartella.js).
  *
  * Namespace globale: window.BU.app
  */
@@ -15,7 +16,10 @@
   var stato = {
     elenco: [],
     buAttivaId: null,
-    vista: 'compila'
+    vista: 'compila',
+    cartellaCollegata: false,
+    dirHandle: null,
+    fileHandleDiBU: {} // buId -> { nomeFile, fileHandle }
   };
 
   var VISTE = ['compila', 'materiali', 'validazione'];
@@ -23,7 +27,7 @@
 
   var timerSalvataggio = null;
   var sidebarRefs = {};
-  var headerRefs = null; // { buId, selStato, badgeCompletezza }
+  var headerRefs = null; // { buId, selStato, badgeCompletezza, bottoneSalva }
 
   // ---------------------------------------------------------------------
   // Persistenza
@@ -119,6 +123,14 @@
     scriviHash();
     renderSidebar();
     renderMain();
+
+    if (stato.cartellaCollegata) {
+      BU.cartella.creaFileBU(stato.dirHandle, bu).then(function (voce) {
+        stato.fileHandleDiBU[bu.id] = voce;
+      }).catch(function (e) {
+        global.alert('La business unit è stata creata ma non salvata su file: ' + e.message);
+      });
+    }
   }
 
   function eliminaBU(id) {
@@ -133,6 +145,14 @@
     scriviHash();
     renderSidebar();
     renderMain();
+
+    var voce = stato.fileHandleDiBU[id];
+    if (stato.cartellaCollegata && voce) {
+      delete stato.fileHandleDiBU[id];
+      BU.cartella.eliminaFile(stato.dirHandle, voce.nomeFile).catch(function (e) {
+        global.alert('La business unit è stata rimossa dall\'elenco ma il file non è stato eliminato: ' + e.message);
+      });
+    }
   }
 
   // ---------------------------------------------------------------------
@@ -189,7 +209,128 @@
     reader.readAsText(file);
   }
 
-  function esportaMarkdownBU(bu) {
+  // ---------------------------------------------------------------------
+  // Cartella condivisa — un file per BU, letto/scritto con la File System
+  // Access API (solo Chromium: Chrome, Edge). Se non collegata, l'app
+  // funziona come sempre sul localStorage del browser.
+  // ---------------------------------------------------------------------
+
+  // Carica tutte le BU dalla cartella collegata e sostituisce l'elenco in
+  // memoria. I file che non si riescono a leggere vengono saltati (non
+  // bloccano il caricamento delle altre BU), con un avviso in console.
+  function caricaDaCartella() {
+    return BU.cartella.elencaFile(stato.dirHandle).then(function (voci) {
+      var nuovoElenco = [];
+      var nuoveMappe = {};
+      var letture = voci.map(function (voce) {
+        return BU.cartella.leggiBU(voce.fileHandle).then(function (bu) {
+          nuovoElenco.push(bu);
+          nuoveMappe[bu.id] = voce;
+        }).catch(function (e) {
+          console.warn('BU Blueprint: impossibile leggere "' + voce.nomeFile + '": ' + e.message);
+        });
+      });
+      return Promise.all(letture).then(function () {
+        stato.elenco = nuovoElenco;
+        stato.fileHandleDiBU = nuoveMappe;
+        leggiHash();
+        scriviHash();
+        aggiornaControlliCartella();
+        renderSidebar();
+        renderMain();
+      });
+    });
+  }
+
+  function collegaCartella() {
+    if (!BU.cartella.supportata()) return;
+    BU.cartella.collega().then(function (handle) {
+      stato.dirHandle = handle;
+      stato.cartellaCollegata = true;
+      return caricaDaCartella();
+    }).catch(function (e) {
+      if (e && e.name === 'AbortError') return; // l'utente ha chiuso il selettore
+      global.alert('Impossibile collegare la cartella: ' + e.message);
+    });
+  }
+
+  function riconnettiCartella(handle) {
+    BU.cartella.richiediPermesso(handle).then(function (concesso) {
+      if (!concesso) {
+        global.alert('Permesso negato: la cartella resta scollegata.');
+        return;
+      }
+      stato.dirHandle = handle;
+      stato.cartellaCollegata = true;
+      return caricaDaCartella();
+    });
+  }
+
+  function scollegaCartella() {
+    if (!global.confirm('Scollegare la cartella BU? Si torna ai dati salvati in questo browser (localStorage).')) return;
+    BU.cartella.scollega().then(function () {
+      stato.dirHandle = null;
+      stato.cartellaCollegata = false;
+      stato.fileHandleDiBU = {};
+      stato.elenco = BU.store.carica();
+      leggiHash();
+      scriviHash();
+      aggiornaControlliCartella();
+      renderSidebar();
+      renderMain();
+    });
+  }
+
+  function salvaSuFile(bu) {
+    var voce = stato.fileHandleDiBU[bu.id];
+    if (!voce) return;
+    BU.cartella.scriviBU(voce.fileHandle, bu).then(function () {
+      aggiornaIndicatoreSalvataggio('Salvato su file alle ' + new Date().toLocaleTimeString('it-IT'));
+    }).catch(function (e) {
+      global.alert('Impossibile salvare il file "' + voce.nomeFile + '": ' + e.message);
+    });
+  }
+
+  // Aggiorna testo e comportamento del controllo cartella nella sidebar
+  // senza ricostruire tutta la sidebar.
+  function aggiornaControlliCartella() {
+    var contenitore = document.getElementById('cartella-sezione');
+    if (!contenitore) return;
+    var statoEl = document.getElementById('cartella-stato');
+    var bottone = document.getElementById('bottone-cartella');
+
+    if (!BU.cartella.supportata()) {
+      contenitore.style.display = 'none';
+      return;
+    }
+    contenitore.style.display = '';
+
+    if (stato.cartellaCollegata) {
+      statoEl.textContent = 'Cartella collegata' + (stato.dirHandle && stato.dirHandle.name ? ': ' + stato.dirHandle.name : '');
+      bottone.textContent = 'Scollega cartella';
+      bottone.onclick = scollegaCartella;
+      return;
+    }
+
+    statoEl.textContent = 'Nessuna cartella collegata';
+    bottone.textContent = 'Collega cartella BU';
+    bottone.onclick = collegaCartella;
+
+    BU.cartella.ripristina().then(function (risultato) {
+      if (!risultato || stato.cartellaCollegata) return; // niente di salvato, o collegata nel frattempo
+      if (risultato.permesso === 'granted') {
+        stato.dirHandle = risultato.handle;
+        stato.cartellaCollegata = true;
+        caricaDaCartella();
+        return;
+      }
+      statoEl.textContent = 'Cartella collegata in precedenza, permesso da confermare';
+      bottone.textContent = 'Riconnetti cartella BU';
+      bottone.onclick = function () { riconnettiCartella(risultato.handle); };
+    });
+  }
+
+  function costruisciMarkdownBU(bu) {
     var righe = [];
     righe.push('# ' + bu.nome + ' — Materiali');
     righe.push('');
@@ -207,11 +348,62 @@
       righe.push(testo);
       righe.push('');
     });
-    scaricaFile(
-      'bu-blueprint-' + bu.nome.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + dataPerNomeFile() + '.md',
-      righe.join('\n'),
-      'text/markdown'
-    );
+    return righe.join('\n');
+  }
+
+  function nomeFileMarkdown(bu) {
+    return 'bu-blueprint-' + bu.nome.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + dataPerNomeFile() + '.md';
+  }
+
+  // ---------------------------------------------------------------------
+  // Anteprima Markdown — un overlay in-app, non solo il download alla cieca.
+  // ---------------------------------------------------------------------
+
+  var overlayAnteprima = null;
+
+  function chiudiConEsc(e) {
+    if (e.key === 'Escape') chiudiAnteprimaMarkdown();
+  }
+
+  function chiudiAnteprimaMarkdown() {
+    if (!overlayAnteprima) return;
+    overlayAnteprima.parentNode.removeChild(overlayAnteprima);
+    overlayAnteprima = null;
+    document.removeEventListener('keydown', chiudiConEsc);
+  }
+
+  function mostraAnteprimaMarkdown(bu) {
+    chiudiAnteprimaMarkdown();
+    var testo = costruisciMarkdownBU(bu);
+
+    var overlay = BU.ui.el('div', {
+      class: 'overlay',
+      onclick: function (e) { if (e.target === overlay) chiudiAnteprimaMarkdown(); }
+    });
+
+    var area = BU.ui.el('textarea', { class: 'anteprima-testo', readonly: 'readonly', value: testo });
+
+    var pannello = BU.ui.el('div', { class: 'anteprima-pannello' }, [
+      BU.ui.el('div', { class: 'anteprima-intestazione' }, [
+        BU.ui.el('h2', { class: 'anteprima-titolo', text: 'Markdown — ' + bu.nome }),
+        BU.ui.el('div', { class: 'anteprima-azioni' }, [
+          BU.ui.el('button', {
+            type: 'button', class: 'pulsante pulsante--primario',
+            onclick: function () { scaricaFile(nomeFileMarkdown(bu), testo, 'text/markdown'); }
+          }, ['Scarica il file']),
+          BU.ui.el('button', {
+            type: 'button', class: 'pulsante pulsante--secondario',
+            onclick: function () { chiudiAnteprimaMarkdown(); }
+          }, ['Chiudi'])
+        ])
+      ]),
+      area
+    ]);
+
+    overlay.appendChild(pannello);
+    document.body.appendChild(overlay);
+    overlayAnteprima = overlay;
+    document.addEventListener('keydown', chiudiConEsc);
   }
 
   // ---------------------------------------------------------------------
@@ -302,13 +494,23 @@
 
     var bottoneEsporta = BU.ui.el('button', {
       type: 'button', class: 'pulsante pulsante--secondario',
-      onclick: function () { esportaMarkdownBU(bu); }
-    }, ['Esporta Markdown']);
+      onclick: function () { mostraAnteprimaMarkdown(bu); }
+    }, ['Markdown']);
+
+    var rigaAzioni = [badgeCompletezza, bottoneEsporta];
+    var bottoneSalva = null;
+    if (stato.cartellaCollegata && stato.fileHandleDiBU[bu.id]) {
+      bottoneSalva = BU.ui.el('button', {
+        type: 'button', class: 'pulsante pulsante--primario',
+        onclick: function () { salvaSuFile(bu); }
+      }, ['Salva su file']);
+      rigaAzioni.push(bottoneSalva);
+    }
 
     header.appendChild(BU.ui.el('div', { class: 'bu-header-riga1' }, [inputNome, selStato]));
-    header.appendChild(BU.ui.el('div', { class: 'bu-header-riga2' }, [badgeCompletezza, bottoneEsporta]));
+    header.appendChild(BU.ui.el('div', { class: 'bu-header-riga2' }, rigaAzioni));
 
-    headerRefs = { buId: bu.id, selStato: selStato, badgeCompletezza: badgeCompletezza };
+    headerRefs = { buId: bu.id, selStato: selStato, badgeCompletezza: badgeCompletezza, bottoneSalva: bottoneSalva };
   }
 
   // Aggiorna gli indicatori dell'header senza ricostruirlo (evita di perdere
@@ -375,6 +577,7 @@
     collegaAzioniSidebar();
     renderSidebar();
     renderMain();
+    aggiornaControlliCartella();
 
     global.addEventListener('beforeunload', function () {
       if (timerSalvataggio) {

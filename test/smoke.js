@@ -32,7 +32,7 @@ function elencaFileGeneratori() {
   return ordinati.map(function (f) { return 'src/gen/' + f; });
 }
 
-var FILE_SORGENTE = ['src/schema.js', 'src/store.js', 'src/render.js'].concat(elencaFileGeneratori());
+var FILE_SORGENTE = ['src/schema.js', 'src/store.js', 'src/cartella.js', 'src/render.js'].concat(elencaFileGeneratori());
 
 // ---------------------------------------------------------------------
 // Localstorage minimale, per testare store.js in Node
@@ -76,13 +76,29 @@ function creaContesto() {
 // ---------------------------------------------------------------------
 
 var esiti = [];
+var promesseInSospeso = [];
 
+// Supporta anche test asincroni: se fn() restituisce una promise, l'esito
+// viene aggiornato quando si risolve, e il riepilogo finale aspetta tutte
+// le promesse in sospeso prima di stampare (vedi in fondo al file).
 function test(nome, fn) {
+  var voce = { nome: nome, ok: null, errore: null };
+  esiti.push(voce);
   try {
-    fn();
-    esiti.push({ nome: nome, ok: true });
+    var risultato = fn();
+    if (risultato && typeof risultato.then === 'function') {
+      promesseInSospeso.push(risultato.then(function () {
+        voce.ok = true;
+      }).catch(function (e) {
+        voce.ok = false;
+        voce.errore = e && e.stack ? e.stack : String(e);
+      }));
+      return;
+    }
+    voce.ok = true;
   } catch (e) {
-    esiti.push({ nome: nome, ok: false, errore: e && e.stack ? e.stack : String(e) });
+    voce.ok = false;
+    voce.errore = e && e.stack ? e.stack : String(e);
   }
 }
 
@@ -619,19 +635,145 @@ test('leve: il campo tipo dello schema v1 non sopravvive alla normalizzazione', 
 });
 
 // ---------------------------------------------------------------------
-// Riepilogo
+// Test: cartella condivisa (src/cartella.js), con un mock minimale di
+// FileSystemDirectoryHandle/FileSystemFileHandle — nessuna API di browser
+// è disponibile in Node, quindi si testa la logica contro un finto
+// filesystem in memoria con la stessa forma (values/getFileHandle/
+// removeEntry, getFile/createWritable).
 // ---------------------------------------------------------------------
 
-var falliti = esiti.filter(function (e) { return !e.ok; });
+function creaCartellaFinta(fileIniziali) {
+  var file = {}; // nomeFile -> { testo }
+  Object.keys(fileIniziali || {}).forEach(function (nome) {
+    file[nome] = { testo: fileIniziali[nome] };
+  });
 
-esiti.forEach(function (e) {
-  console.log((e.ok ? 'OK   ' : 'FAIL ') + e.nome);
-  if (!e.ok) console.log('     ' + e.errore.split('\n').join('\n     '));
+  function creaFileHandleFinto(nomeFile) {
+    return {
+      kind: 'file',
+      name: nomeFile,
+      getFile: function () {
+        return Promise.resolve({ text: function () { return Promise.resolve(file[nomeFile].testo); } });
+      },
+      createWritable: function () {
+        var buffer = { testo: '' };
+        return Promise.resolve({
+          write: function (testo) { buffer.testo = testo; return Promise.resolve(); },
+          close: function () { file[nomeFile].testo = buffer.testo; return Promise.resolve(); }
+        });
+      }
+    };
+  }
+
+  return {
+    name: 'CartellaFinta',
+    values: function () {
+      var nomi = Object.keys(file);
+      var i = 0;
+      return {
+        next: function () {
+          if (i >= nomi.length) return Promise.resolve({ done: true });
+          var handle = creaFileHandleFinto(nomi[i]);
+          i += 1;
+          return Promise.resolve({ done: false, value: handle });
+        }
+      };
+    },
+    getFileHandle: function (nome, opzioni) {
+      if (!file[nome]) {
+        if (!opzioni || !opzioni.create) return Promise.reject(new Error('File non trovato: ' + nome));
+        file[nome] = { testo: '' };
+      }
+      return Promise.resolve(creaFileHandleFinto(nome));
+    },
+    removeEntry: function (nome) {
+      delete file[nome];
+      return Promise.resolve();
+    },
+    _file: file
+  };
+}
+
+test('cartella: supportata() è false in un contesto senza File System Access API', function () {
+  var ctx = creaContesto();
+  assicuraUguale(ctx.BU.cartella.supportata(), false);
 });
 
-console.log('');
-console.log(esiti.length + ' test, ' + falliti.length + ' falliti');
+test('cartella: nomeFileDa produce uno slug sicuro con suffisso dall\'id', function () {
+  var ctx = creaContesto();
+  var bu = ctx.BU.schema.nuovaBU('Prova! Con Spazi & Simboli');
+  var nome = ctx.BU.cartella.nomeFileDa(bu);
+  assicura(/^[a-z0-9-]+\.json$/.test(nome), 'nome file non sicuro: ' + nome);
+  var suffissoAtteso = String(bu.id).toLowerCase().replace(/[^a-z0-9]/g, '').slice(-8);
+  assicura(nome.indexOf(suffissoAtteso) !== -1, 'il nome file non include il suffisso dell\'id');
+});
 
-if (falliti.length > 0) {
-  process.exitCode = 1;
-}
+test('cartella: elencaFile trova solo i .json e ignora altri file', function () {
+  var ctx = creaContesto();
+  var cartella = creaCartellaFinta({ 'a.json': '{}', 'note.txt': 'ciao', 'b.json': '{}' });
+  return ctx.BU.cartella.elencaFile(cartella).then(function (voci) {
+    var nomi = voci.map(function (v) { return v.nomeFile; }).sort();
+    assicuraUguale(nomi.length, 2, 'dovrebbe trovare solo i due .json');
+    assicuraUguale(nomi[0], 'a.json');
+    assicuraUguale(nomi[1], 'b.json');
+  });
+});
+
+test('cartella: scrivi poi leggi la stessa BU, andata e ritorno senza perdite', function () {
+  var ctx = creaContesto();
+  var bu = creaBuCompilata(ctx);
+  var cartella = creaCartellaFinta({});
+  return cartella.getFileHandle('test.json', { create: true }).then(function (fileHandle) {
+    return ctx.BU.cartella.scriviBU(fileHandle, bu).then(function () {
+      return ctx.BU.cartella.leggiBU(fileHandle);
+    });
+  }).then(function (riletta) {
+    assicuraUguale(riletta.id, bu.id);
+    assicuraUguale(riletta.campi.identita.descrizione.valore, bu.campi.identita.descrizione.valore);
+    assicuraUguale(riletta.leve.length, bu.leve.length);
+  });
+});
+
+test('cartella: creaFileBU crea il file con il nome atteso e lo rende leggibile', function () {
+  var ctx = creaContesto();
+  var bu = ctx.BU.schema.nuovaBU('Nuova dalla cartella');
+  var cartella = creaCartellaFinta({});
+  return ctx.BU.cartella.creaFileBU(cartella, bu).then(function (voce) {
+    assicuraUguale(voce.nomeFile, ctx.BU.cartella.nomeFileDa(bu));
+    assicura(!!cartella._file[voce.nomeFile], 'il file non risulta creato nella cartella finta');
+    return ctx.BU.cartella.leggiBU(voce.fileHandle);
+  }).then(function (riletta) {
+    assicuraUguale(riletta.nome, 'Nuova dalla cartella');
+  });
+});
+
+test('cartella: eliminaFile rimuove il file dalla cartella', function () {
+  var ctx = creaContesto();
+  var cartella = creaCartellaFinta({ 'da-rimuovere.json': '{}' });
+  return ctx.BU.cartella.eliminaFile(cartella, 'da-rimuovere.json').then(function () {
+    return ctx.BU.cartella.elencaFile(cartella);
+  }).then(function (voci) {
+    assicuraUguale(voci.length, 0, 'il file avrebbe dovuto essere rimosso');
+  });
+});
+
+// ---------------------------------------------------------------------
+// Riepilogo — aspetta che tutti i test asincroni si siano risolti prima
+// di stampare (i test sincroni hanno già l'esito pronto).
+// ---------------------------------------------------------------------
+
+Promise.all(promesseInSospeso).then(function () {
+  var falliti = esiti.filter(function (e) { return !e.ok; });
+
+  esiti.forEach(function (e) {
+    console.log((e.ok ? 'OK   ' : 'FAIL ') + e.nome);
+    if (!e.ok) console.log('     ' + e.errore.split('\n').join('\n     '));
+  });
+
+  console.log('');
+  console.log(esiti.length + ' test, ' + falliti.length + ' falliti');
+
+  if (falliti.length > 0) {
+    process.exitCode = 1;
+  }
+});
