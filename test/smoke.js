@@ -32,7 +32,7 @@ function elencaFileGeneratori() {
   return ordinati.map(function (f) { return 'src/gen/' + f; });
 }
 
-var FILE_SORGENTE = ['src/schema.js', 'src/store.js', 'src/cartella.js', 'src/render.js'].concat(elencaFileGeneratori());
+var FILE_SORGENTE = ['src/schema.js', 'src/store.js', 'src/cartella.js', 'src/render.js', 'src/markdown.js'].concat(elencaFileGeneratori());
 
 // ---------------------------------------------------------------------
 // Localstorage minimale, per testare store.js in Node
@@ -656,6 +656,66 @@ test('leve: il campo tipo dello schema v1 non sopravvive alla normalizzazione', 
   });
   assicura(bu.leve[0].tipo === undefined, 'il campo tipo è ancora presente sulle leve');
   assicuraUguale(bu.leve[0].fatto_osservabile, 'x', 'la normalizzazione ha perso il contenuto della leva');
+});
+
+// ---------------------------------------------------------------------
+// Test: renderer Markdown → HTML (src/markdown.js) e documento completo
+// (BU.render.documentoCompleto, usato dalla vista DOCUMENTO)
+// ---------------------------------------------------------------------
+
+test('markdown: titoli, grassetto, corsivo, codice inline', function () {
+  var ctx = creaContesto();
+  var html = ctx.BU.markdown.renderizza('# Titolo\n\n## Sotto\n\nTesto **grosso** e _corsivo_ e `codice`.');
+  assicura(html.indexOf('<h1>Titolo</h1>') !== -1, 'manca il titolo h1');
+  assicura(html.indexOf('<h2>Sotto</h2>') !== -1, 'manca il sottotitolo h2');
+  assicura(html.indexOf('<strong>grosso</strong>') !== -1, 'il grassetto non è stato interpretato');
+  assicura(html.indexOf('<em>corsivo</em>') !== -1, 'il corsivo non è stato interpretato');
+  assicura(html.indexOf('<code>codice</code>') !== -1, 'il codice inline non è stato interpretato');
+});
+
+test('markdown: elenco puntato ed elenco numerato con continuazione rientrata', function () {
+  var ctx = creaContesto();
+  var html = ctx.BU.markdown.renderizza('- uno\n- due');
+  assicura(html.indexOf('<ul><li>uno</li><li>due</li></ul>') !== -1, 'elenco puntato non renderizzato correttamente: ' + html);
+
+  var htmlOrdinato = ctx.BU.markdown.renderizza('1. primo\n   dettaglio del primo\n2. secondo');
+  assicura(htmlOrdinato.indexOf('<ol>') !== -1, 'elenco numerato non aperto');
+  assicura(htmlOrdinato.indexOf('primo<br>dettaglio del primo') !== -1,
+    'la riga rientrata non è stata unita alla voce precedente come continuazione: ' + htmlOrdinato);
+});
+
+test('markdown: tabella con celle contenenti pipe escapati', function () {
+  var ctx = creaContesto();
+  var md = ctx.BU.render.tabella(['A', 'B'], [['x', 'y'], ['1 | 2', 'z']]);
+  var html = ctx.BU.markdown.renderizza(md);
+  assicura(html.indexOf('<table>') !== -1, 'la tabella non è stata renderizzata');
+  assicura(html.indexOf('<th>A</th>') !== -1, 'intestazione di tabella mancante');
+  assicura(html.indexOf('<td>1 | 2</td>') !== -1, 'il pipe escapato nella cella non è stato ripristinato: ' + html);
+});
+
+test('markdown: blocco di codice (```) non interpreta la formattazione al suo interno', function () {
+  var ctx = creaContesto();
+  var html = ctx.BU.markdown.renderizza('```\nRiga con **non grassetto** e `non codice`.\n```');
+  assicura(html.indexOf('<pre><code>') !== -1, 'il blocco di codice non è stato aperto');
+  assicura(html.indexOf('**non grassetto**') !== -1, 'il blocco di codice ha interpretato il markdown al suo interno: ' + html);
+});
+
+test('markdown: caratteri HTML nei valori dei campi vengono escapati, mai eseguiti', function () {
+  var ctx = creaContesto();
+  var html = ctx.BU.markdown.renderizza('Prezzo < 100€ & altre condizioni.');
+  assicura(html.indexOf('&lt;') !== -1 && html.indexOf('&amp;') !== -1, 'HTML non escapato: rischio di markup non voluto nel testo: ' + html);
+});
+
+test('documento completo: BU.render.documentoCompleto concatena tutti i generatori con un titolo per BU', function () {
+  var ctx = creaContesto();
+  var bu = creaBuCompilata(ctx);
+  var md = ctx.BU.render.documentoCompleto(bu);
+  assicura(md.indexOf('# ' + bu.nome + ' — Materiali') !== -1, 'manca il titolo del documento');
+  ctx.BU.gen.elencaGeneratori().forEach(function (g) {
+    assicura(md.indexOf('<!-- Generatore: ' + g.nome) !== -1, 'manca il separatore per il generatore "' + g.nome + '"');
+  });
+  var html = ctx.BU.markdown.renderizza(md);
+  assicura(html.indexOf('<!-- Generatore:') !== -1, 'i commenti HTML dei separatori dovrebbero passare invariati nell\'output renderizzato');
 });
 
 // ---------------------------------------------------------------------

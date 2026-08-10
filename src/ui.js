@@ -1,6 +1,7 @@
 /*
  * ui.js
- * Le tre viste di una business unit: COMPILA, MATERIALI, VALIDAZIONE.
+ * Le quattro viste di una business unit: COMPILA, MATERIALI, DOCUMENTO,
+ * VALIDAZIONE.
  * Le funzioni qui dentro mutano direttamente l'oggetto `bu` passato (è un
  * riferimento vivo nello stato di app.js) e chiamano `segnalaModifica()`
  * per notificare che qualcosa è cambiato (salvataggio differito, sidebar).
@@ -336,6 +337,27 @@
   }
 
   // ---------------------------------------------------------------------
+  // VISTA: DOCUMENTO — tutti i materiali renderizzati come un unico
+  // documento (BU.render.documentoCompleto + BU.markdown), con il download
+  // del file .md grezzo. Vista di sola lettura: non passa segnalaModifica.
+  // ---------------------------------------------------------------------
+
+  function renderDocumento(container, bu, scarica) {
+    container.innerHTML = '';
+
+    var intestazione = el('div', { class: 'documento-intestazione' }, [
+      el('div', { class: 'documento-nota' },
+        ['Anteprima renderizzata di tutti i materiali generati. Il testo grezzo, modificabile a mano, resta nella vista Materiali.']),
+      el('button', { type: 'button', class: 'pulsante pulsante--primario', onclick: scarica }, ['Scarica il file .md'])
+    ]);
+    container.appendChild(intestazione);
+
+    var corpo = el('div', { class: 'md-render' });
+    corpo.innerHTML = BU.markdown.renderizza(BU.render.documentoCompleto(bu));
+    container.appendChild(corpo);
+  }
+
+  // ---------------------------------------------------------------------
   // VISTA: VALIDAZIONE
   // ---------------------------------------------------------------------
 
@@ -431,6 +453,7 @@
     formattaData: formattaData,
     renderCompila: renderCompila,
     renderMateriali: renderMateriali,
+    renderDocumento: renderDocumento,
     renderValidazione: renderValidazione,
     MAPPA_DECISIONE_STATO: MAPPA_DECISIONE_STATO
   };

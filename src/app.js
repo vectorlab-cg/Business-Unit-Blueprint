@@ -1,8 +1,9 @@
 /*
  * app.js
  * Avvio, routing (hash: #<idBU>/<vista>), sidebar, salvataggio differito,
- * backup/ripristino JSON, anteprima ed export Markdown della singola
- * business unit, cartella condivisa su GitHub (un file per BU, vedi
+ * backup/ripristino JSON, download del documento Markdown completo (vista
+ * DOCUMENTO, resa in HTML da BU.render.documentoCompleto + BU.markdown —
+ * vedi ui.js), cartella condivisa su GitHub (un file per BU, vedi
  * cartella.js): lettura sempre attiva, scrittura con token personale.
  *
  * Namespace globale: window.BU.app
@@ -22,8 +23,8 @@
     fileHandleDiBU: {} // buId -> { nomeFile, percorso, sha, downloadUrl }
   };
 
-  var VISTE = ['compila', 'materiali', 'validazione'];
-  var VISTE_ETICHETTE = { compila: 'Compila', materiali: 'Materiali', validazione: 'Validazione' };
+  var VISTE = ['compila', 'materiali', 'documento', 'validazione'];
+  var VISTE_ETICHETTE = { compila: 'Compila', materiali: 'Materiali', documento: 'Documento', validazione: 'Validazione' };
 
   var timerSalvataggio = null;
   var sidebarRefs = {};
@@ -309,80 +310,12 @@
     }
   }
 
-  function costruisciMarkdownBU(bu) {
-    var righe = [];
-    righe.push('# ' + bu.nome + ' — Materiali');
-    righe.push('');
-    righe.push('Stato: ' + (schema.STATI_BU_ETICHETTE[bu.stato] || bu.stato));
-    righe.push('');
-    BU.gen.elencaGeneratori().forEach(function (generatore) {
-      var materiale = bu.materiali[generatore.id];
-      var testo = materiale ? materiale.testo : generatore.genera(bu);
-      righe.push('---');
-      righe.push('');
-      righe.push('<!-- Generatore: ' + generatore.nome +
-        (materiale ? ' — stato revisione: ' + schema.STATI_MATERIALE_ETICHETTE[materiale.stato] : ' — non ancora salvato, generato al momento dell\'export') +
-        ' -->');
-      righe.push('');
-      righe.push(testo);
-      righe.push('');
-    });
-    return righe.join('\n');
-  }
-
   function nomeFileMarkdown(bu) {
     return 'bu-blueprint-' + bu.nome.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + dataPerNomeFile() + '.md';
   }
 
-  // ---------------------------------------------------------------------
-  // Anteprima Markdown — un overlay in-app, non solo il download alla cieca.
-  // ---------------------------------------------------------------------
-
-  var overlayAnteprima = null;
-
-  function chiudiConEsc(e) {
-    if (e.key === 'Escape') chiudiAnteprimaMarkdown();
-  }
-
-  function chiudiAnteprimaMarkdown() {
-    if (!overlayAnteprima) return;
-    overlayAnteprima.parentNode.removeChild(overlayAnteprima);
-    overlayAnteprima = null;
-    document.removeEventListener('keydown', chiudiConEsc);
-  }
-
-  function mostraAnteprimaMarkdown(bu) {
-    chiudiAnteprimaMarkdown();
-    var testo = costruisciMarkdownBU(bu);
-
-    var overlay = BU.ui.el('div', {
-      class: 'overlay',
-      onclick: function (e) { if (e.target === overlay) chiudiAnteprimaMarkdown(); }
-    });
-
-    var area = BU.ui.el('textarea', { class: 'anteprima-testo', readonly: 'readonly', value: testo });
-
-    var pannello = BU.ui.el('div', { class: 'anteprima-pannello' }, [
-      BU.ui.el('div', { class: 'anteprima-intestazione' }, [
-        BU.ui.el('h2', { class: 'anteprima-titolo', text: 'Markdown — ' + bu.nome }),
-        BU.ui.el('div', { class: 'anteprima-azioni' }, [
-          BU.ui.el('button', {
-            type: 'button', class: 'pulsante pulsante--primario',
-            onclick: function () { scaricaFile(nomeFileMarkdown(bu), testo, 'text/markdown'); }
-          }, ['Scarica il file']),
-          BU.ui.el('button', {
-            type: 'button', class: 'pulsante pulsante--secondario',
-            onclick: function () { chiudiAnteprimaMarkdown(); }
-          }, ['Chiudi'])
-        ])
-      ]),
-      area
-    ]);
-
-    overlay.appendChild(pannello);
-    document.body.appendChild(overlay);
-    overlayAnteprima = overlay;
-    document.addEventListener('keydown', chiudiConEsc);
+  function scaricaDocumento(bu) {
+    scaricaFile(nomeFileMarkdown(bu), BU.render.documentoCompleto(bu), 'text/markdown');
   }
 
   // ---------------------------------------------------------------------
@@ -471,12 +404,7 @@
     var completezza = schema.completezza(bu);
     var badgeCompletezza = BU.ui.el('span', { class: 'bu-header-completezza', text: completezza.compilati + '/' + completezza.totali + ' campi (' + completezza.percentuale + '%)' });
 
-    var bottoneEsporta = BU.ui.el('button', {
-      type: 'button', class: 'pulsante pulsante--secondario',
-      onclick: function () { mostraAnteprimaMarkdown(bu); }
-    }, ['Markdown']);
-
-    var rigaAzioni = [badgeCompletezza, bottoneEsporta];
+    var rigaAzioni = [badgeCompletezza];
     var bottoneSalva = null;
     if (stato.fileHandleDiBU[bu.id] && BU.cartella.haToken()) {
       bottoneSalva = BU.ui.el('button', {
@@ -524,6 +452,8 @@
 
     if (stato.vista === 'materiali') {
       BU.ui.renderMateriali(container, bu, callback);
+    } else if (stato.vista === 'documento') {
+      BU.ui.renderDocumento(container, bu, function () { scaricaDocumento(bu); });
     } else if (stato.vista === 'validazione') {
       BU.ui.renderValidazione(container, bu, callback);
     } else {

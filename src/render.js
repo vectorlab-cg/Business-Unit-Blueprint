@@ -145,6 +145,33 @@
     return testo.replace(/[.!?]+\s*$/, '');
   }
 
+  // Tutti i materiali di una BU concatenati in un unico documento Markdown —
+  // usato sia dalla vista DOCUMENTO (renderizzata) sia dal download del
+  // singolo file .md. Usa il testo già generato (ed eventualmente
+  // modificato a mano) se presente, altrimenti genera al volo, senza mai
+  // sovrascrivere modifiche manuali salvate.
+  function documentoCompleto(bu) {
+    var schema = BU.schema;
+    var righe = [];
+    righe.push('# ' + bu.nome + ' — Materiali');
+    righe.push('');
+    righe.push('Stato: ' + (schema.STATI_BU_ETICHETTE[bu.stato] || bu.stato));
+    righe.push('');
+    BU.gen.elencaGeneratori().forEach(function (generatore) {
+      var materiale = bu.materiali[generatore.id];
+      var testo = materiale ? materiale.testo : generatore.genera(bu);
+      righe.push('---');
+      righe.push('');
+      righe.push('<!-- Generatore: ' + generatore.nome +
+        (materiale ? ' — stato revisione: ' + schema.STATI_MATERIALE_ETICHETTE[materiale.stato] : ' — non ancora salvato, generato al momento dell\'export') +
+        ' -->');
+      righe.push('');
+      righe.push(testo);
+      righe.push('');
+    });
+    return righe.join('\n');
+  }
+
   BU.render = {
     manca: manca,
     daScrivere: daScrivere,
@@ -158,7 +185,8 @@
     etichettaStatoCampo: etichettaStatoCampo,
     testoCampoConStato: testoCampoConStato,
     legendaStatiCampo: legendaStatiCampo,
-    senzaPuntoFinale: senzaPuntoFinale
+    senzaPuntoFinale: senzaPuntoFinale,
+    documentoCompleto: documentoCompleto
   };
 
 }(typeof window !== 'undefined' ? window : this));
