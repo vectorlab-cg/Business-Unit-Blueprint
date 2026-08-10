@@ -85,13 +85,13 @@
   };
 
   var SEZIONI = [
-    { chiave: 'identita', etichetta: 'Identità' },
-    { chiave: 'mercato', etichetta: 'Mercato' },
-    { chiave: 'offerta', etichetta: 'Offerta' },
-    { chiave: 'economia', etichetta: 'Economia' },
-    { chiave: 'pilota', etichetta: 'Pilota' },
-    { chiave: 'risorse', etichetta: 'Risorse' },
-    { chiave: 'test', etichetta: 'Test' }
+    { chiave: 'identita', etichetta: 'Identità', descrizione: 'Chi siete e cosa fate, in una frase.' },
+    { chiave: 'mercato', etichetta: 'Mercato', descrizione: 'Chi comprerebbe, chi decide, e chi altro glielo offre già.' },
+    { chiave: 'offerta', etichetta: 'Offerta', descrizione: 'Cosa vendete, a chi, e a quanto.' },
+    { chiave: 'economia', etichetta: 'Economia', descrizione: 'Se conviene: costo di erogazione, capacità e dimensione del mercato.' },
+    { chiave: 'pilota', etichetta: 'Pilota', descrizione: 'Versione ridotta per il primo cliente — facoltativa.' },
+    { chiave: 'risorse', etichetta: 'Risorse', descrizione: 'Cosa avete già e cosa manca per erogare il servizio.' },
+    { chiave: 'test', etichetta: 'Test', descrizione: 'Come e dove verificarlo tutto con un vero mercato.' }
   ];
 
   // ---------------------------------------------------------------------

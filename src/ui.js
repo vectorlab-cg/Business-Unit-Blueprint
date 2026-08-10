@@ -72,18 +72,22 @@
   // Chiave 'leve' per la sezione delle leve, altrimenti sezione.chiave.
   var sezioniChiuse = {};
 
-  function titoloSezioneCollassabile(chiave, testo, ridisegna) {
+  function titoloSezioneCollassabile(chiave, testo, descrizione, ridisegna) {
     var chiusa = !!sezioniChiuse[chiave];
+    var figli = [
+      el('span', { class: 'sezione-titolo-freccia', text: chiusa ? '▸' : '▾' }),
+      ' ' + testo
+    ];
+    if (descrizione) {
+      figli.push(el('span', { class: 'sezione-titolo-descrizione', text: ' — ' + descrizione }));
+    }
     return el('h2', {
       class: 'sezione-titolo sezione-titolo--interattivo',
       onclick: function () {
         sezioniChiuse[chiave] = !chiusa;
         ridisegna();
       }
-    }, [
-      el('span', { class: 'sezione-titolo-freccia', text: chiusa ? '▸' : '▾' }),
-      ' ' + testo
-    ]);
+    }, figli);
   }
 
   function renderCompila(container, bu, segnalaModifica) {
@@ -101,7 +105,7 @@
       });
 
       container.appendChild(el('section', { class: 'sezione' }, [
-        titoloSezioneCollassabile(sezione.chiave, sezione.etichetta, ridisegna),
+        titoloSezioneCollassabile(sezione.chiave, sezione.etichetta, sezione.descrizione, ridisegna),
         corpo
       ]));
     });
@@ -199,7 +203,8 @@
   function renderLeve(bu, segnalaModifica, ridisegna) {
     var corpo = el('div', { class: 'sezione-corpo' + (sezioniChiuse.leve ? ' sezione-corpo--chiusa' : '') });
     var wrapper = el('section', { class: 'sezione sezione--leve' }, [
-      titoloSezioneCollassabile('leve', 'Leve (' + bu.leve.length + '/5)', ridisegna),
+      titoloSezioneCollassabile('leve', 'Leve (' + bu.leve.length + '/5)',
+        'I problemi reali che l\'offerta risolve, nelle parole del cliente e nelle vostre.', ridisegna),
       corpo
     ]);
 

@@ -380,6 +380,13 @@ textarea {
   color: var(--text-debole);
 }
 
+.sezione-titolo-descrizione {
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--text-debole);
+  font-weight: normal;
+}
+
 .sezione-corpo--chiusa {
   display: none;
 }
