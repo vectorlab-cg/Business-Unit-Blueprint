@@ -131,6 +131,13 @@ textarea {
   color: var(--text-debole);
 }
 
+.sidebar-voce-locale {
+  color: var(--avviso);
+  border: 1px solid var(--avviso);
+  border-radius: 3px;
+  padding: 0 4px;
+}
+
 .sidebar-voce-elimina {
   position: absolute;
   top: 6px;

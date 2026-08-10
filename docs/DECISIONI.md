@@ -98,3 +98,25 @@ La specifica originale lasciava alcuni dettagli aperti. Scelte fatte, e perché
   in uno privato) è stata una scelta esplicita, con il compromesso — dati di
   business unit permanentemente visibili pubblicamente — dichiarato e
   accettato prima di procedere.
+- **`caricaDaCartella()` unisce l'elenco locale con quello letto da GitHub,
+  non lo sostituisce.** Prima versione: lo sostituiva. Bug reale — una BU
+  creata senza token esiste solo in `localStorage`; sostituire l'elenco ad
+  ogni lettura della cartella (che avviene ad ogni avvio dell'app) la faceva
+  sparire dalla vista, e il salvataggio automatico successivo la cancellava
+  per sempre. Ora una BU senza file su GitHub resta in elenco, marcata "Solo
+  locale" in sidebar, con un pulsante "Condividi su GitHub" per spingerla
+  quando c'è un token. Una BU che aveva già un file su GitHub e non
+  ricompare più nella cartella è invece considerata eliminata da qualcun
+  altro, non "solo locale": per quelle la cartella condivisa resta la fonte
+  di verità. Coperto da [test/browser.js](../test/browser.js) — è lo stato
+  DOM/app che `test/smoke.js` non può testare, quindi il bug non sarebbe
+  mai risultato in un test rosso senza un secondo strato di test in un
+  browser reale.
+- **Conflitto di scrittura (409) su GitHub → messaggio dedicato invece
+  dell'errore grezzo dell'API.** Capita quando due persone salvano la stessa
+  BU quasi insieme: chi arriva secondo non aveva più lo sha corrente. Il
+  messaggio dell'API GitHub ("does not match...") non dice a chi lo legge
+  cosa fare; `BU.cartella.verificaRisposta()` lo intercetta e spiega di
+  aggiornare da GitHub e riapplicare le modifiche. Non tenta un merge
+  automatico: due scritture concorrenti sullo stesso file restano un caso
+  raro per un team di questa dimensione, non vale la complessità.

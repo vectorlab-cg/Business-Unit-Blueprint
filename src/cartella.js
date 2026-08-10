@@ -86,6 +86,13 @@
 
   function verificaRisposta(risposta) {
     if (risposta.ok) return risposta;
+    // 409: lo sha inviato non è più quello corrente — qualcun altro ha
+    // scritto lo stesso file nel frattempo. Messaggio azionabile invece del
+    // testo grezzo dell'API, che parla di sha e non dice cosa fare.
+    if (risposta.status === 409) {
+      throw new Error('Qualcun altro ha salvato questa business unit nel frattempo. ' +
+        'Aggiorna da GitHub e riapplica le tue modifiche prima di salvare di nuovo.');
+    }
     return risposta.json().catch(function () { return {}; }).then(function (corpo) {
       var messaggio = corpo && corpo.message ? corpo.message : risposta.statusText;
       throw new Error('GitHub (' + risposta.status + '): ' + messaggio);

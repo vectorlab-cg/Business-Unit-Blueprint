@@ -21,9 +21,12 @@ La sidebar ha anche una sezione **cartella condivisa**: legge le business
 unit dalla cartella `BU/` di questo repo tramite le API GitHub (nessun
 login richiesto), e le salva lì se incolli un tuo
 [token GitHub personale](https://github.com/settings/tokens) (resta solo nel
-tuo browser). Dettagli in [`src/cartella.js`](src/cartella.js).
+tuo browser). Una BU creata senza token esiste solo sul tuo browser — è
+marcata **"Solo locale"** in sidebar finché non premi **"Condividi su
+GitHub"** (compare in testa non appena c'è un token). Dettagli in
+[`src/cartella.js`](src/cartella.js).
 
-## Le tre viste
+## Le quattro viste
 
 - **Compila** — questionario per sezioni (Identità, Mercato, Offerta,
   Pilota, Risorse, Test) più le leve. Ogni campo ha uno stato
@@ -32,6 +35,8 @@ tuo browser). Dettagli in [`src/cartella.js`](src/cartella.js).
   un cliente. Vedi [docs/MODELLO.md](docs/MODELLO.md).
 - **Materiali** — un blocco per generatore, con generazione/rigenerazione e
   testo modificabile a mano.
+- **Documento** — tutti i materiali concatenati e renderizzati (titoli,
+  tabelle, badge di stato), con il download del file .md grezzo.
 - **Validazione** — risultati del test e decisione finale: **Continua /
   Modifica / Ferma**.
 
@@ -49,13 +54,6 @@ continuazione o chiusura · Analisi SWOT.
 Codice in `src/gen/`, un file per generatore. Per aggiungerne uno:
 [docs/AGGIUNGERE-UN-GENERATORE.md](docs/AGGIUNGERE-UN-GENERATORE.md).
 
-## Un esempio
-
-[`esempio/vectorlab-forge.json`](esempio/vectorlab-forge.json) — una vera
-business unit, compilata e generata con lo stesso codice dell'app. Per
-caricarla: **"Ripristina backup JSON"** nella sidebar (sostituisce le BU
-locali).
-
 ## Struttura
 
 ```
@@ -64,11 +62,14 @@ src/
   schema.js           modello dati, normalizzazione/migrazione
   store.js            localStorage, export/import JSON
   render.js           helper condivisi dai generatori
-  ui.js                le tre viste
+  markdown.js          renderer Markdown -> HTML per la vista Documento
+  ui.js                le quattro viste
   app.js               avvio, routing, sidebar, cartella condivisa
   cartella.js          lettura/scrittura BU via API GitHub
   gen/                 un file per generatore
-test/smoke.js        test senza dipendenze — node test/smoke.js
+test/
+  smoke.js             test senza dipendenze — node test/smoke.js
+  browser.js           test end-to-end in browser reale — node test/browser.js
 docs/
   MODELLO.md            il modello dati spiegato
   DECISIONI.md          scelte di design non ovvie dalla specifica
@@ -76,7 +77,9 @@ docs/
 ```
 
 Niente framework, niente build: script classici caricati in ordine da
-`index.html`, registrati su un namespace globale `window.BU`.
+`index.html`, registrati su un namespace globale `window.BU`. L'app non ha
+nessuna dipendenza — `package.json` esiste solo per i test end-to-end (vedi
+sotto) e non viene mai caricato da `index.html`.
 
 ## Test
 
@@ -84,6 +87,18 @@ Niente framework, niente build: script classici caricati in ordine da
 node test/smoke.js
 ```
 
-Nessuna dipendenza: sorgenti caricati in un contesto `vm` di Node.
-Copre schema, generatori, migrazione, stato dei campi e cartella condivisa
-(quest'ultima con `fetch` mockato contro un repository finto).
+Nessuna dipendenza: sorgenti caricati in un contesto `vm` di Node. Copre
+schema, generatori, migrazione, stato dei campi, il renderer Markdown e la
+cartella condivisa lato API (`fetch` mockato contro un repository finto) —
+tutto ciò che non richiede un DOM vero.
+
+```
+npm install && node test/browser.js
+```
+
+Test end-to-end in un browser reale (Puppeteer, unica dipendenza del
+progetto, usata solo qui): copre lo stato e il DOM di `app.js`/`ui.js` che
+`smoke.js` non può toccare — es. che una business unit creata senza token
+GitHub non sparisca quando la cartella condivisa si aggiorna. Anche qui
+nessuna rete vera: le API di GitHub sono finte. Gira anche in CI
+(`.github/workflows/ci.yml`).

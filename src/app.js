@@ -126,10 +126,7 @@
     renderMain();
 
     if (stato.usaCartella && BU.cartella.haToken()) {
-      BU.cartella.creaFileBU(bu).then(function (voce) {
-        stato.fileHandleDiBU[bu.id] = voce;
-        if (headerRefs && headerRefs.buId === bu.id) renderHeader(bu); // fa comparire "Salva su GitHub"
-      }).catch(function (e) {
+      creaSuCartella(bu).catch(function (e) {
         global.alert('La business unit è stata creata solo in locale: ' + e.message);
       });
     } else if (stato.usaCartella) {
@@ -224,9 +221,15 @@
   // un token GitHub personale con accesso in scrittura al repo.
   // ---------------------------------------------------------------------
 
-  // Carica tutte le BU dalla cartella condivisa e sostituisce l'elenco in
-  // memoria. I file che non si riescono a leggere vengono saltati (non
-  // bloccano il caricamento delle altre BU), con un avviso in console.
+  // Carica tutte le BU dalla cartella condivisa e le unisce all'elenco in
+  // memoria — non lo sostituisce. Una BU creata senza token (o con
+  // "Condividi su GitHub" mai riuscito) non ha un file nella cartella: se
+  // questa funzione sostituisse l'elenco, sparirebbe dalla vista al
+  // prossimo caricamento, e il salvataggio automatico successivo la
+  // cancellerebbe per sempre da localStorage. Una BU già condivisa
+  // (presente in stato.fileHandleDiBU) che non ricompare più tra i file
+  // GitHub è considerata eliminata da qualcun altro, non "solo locale": la
+  // cartella condivisa è la fonte di verità per ciò che ha già condiviso.
   function caricaDaCartella() {
     return BU.cartella.elencaFile().then(function (voci) {
       var nuovoElenco = [];
@@ -240,7 +243,10 @@
         });
       });
       return Promise.all(letture).then(function () {
-        stato.elenco = nuovoElenco;
+        var soloLocali = stato.elenco.filter(function (bu) {
+          return !stato.fileHandleDiBU[bu.id] && !nuoveMappe[bu.id];
+        });
+        stato.elenco = nuovoElenco.concat(soloLocali);
         stato.fileHandleDiBU = nuoveMappe;
         stato.usaCartella = true;
         leggiHash();
@@ -252,6 +258,18 @@
     }).catch(function (e) {
       aggiornaControlliCartella();
       throw e;
+    });
+  }
+
+  // Crea per la prima volta il file su GitHub per una BU che esiste ancora
+  // solo in locale (mai condivisa, o condivisione fallita in precedenza).
+  // Usata sia alla creazione di una nuova BU sia dal pulsante "Condividi su
+  // GitHub" mostrato per le BU rimaste "solo locali".
+  function creaSuCartella(bu) {
+    return BU.cartella.creaFileBU(bu).then(function (voce) {
+      stato.fileHandleDiBU[bu.id] = voce;
+      if (headerRefs && headerRefs.buId === bu.id) renderHeader(bu);
+      renderSidebar(); // toglie l'etichetta "Solo locale"
     });
   }
 
@@ -280,9 +298,14 @@
     contenitore.style.display = '';
 
     var statoEl = document.getElementById('cartella-stato');
-    statoEl.textContent = stato.usaCartella
-      ? 'Condiviso via GitHub (' + stato.elenco.length + ' business unit)'
-      : 'Dati locali in questo browser (GitHub non ancora letto)';
+    if (stato.usaCartella) {
+      var condivise = stato.elenco.filter(function (bu) { return !!stato.fileHandleDiBU[bu.id]; }).length;
+      var soloLocali = stato.elenco.length - condivise;
+      statoEl.textContent = 'Condiviso via GitHub (' + condivise + ' business unit)' +
+        (soloLocali ? ' · ' + soloLocali + ' solo local' + (soloLocali > 1 ? 'i' : 'e') : '');
+    } else {
+      statoEl.textContent = 'Dati locali in questo browser (GitHub non ancora letto)';
+    }
 
     var inputToken = document.getElementById('input-token-github');
     var bottoneToken = document.getElementById('bottone-token');
@@ -338,6 +361,14 @@
       var completezzaEl = BU.ui.el('span', { class: 'sidebar-voce-completezza', text: completezza.percentuale + '%' });
       var nomeEl = BU.ui.el('div', { class: 'sidebar-voce-nome', text: bu.nome });
 
+      var meta = [statoEl, completezzaEl];
+      if (stato.usaCartella && !stato.fileHandleDiBU[bu.id]) {
+        meta.push(BU.ui.el('span', {
+          class: 'sidebar-voce-locale',
+          title: 'Esiste solo su questo browser: non è ancora nella cartella condivisa su GitHub.'
+        }, ['Solo locale']));
+      }
+
       var bottoneElimina = BU.ui.el('button', {
         type: 'button', class: 'sidebar-voce-elimina', title: 'Elimina',
         onclick: function (e) { e.stopPropagation(); eliminaBU(bu.id); }
@@ -348,7 +379,7 @@
         onclick: function () { selezionaBU(bu.id); }
       }, [
         nomeEl,
-        BU.ui.el('div', { class: 'sidebar-voce-meta' }, [statoEl, completezzaEl]),
+        BU.ui.el('div', { class: 'sidebar-voce-meta' }, meta),
         bottoneElimina
       ]);
 
@@ -412,6 +443,15 @@
         onclick: function () { salvaSuFile(bu); }
       }, ['Salva su GitHub']);
       rigaAzioni.push(bottoneSalva);
+    } else if (stato.usaCartella && !stato.fileHandleDiBU[bu.id] && BU.cartella.haToken()) {
+      rigaAzioni.push(BU.ui.el('button', {
+        type: 'button', class: 'pulsante pulsante--primario',
+        onclick: function () {
+          creaSuCartella(bu).catch(function (e) {
+            global.alert('Impossibile condividere su GitHub: ' + e.message);
+          });
+        }
+      }, ['Condividi su GitHub']));
     }
 
     header.appendChild(BU.ui.el('div', { class: 'bu-header-riga1' }, [inputNome, selStato]));

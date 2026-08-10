@@ -1,0 +1,13 @@
+{
+  "name": "bu-blueprint",
+  "private": true,
+  "description": "Nessuna dipendenza di runtime: l'app resta HTML/CSS/JS puri, apribile da file://. Puppeteer qui è solo uno strumento di test (vista DOCUMENTO, cartella condivisa), non viene mai caricato dall'app.",
+  "scripts": {
+    "test": "node test/smoke.js",
+    "test:browser": "node test/browser.js",
+    "test:all": "npm run test && npm run test:browser"
+  },
+  "devDependencies": {
+    "puppeteer": "^24.0.0"
+  }
+}

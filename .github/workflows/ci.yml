@@ -18,7 +18,16 @@ jobs:
         with:
           node-version: '20'
 
-      # Nessuna dipendenza da installare: il progetto è volutamente senza
-      # build step e i test girano con il solo runtime di Node.
-      - name: Esegui i test
+      # test/smoke.js non ha dipendenze (il progetto resta a dipendenza
+      # zero): gira col solo runtime di Node.
+      - name: Test di fumo (senza dipendenze)
         run: node test/smoke.js
+
+      # test/browser.js copia in un browser reale (Puppeteer, unica
+      # dipendenza del progetto, solo per i test) il codice che smoke.js non
+      # può testare: lo stato e il DOM di src/app.js e src/ui.js.
+      - name: Installa Puppeteer (solo per i test)
+        run: npm install
+
+      - name: Test end-to-end in browser
+        run: node test/browser.js

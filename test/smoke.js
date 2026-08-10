@@ -746,9 +746,18 @@ function rispostaTesto(status, testo) {
 }
 
 // repoFinto: { 'BU/nome.json': 'testo del file', ... }. Simula solo le
-// forme di richiesta usate da cartella.js, non l'intera API di GitHub.
+// forme di richiesta usate da cartella.js, non l'intera API di GitHub —
+// incluso il conflitto 409 quando lo sha inviato in scrittura non è più
+// quello corrente (qualcun altro ha scritto lo stesso file nel frattempo).
 function creaFetchFinto(repoFinto) {
   var contatoreSha = 0;
+  var shaCorrente = {}; // percorso -> sha attuale del file nel repo finto
+
+  function shaPer(percorso, nomeFile) {
+    if (!(percorso in shaCorrente)) shaCorrente[percorso] = 'sha-' + nomeFile;
+    return shaCorrente[percorso];
+  }
+
   return function (url, opzioni) {
     opzioni = opzioni || {};
     var metodo = opzioni.method || 'GET';
@@ -758,7 +767,7 @@ function creaFetchFinto(repoFinto) {
       if (!percorsi.length) return Promise.resolve(rispostaJson(404, { message: 'Not Found' }));
       var voci = percorsi.map(function (percorso) {
         var nomeFile = percorso.slice(3);
-        return { type: 'file', name: nomeFile, path: percorso, sha: 'sha-' + nomeFile, download_url: 'https://raw.test/' + percorso };
+        return { type: 'file', name: nomeFile, path: percorso, sha: shaPer(percorso, nomeFile), download_url: 'https://raw.test/' + percorso };
       });
       return Promise.resolve(rispostaJson(200, voci));
     }
@@ -772,12 +781,17 @@ function creaFetchFinto(repoFinto) {
     if (metodo === 'PUT') {
       var corpoPut = JSON.parse(opzioni.body);
       var percorsoPut = url.split('/contents/')[1];
+      var nomeFilePut = percorsoPut.slice(3);
+      if (percorsoPut in repoFinto && corpoPut.sha !== shaPer(percorsoPut, nomeFilePut)) {
+        return Promise.resolve(rispostaJson(409, { message: percorsoPut + ' does not match ' + shaCorrente[percorsoPut] }));
+      }
       var binarioPut = Buffer.from(corpoPut.content, 'base64');
       repoFinto[percorsoPut] = binarioPut.toString('utf8');
       contatoreSha += 1;
-      var nomeFilePut = percorsoPut.slice(3);
+      var nuovoSha = 'sha-' + nomeFilePut + '-v' + contatoreSha;
+      shaCorrente[percorsoPut] = nuovoSha;
       return Promise.resolve(rispostaJson(200, {
-        content: { path: percorsoPut, sha: 'sha-' + nomeFilePut + '-v' + contatoreSha, download_url: 'https://raw.test/' + percorsoPut }
+        content: { path: percorsoPut, sha: nuovoSha, download_url: 'https://raw.test/' + percorsoPut }
       }));
     }
 
@@ -786,6 +800,7 @@ function creaFetchFinto(repoFinto) {
       var percorsoDel = url.split('/contents/')[1];
       if (!corpoDel.sha) return Promise.resolve(rispostaJson(422, { message: 'sha mancante' }));
       delete repoFinto[percorsoDel];
+      delete shaCorrente[percorsoDel];
       return Promise.resolve(rispostaJson(200, {}));
     }
 
@@ -879,6 +894,23 @@ test('cartella: scriviBU su un file esistente aggiorna lo sha (necessario per il
     });
   }).then(function (riletta) {
     assicuraUguale(riletta.nome, 'Nome aggiornato');
+  });
+});
+
+test('cartella: scrivere con uno sha ormai superato dà un errore di conflitto comprensibile (409)', function () {
+  var ctx = creaContestoConFetch({});
+  var bu = ctx.BU.schema.nuovaBU('Conteso');
+  return ctx.BU.cartella.creaFileBU(bu).then(function (voceIniziale) {
+    // Un'altra scrittura (un altro utente, un'altra scheda) aggiorna il file nel frattempo...
+    return ctx.BU.cartella.scriviBU(voceIniziale, bu).then(function () {
+      // ...e chi ha ancora la voce con lo sha vecchio prova a scrivere: conflitto.
+      return ctx.BU.cartella.scriviBU(voceIniziale, bu).then(function () {
+        assicura(false, 'la scrittura con sha superato avrebbe dovuto fallire con un conflitto');
+      }, function (e) {
+        assicura(e.message.indexOf('nel frattempo') !== -1 && e.message.indexOf('Aggiorna da GitHub') !== -1,
+          'il messaggio di conflitto non spiega cosa fare: ' + e.message);
+      });
+    });
   });
 });
 
