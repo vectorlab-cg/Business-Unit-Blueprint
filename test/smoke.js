@@ -135,12 +135,15 @@ function creaBuCompilata(sandbox) {
   imposta('identita', 'descrizione', 'Produciamo ricambi meccanici su misura per linee di imballaggio ferme.', 'mandatorio');
   imposta('identita', 'apertura', 'perdita', 'ipotesi');
   imposta('identita', 'meccanismo', 'Inseriamo un tecnico in stabilimento che rileva la quota e consegna il pezzo entro 48 ore.', 'ipotesi');
+  imposta('identita', 'responsabile', 'Marco Verdi.', 'mandatorio');
 
   imposta('mercato', 'cliente_ideale', 'PMI manifatturiere 50-200 dipendenti con linee automatizzate.', 'mandatorio');
   imposta('mercato', 'decisore', 'Responsabile di manutenzione.', 'ipotesi');
   imposta('mercato', 'contesto_decisore', 'Ha una linea ferma e un fornitore che risponde in due settimane.', 'ipotesi');
   imposta('mercato', 'alternativa_attuale', 'Aspettano il ricambio originale dal produttore della macchina.', 'generato_da_ia');
   imposta('mercato', 'differenziazione_competitiva', 'Gli altri produttori di ricambi custom hanno tempi di 1-2 settimane, noi consegniamo in 48 ore.', 'ipotesi');
+  imposta('mercato', 'concorrenti_diretti', ['Officina Rossi (ricambi custom generici)', 'Service locali non specializzati'], 'ipotesi');
+  imposta('mercato', 'sinergia_altre_bu', 'Alcuni di questi clienti sono già serviti da Ynsera per staff augmentation: canale caldo.', 'ipotesi');
 
   imposta('offerta', 'servizio', 'Rilievo, disegno CAD e produzione del pezzo di ricambio.', 'ipotesi');
   imposta('offerta', 'unita_vendita', 'Un pezzo di ricambio urgente.', 'ipotesi');
@@ -150,10 +153,15 @@ function creaBuCompilata(sandbox) {
   imposta('offerta', 'modalita_vendita', 'Preventivo telefonico, conferma via email.', 'ipotesi');
   imposta('offerta', 'tempi', '48 ore dalla conferma.', 'ipotesi');
 
+  imposta('economia', 'costo_erogazione', 'Circa 300-500 euro a pezzo (materiale, tornitura, ore tecnico).', 'ipotesi');
+  imposta('economia', 'capacita_erogazione', 'Circa 10 pezzi urgenti al mese con il tecnico attuale.', 'ipotesi');
+  imposta('economia', 'dimensione_mercato', 'Stima: circa 800 PMI manifatturiere nel raggio di 150km con linee automatizzate (dato camere di commercio locali).', 'generato_da_ia');
+
   imposta('pilota', 'servizio_pilota', 'Un solo pezzo di ricambio, senza accordo quadro.', 'ipotesi');
   imposta('pilota', 'prezzo_pilota', '400 euro, indipendentemente dalla complessità.', 'ipotesi');
   bu.campi.pilota.durata_pilota.valore = { testo: '1 intervento', dataFine: '2026-08-15' };
   imposta('pilota', 'criteri_successo_pilota', ['Consegna entro 48 ore', 'Il cliente richiede un secondo pezzo'], 'ipotesi');
+  imposta('pilota', 'condizioni_passaggio', 'Se il cliente richiede un secondo pezzo entro 60 giorni, passa a listino standard.', 'ipotesi');
 
   imposta('risorse', 'competenze_presenti', ['Disegno CAD', 'Tornitura CNC'], 'ipotesi');
   imposta('risorse', 'competenze_mancanti', ['Logistica urgente su tutto il territorio'], 'ipotesi');
@@ -173,6 +181,7 @@ function creaBuCompilata(sandbox) {
   bu.risultati.preventivi = '4';
   bu.risultati.vendite = '2';
   bu.risultati.angolo_vincente = 'La leva sul fermo linea.';
+  bu.risultati.obiezioni_raccolte = 'Il prezzo sembra alto finché non lo confrontano col costo di una linea ferma due settimane.';
   bu.risultati.note_risultati = 'Test durato 4 settimane su LinkedIn Ads.';
 
   bu.leve = [
@@ -384,9 +393,9 @@ test('store: importaJSON rifiuta JSON non valido con errore descrittivo', functi
 // Test: generatori
 // ---------------------------------------------------------------------
 
-test('generatori: sono registrati tutti e 15', function () {
+test('generatori: sono registrati tutti e 16', function () {
   var ctx = creaContesto();
-  assicuraUguale(ctx.BU.gen.elencaGeneratori().length, 15);
+  assicuraUguale(ctx.BU.gen.elencaGeneratori().length, 16);
 });
 
 test('generatori: ogni id registrato è unico', function () {
@@ -647,6 +656,34 @@ test('problem statement: "cosa è già mandatorio" elenca solo i campi mandatori
     'la descrizione (mandatoria nella fixture) non compare tra i dati consolidati');
   assicura(sezioneMandatori.indexOf(r.bu.campi.offerta.servizio.valore) === -1,
     'il servizio (ipotesi nella fixture, non mandatorio) non dovrebbe comparire tra i dati consolidati');
+});
+
+test('dimensionamento: mette insieme prezzo/costo/capacità/mercato senza inventare un ricavo', function () {
+  var r = generaPerBuCompilata('dimensionamento');
+  assicura(r.md.indexOf(r.bu.campi.offerta.prezzo.valore) !== -1, 'manca il prezzo');
+  assicura(r.md.indexOf(r.bu.campi.economia.costo_erogazione.valore) !== -1, 'manca il costo di erogazione');
+  assicura(r.md.indexOf(r.bu.campi.economia.capacita_erogazione.valore) !== -1, 'manca la capacità di erogazione');
+  assicura(r.md.indexOf(r.bu.campi.economia.dimensione_mercato.valore) !== -1, 'manca la dimensione del mercato');
+  assicura(r.md.indexOf('[DA SCRIVERE:') !== -1, 'il ricavo potenziale dovrebbe restare da scrivere a mano, non inventato');
+});
+
+test('swot: forze includono la sinergia con altre BU, minacce i concorrenti diretti, opportunità la dimensione del mercato', function () {
+  var r = generaPerBuCompilata('swot');
+  var forzeSez = sezione(r.md, '## Forze');
+  assicura(forzeSez.indexOf(r.bu.campi.mercato.sinergia_altre_bu.valore) !== -1, 'manca la sinergia con altre BU tra le forze');
+  var minacceSez = sezione(r.md, '## Minacce');
+  assicura(minacceSez.indexOf(r.bu.campi.mercato.concorrenti_diretti.valore[0]) !== -1, 'mancano i concorrenti diretti tra le minacce');
+  var opportunitaSez = sezione(r.md, '## Opportunità');
+  assicura(opportunitaSez.indexOf(r.bu.campi.economia.dimensione_mercato.valore) !== -1, 'manca la dimensione del mercato tra le opportunità');
+});
+
+test('bu one-page: include responsabile, dimensione del mercato, costo e capacità di erogazione', function () {
+  var r = generaPerBuCompilata('bu-one-page');
+  assicura(r.md.indexOf(r.bu.campi.identita.responsabile.valore) !== -1, 'manca il responsabile della BU');
+  assicura(r.md.indexOf(r.bu.campi.economia.dimensione_mercato.valore) !== -1, 'manca la dimensione del mercato');
+  var economia = sezione(r.md, '## Economia');
+  assicura(economia.indexOf(r.bu.campi.economia.costo_erogazione.valore) !== -1, 'manca il costo di erogazione nella sezione Economia');
+  assicura(economia.indexOf(r.bu.campi.economia.capacita_erogazione.valore) !== -1, 'manca la capacità di erogazione nella sezione Economia');
 });
 
 test('leve: il campo tipo dello schema v1 non sopravvive alla normalizzazione', function () {

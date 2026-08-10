@@ -120,3 +120,38 @@ La specifica originale lasciava alcuni dettagli aperti. Scelte fatte, e perché
   aggiornare da GitHub e riapplicare le modifiche. Non tenta un merge
   automatico: due scritture concorrenti sullo stesso file restano un caso
   raro per un team di questa dimensione, non vale la complessità.
+- **Sette campi nuovi per colmare un buco di metodo, non di dati**: senza
+  dimensione del mercato, costo di erogazione e capacità, una BU può passare
+  ogni verifica dello strumento (offerta chiara, differenziazione netta,
+  test che converte) ed essere comunque un cattivo investimento — troppo
+  piccola, non profittevole, o oltre quello che il team regge. Quattro sono
+  mandatori, allo stesso livello di prezzo/decisore/servizio: **dimensione
+  del mercato**, **costo di erogazione**, **capacità di erogazione** (le tre
+  raccolte nella nuova sezione **Economia**, vedi sotto) e **responsabile
+  della BU** (Identità — governance: con 5-10 BU in due anni, ognuna deve
+  avere un nome accountable). Tre restano facoltativi, arricchimento non
+  blocco: **concorrenti diretti** (Mercato, lista, oltre al confronto
+  singolo già in `differenziazione_competitiva`), **sinergia con altre
+  business unit** (Mercato: canale già caldo, se c'è — ma una BU su mercato
+  vergine resta valida senza), **condizioni di passaggio dal pilota**
+  (coerente col resto della sezione Pilota, tutta facoltativa per design).
+  Un ottavo campo, **obiezioni raccolte**, vive in `RISULTATI` (Validazione)
+  non in `CAMPI`: nasce dal test, non è una condizione per partire.
+- **Sezione "Economia" a parte, invece di lasciare `dimensione_mercato`,
+  `costo_erogazione` e `capacita_erogazione` sparsi in Mercato/Offerta/
+  Risorse dove starebbero una alla volta.** Nell'output (BU One-Page,
+  Dimensionamento) finiscono sempre insieme: separarli nel COMPILA li
+  avrebbe tenuti lontani proprio nel momento in cui si compilano, mentre chi
+  li legge dopo li vede fianco a fianco. Vedi [MODELLO.md](MODELLO.md).
+- **Le sezioni del COMPILA si aprono e si chiudono, stato tenuto solo in
+  memoria** (non salvato con la BU, si azzera al ricaricamento). Con 7
+  sezioni invece delle 6 originali la form è più lunga; poter chiudere
+  quelle già compilate riduce lo scroll senza dover nascondere per sempre
+  nulla — si riapre con un click.
+- **Il generatore "Dimensionamento" non calcola un ricavo potenziale.**
+  Prezzo, costo e capacità sono testo libero — spesso una fascia ("20.000-
+  100.000 €"), non un numero — quindi lo strumento non può moltiplicarli in
+  modo affidabile. Mette i quattro dati fianco a fianco e lascia il calcolo
+  vero e proprio `[DA SCRIVERE]`, con un prompt che li riporta: stessa
+  logica già usata altrove (es. gli 8 headline della proposta di valore) per
+  tutto ciò che richiede un giudizio che lo strumento non si prende.

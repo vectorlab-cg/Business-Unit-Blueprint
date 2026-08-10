@@ -15,7 +15,8 @@
     return [
       '- Cliente ideale: ' + render.testoCampoConStato(bu, 'mercato', 'cliente_ideale'),
       '- Decisore: ' + render.testoCampoConStato(bu, 'mercato', 'decisore'),
-      '- Oggi fa così: ' + render.testoCampoConStato(bu, 'mercato', 'alternativa_attuale')
+      '- Oggi fa così: ' + render.testoCampoConStato(bu, 'mercato', 'alternativa_attuale'),
+      '- Dimensione del mercato: ' + render.testoCampoConStato(bu, 'economia', 'dimensione_mercato')
     ].join('\n');
   }
 
@@ -25,6 +26,16 @@
       '- Risultato promesso: ' + render.testoCampoConStato(bu, 'offerta', 'risultato_promesso'),
       '- Prezzo: ' + render.testoCampoConStato(bu, 'offerta', 'prezzo'),
       '- Tempi: ' + render.testoCampoConStato(bu, 'offerta', 'tempi')
+    ].join('\n');
+  }
+
+  // I numeri che dicono se, oltre a vendere, la BU regge economicamente:
+  // il prezzo da solo (già in "Offerta") non basta. Per il conto completo
+  // vedi il generatore "Dimensionamento".
+  function sezioneEconomia(bu) {
+    return [
+      '- Costo di erogazione: ' + render.testoCampoConStato(bu, 'economia', 'costo_erogazione'),
+      '- Capacità di erogazione: ' + render.testoCampoConStato(bu, 'economia', 'capacita_erogazione')
     ].join('\n');
   }
 
@@ -98,6 +109,7 @@
     righe.push('Stato: ' + (schema.STATI_BU_ETICHETTE[bu.stato] || bu.stato) +
       ' · Apertura: ' + schema.APERTURE_ETICHETTE[schema.apertura(bu)] +
       (schema.aperturaDecisa(bu) ? '' : ' _(non ancora decisa)_'));
+    righe.push('Responsabile: ' + render.testoCampoConStato(bu, 'identita', 'responsabile'));
     righe.push(render.legendaStatiCampo());
     righe.push('');
     righe.push('## Cosa facciamo');
@@ -110,6 +122,9 @@
     righe.push('');
     righe.push('## Offerta');
     righe.push(sezioneOfferta(bu));
+    righe.push('');
+    righe.push('## Economia');
+    righe.push(sezioneEconomia(bu));
     righe.push('');
     righe.push('## Pilota');
     righe.push(sezionePilota(bu));

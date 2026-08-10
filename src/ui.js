@@ -67,6 +67,25 @@
   // VISTA: COMPILA
   // ---------------------------------------------------------------------
 
+  // Quali sezioni sono chiuse — stato di sola interfaccia (non salvato con
+  // la BU): resta per la durata della pagina, si azzera al ricaricamento.
+  // Chiave 'leve' per la sezione delle leve, altrimenti sezione.chiave.
+  var sezioniChiuse = {};
+
+  function titoloSezioneCollassabile(chiave, testo, ridisegna) {
+    var chiusa = !!sezioniChiuse[chiave];
+    return el('h2', {
+      class: 'sezione-titolo sezione-titolo--interattivo',
+      onclick: function () {
+        sezioniChiuse[chiave] = !chiusa;
+        ridisegna();
+      }
+    }, [
+      el('span', { class: 'sezione-titolo-freccia', text: chiusa ? '▸' : '▾' }),
+      ' ' + testo
+    ]);
+  }
+
   function renderCompila(container, bu, segnalaModifica) {
     container.innerHTML = '';
 
@@ -75,15 +94,16 @@
     }
 
     schema.SEZIONI.forEach(function (sezione) {
-      var sezioneEl = el('section', { class: 'sezione' }, [
-        el('h2', { class: 'sezione-titolo', text: sezione.etichetta })
-      ]);
+      var corpo = el('div', { class: 'sezione-corpo' + (sezioniChiuse[sezione.chiave] ? ' sezione-corpo--chiusa' : '') });
 
       schema.elencaCampiSezione(sezione.chiave).forEach(function (def) {
-        sezioneEl.appendChild(renderCampo(bu, def, segnalaModifica));
+        corpo.appendChild(renderCampo(bu, def, segnalaModifica));
       });
 
-      container.appendChild(sezioneEl);
+      container.appendChild(el('section', { class: 'sezione' }, [
+        titoloSezioneCollassabile(sezione.chiave, sezione.etichetta, ridisegna),
+        corpo
+      ]));
     });
 
     container.appendChild(renderLeve(bu, segnalaModifica, ridisegna));
@@ -177,12 +197,14 @@
   }
 
   function renderLeve(bu, segnalaModifica, ridisegna) {
+    var corpo = el('div', { class: 'sezione-corpo' + (sezioniChiuse.leve ? ' sezione-corpo--chiusa' : '') });
     var wrapper = el('section', { class: 'sezione sezione--leve' }, [
-      el('h2', { class: 'sezione-titolo', text: 'Leve (' + bu.leve.length + '/5)' })
+      titoloSezioneCollassabile('leve', 'Leve (' + bu.leve.length + '/5)', ridisegna),
+      corpo
     ]);
 
     if (bu.leve.length < 3) {
-      wrapper.appendChild(el('div', { class: 'campo-avviso campo-avviso--visibile' },
+      corpo.appendChild(el('div', { class: 'campo-avviso campo-avviso--visibile' },
         ['Servono da 3 a 5 leve. Ne mancano almeno ' + (3 - bu.leve.length) + '.']));
     }
 
@@ -190,9 +212,9 @@
     bu.leve.forEach(function (leva, indice) {
       elenco.appendChild(renderLevaCard(bu, leva, indice, segnalaModifica, ridisegna));
     });
-    wrapper.appendChild(elenco);
+    corpo.appendChild(elenco);
 
-    wrapper.appendChild(el('button', {
+    corpo.appendChild(el('button', {
       type: 'button', class: 'pulsante pulsante--secondario',
       disabled: bu.leve.length >= 5 ? 'disabled' : undefined,
       onclick: function () {

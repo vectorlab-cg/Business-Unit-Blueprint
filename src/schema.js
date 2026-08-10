@@ -88,6 +88,7 @@
     { chiave: 'identita', etichetta: 'Identità' },
     { chiave: 'mercato', etichetta: 'Mercato' },
     { chiave: 'offerta', etichetta: 'Offerta' },
+    { chiave: 'economia', etichetta: 'Economia' },
     { chiave: 'pilota', etichetta: 'Pilota' },
     { chiave: 'risorse', etichetta: 'Risorse' },
     { chiave: 'test', etichetta: 'Test' }
@@ -109,6 +110,8 @@
       aiuto: 'Dalla perdita che il cliente subisce oggi, oppure dal risultato che otterrebbe. ' +
         'Orienta il taglio del blocco problema in landing e nella presentazione commerciale. ' +
         'Finché non lo ha deciso un test, resta un\'ipotesi.' },
+    { sezione: 'identita', chiave: 'responsabile', etichetta: 'Responsabile della BU', tipo: 'testo', critico: true,
+      aiuto: 'Chi la porta avanti e prende la decisione Continua/Modifica/Ferma in Validazione.' },
 
     // MERCATO
     { sezione: 'mercato', chiave: 'cliente_ideale', etichetta: 'Cliente ideale', tipo: 'testo', critico: true,
@@ -122,6 +125,11 @@
     { sezione: 'mercato', chiave: 'differenziazione_competitiva', etichetta: 'Perché voi e non un concorrente', tipo: 'testo', critico: true,
       aiuto: 'Non "cosa fa oggi al posto vostro" (quello è alternativa attuale) — perché sceglierebbe voi ' +
         'e non un concorrente diretto che offre qualcosa di simile.' },
+    { sezione: 'mercato', chiave: 'concorrenti_diretti', etichetta: 'Concorrenti diretti', tipo: 'lista', critico: false,
+      aiuto: 'Una voce per riga: chi altro offre qualcosa di simile, oltre al confronto già fatto sopra.' },
+    { sezione: 'mercato', chiave: 'sinergia_altre_bu', etichetta: 'Sinergia con altre business unit', tipo: 'testo', critico: false,
+      aiuto: 'Questa BU si rivolge (anche) a clienti già serviti da un\'altra vostra business unit? Se sì, quale vantaggio dà ' +
+        '(canale già caldo, credibilità, cross-sell).' },
 
     // OFFERTA
     { sezione: 'offerta', chiave: 'servizio', etichetta: 'Servizio', tipo: 'testo', critico: true,
@@ -139,6 +147,21 @@
     { sezione: 'offerta', chiave: 'tempi', etichetta: 'Tempi', tipo: 'testo', critico: false,
       aiuto: 'Dal sì alla consegna.' },
 
+    // ECONOMIA — i dati che dicono se la BU vale l'investimento, non solo
+    // se il mercato la vuole: quanto costa erogarla, quante ne reggi in
+    // parallelo, quanto è grande il mercato. Alimentano il generatore
+    // "Dimensionamento". Una sezione a sé perché nell'output finiscono
+    // sempre insieme, non spezzati tra Mercato/Offerta/Risorse.
+    { sezione: 'economia', chiave: 'costo_erogazione', etichetta: 'Costo di erogazione', tipo: 'testo', critico: true,
+      aiuto: 'Quanto costa erogare il servizio (tempo/risorse valorizzate, subappalti, strumenti). Il prezzo da solo non dice ' +
+        'se la BU è profittevole: serve per capire il margine.' },
+    { sezione: 'economia', chiave: 'capacita_erogazione', etichetta: 'Capacità di erogazione', tipo: 'testo', critico: true,
+      aiuto: 'Quanti clienti/progetti puoi servire in parallelo (o in un anno) con le risorse attuali — stima approssimativa. ' +
+        'Senza questo non sai se la BU può scalare o regge un solo cliente alla volta.' },
+    { sezione: 'economia', chiave: 'dimensione_mercato', etichetta: 'Dimensione del mercato', tipo: 'testo', critico: true,
+      aiuto: 'Quanti clienti così esistono, anche una stima grezza — e come ci sei arrivato. Senza questo non sai se, ' +
+        'anche validata, la BU è abbastanza grande da valere l\'investimento.' },
+
     // PILOTA — versione ridotta dell'offerta per il primo cliente/i primi
     // clienti, pensata per abbassare la soglia d'ingresso. Non è la stessa
     // cosa del prezzo provvisorio dell'offerta standard (quello è già
@@ -151,6 +174,8 @@
       aiuto: 'Con una data di fine.' },
     { sezione: 'pilota', chiave: 'criteri_successo_pilota', etichetta: 'Criteri di successo del pilota', tipo: 'lista', critico: false,
       aiuto: 'Una voce per riga: cosa deve succedere perché il pilota sia un successo.' },
+    { sezione: 'pilota', chiave: 'condizioni_passaggio', etichetta: 'Condizioni di passaggio', tipo: 'testo', critico: false,
+      aiuto: 'Cosa deve succedere per passare dal pilota all\'offerta standard, se il pilota ha successo.' },
 
     // RISORSE (liste, una voce per riga)
     { sezione: 'risorse', chiave: 'competenze_presenti', etichetta: 'Competenze presenti', tipo: 'lista', critico: false,
@@ -187,6 +212,7 @@
     { chiave: 'preventivi', etichetta: 'Preventivi inviati', decide: true },
     { chiave: 'vendite', etichetta: 'Vendite / contratti chiusi', decide: true },
     { chiave: 'angolo_vincente', etichetta: 'Angolo / leva vincente', decide: true },
+    { chiave: 'obiezioni_raccolte', etichetta: 'Obiezioni raccolte', decide: false },
     { chiave: 'note_risultati', etichetta: 'Note libere', decide: false }
   ];
 

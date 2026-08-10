@@ -365,6 +365,25 @@ textarea {
   border-bottom: 1px solid var(--border);
 }
 
+.sezione-titolo--interattivo {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sezione-titolo--interattivo:hover {
+  color: var(--text);
+}
+
+.sezione-titolo-freccia {
+  display: inline-block;
+  width: 1em;
+  color: var(--text-debole);
+}
+
+.sezione-corpo--chiusa {
+  display: none;
+}
+
 .campo {
   border-left: 3px solid var(--ipotesi);
   background: var(--bg-panel);

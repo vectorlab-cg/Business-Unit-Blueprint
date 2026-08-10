@@ -22,6 +22,10 @@
     if (schema.campoHaValore(meccanismo, 'testo')) {
       righe.push('Meccanismo distintivo: ' + render.testoCampoConStato(bu, 'identita', 'meccanismo'));
     }
+    var sinergia = schema.ottieniCampo(bu, 'mercato', 'sinergia_altre_bu');
+    if (schema.campoHaValore(sinergia, 'testo')) {
+      righe.push('Sinergia con altre business unit: ' + render.testoCampoConStato(bu, 'mercato', 'sinergia_altre_bu'));
+    }
     if (!righe.length) return render.manca('almeno una competenza presente o il meccanismo');
     return render.elencoPuntato(righe);
   }
@@ -71,7 +75,11 @@
     if (schema.campoHaValore(contesto, 'testo')) {
       righe.push('Momento del decisore: ' + render.testoCampoConStato(bu, 'mercato', 'contesto_decisore'));
     }
-    var elenco = righe.length ? render.elencoPuntato(righe) : render.manca('almeno una leva o il contesto del decisore');
+    var dimensione = schema.ottieniCampo(bu, 'economia', 'dimensione_mercato');
+    if (schema.campoHaValore(dimensione, 'testo')) {
+      righe.push('Dimensione del mercato: ' + render.testoCampoConStato(bu, 'economia', 'dimensione_mercato'));
+    }
+    var elenco = righe.length ? render.elencoPuntato(righe) : render.manca('almeno una leva, il contesto del decisore o la dimensione del mercato');
     return elenco + '\n\n' + render.daScrivere('trend di mercato più ampi che rendono questo il momento giusto — lo strumento non ha dati esterni, va aggiunto a mano');
   }
 
@@ -80,6 +88,8 @@
       'Alternativa attuale: ' + render.testoCampoConStato(bu, 'mercato', 'alternativa_attuale'),
       'Perché potrebbero non scegliervi: ' + render.testoCampoConStato(bu, 'mercato', 'differenziazione_competitiva')
     ];
+    var concorrenti = render.righeLista(bu, 'mercato', 'concorrenti_diretti');
+    if (concorrenti) righe.push('Concorrenti diretti: ' + concorrenti.join('; '));
     return render.elencoPuntato(righe) + '\n\n' +
       render.daScrivere('rischi macro (nuovi entranti, normative, dipendenze) — lo strumento non ha dati esterni, va aggiunto a mano');
   }

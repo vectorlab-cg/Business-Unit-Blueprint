@@ -29,10 +29,10 @@ GitHub"** (compare in testa non appena c'è un token). Dettagli in
 ## Le quattro viste
 
 - **Compila** — questionario per sezioni (Identità, Mercato, Offerta,
-  Pilota, Risorse, Test) più le leve. Ogni campo ha uno stato
-  (`ipotesi | generato_da_ia | mandatorio`), riportato con un'icona
-  (💭 🤖 🔒) nel Markdown dei materiali interni — mai in quelli destinati a
-  un cliente. Vedi [docs/MODELLO.md](docs/MODELLO.md).
+  Economia, Pilota, Risorse, Test), apribili/chiudibili una per una, più le
+  leve. Ogni campo ha uno stato (`ipotesi | generato_da_ia | mandatorio`),
+  riportato con un'icona (💭 🤖 🔒) nel Markdown dei materiali interni — mai
+  in quelli destinati a un cliente. Vedi [docs/MODELLO.md](docs/MODELLO.md).
 - **Materiali** — un blocco per generatore, con generazione/rigenerazione e
   testo modificabile a mano.
 - **Documento** — tutti i materiali concatenati e renderizzati (titoli,
@@ -40,7 +40,7 @@ GitHub"** (compare in testa non appena c'è un token). Dettagli in
 - **Validazione** — risultati del test e decisione finale: **Continua /
   Modifica / Ferma**.
 
-## I 15 generatori
+## I 16 generatori
 
 Markdown dai dati compilati, buchi sempre segnalati (`[MANCA: ...]`,
 `[DA SCRIVERE: ...]`) invece di essere inventati o saltati in silenzio.
@@ -49,7 +49,13 @@ BU One-Page · Problem Statement · Ideal Customer Profile · Criteri di
 ricerca prospect · Proposta di valore · Offerta pilota · Brief demo/mockup ·
 Landing page · Presentazione commerciale · Script discovery call · Template
 proposta economica · Pipeline commerciale · Dashboard KPI · Criteri di
-continuazione o chiusura · Analisi SWOT.
+continuazione o chiusura · Analisi SWOT · Dimensionamento.
+
+**Dimensionamento** mette fianco a fianco prezzo, costo di erogazione,
+capacità e dimensione del mercato — i dati che dicono se una BU vale
+l'investimento, non solo se il mercato la vuole. Non calcola un ricavo
+potenziale da solo (i campi sono spesso una fascia, non un numero): lo
+lascia `[DA SCRIVERE]`, con un prompt che riporta i dati per farlo a mano.
 
 Codice in `src/gen/`, un file per generatore. Per aggiungerne uno:
 [docs/AGGIUNGERE-UN-GENERATORE.md](docs/AGGIUNGERE-UN-GENERATORE.md).

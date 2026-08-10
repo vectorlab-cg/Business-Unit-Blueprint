@@ -10,7 +10,7 @@ ragione.
 {
   id, nome, stato,
   creata, modificata,
-  campi: { identita: {...}, mercato: {...}, offerta: {...}, pilota: {...}, risorse: {...}, test: {...} },
+  campi: { identita: {...}, mercato: {...}, offerta: {...}, economia: {...}, pilota: {...}, risorse: {...}, test: {...} },
   leve: [ ... ],
   materiali: { <idGeneratore>: {...} },
   risultati: { ... },
@@ -27,7 +27,7 @@ registra una decisione in VALIDAZIONE (vedi sotto).
 ## Campi
 
 Ogni campo (`BU.schema.CAMPI`) appartiene a una sezione (`identita`,
-`mercato`, `offerta`, `pilota`, `risorse`, `test`) e ha un tipo:
+`mercato`, `offerta`, `economia`, `pilota`, `risorse`, `test`) e ha un tipo:
 
 - `testo` — stringa libera.
 - `lista` — array di stringhe, una voce per riga in COMPILA.
@@ -123,6 +123,23 @@ duplicava ciò che la struttura esprime da sola.
 
 Quello che invece mancava è una decisione **per business unit**, non per leva:
 da quale lato apre la comunicazione. È diventata `identita.apertura`.
+
+## Economia
+
+`costo_erogazione`, `capacita_erogazione`, `dimensione_mercato` — tutti e
+tre critici. Rispondono a una domanda che il resto dello schema non fa:
+non "il mercato vuole questo servizio" ma "vale la pena costruirlo". Una BU
+può avere offerta chiara, differenziazione netta e un test che converte, ed
+essere comunque un cattivo investimento — perché il costo di erogarla
+mangia il margine, perché il team regge un solo cliente alla volta, o
+perché il mercato indirizzabile è troppo piccolo. Sezione a sé anziché
+sparsi in Mercato/Offerta/Risorse (dove concettualmente potrebbero stare
+uno alla volta) perché nell'output finiscono sempre insieme: alimentano il
+generatore "Dimensionamento", che li mette fianco a fianco.
+
+`mercato.concorrenti_diretti` e `mercato.sinergia_altre_bu` restano invece
+in Mercato, e facoltativi: arricchiscono il quadro competitivo ma non sono
+condizioni per procedere.
 
 ## Pilota
 
