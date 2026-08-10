@@ -70,7 +70,13 @@
   // Quali sezioni sono chiuse — stato di sola interfaccia (non salvato con
   // la BU): resta per la durata della pagina, si azzera al ricaricamento.
   // Chiave 'leve' per la sezione delle leve, altrimenti sezione.chiave.
-  var sezioniChiuse = {};
+  // Si parte con tutto chiuso: chi compila apre solo le sezioni su cui
+  // lavora, invece di scorrere l'intera form ogni volta.
+  var sezioniChiuse = (function () {
+    var iniziale = { leve: true };
+    schema.SEZIONI.forEach(function (s) { iniziale[s.chiave] = true; });
+    return iniziale;
+  }());
 
   function titoloSezioneCollassabile(chiave, testo, descrizione, ridisegna) {
     var chiusa = !!sezioniChiuse[chiave];
