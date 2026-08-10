@@ -91,7 +91,14 @@ function installaCartellaFinta() {
 function attesa(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 
 async function main() {
-  var browser = await puppeteer.launch({ headless: 'new' });
+  // --no-sandbox: senza, Chromium non parte nei runner CI (GitHub Actions
+  // non concede i permessi che il sandbox di default richiede).
+  // --disable-dev-shm-usage: /dev/shm è troppo piccolo nei container CI e
+  // farebbe crashare Chromium sotto carico.
+  var browser = await puppeteer.launch({
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+  });
   var page = await browser.newPage();
 
   var promptDaRispondere = [];
