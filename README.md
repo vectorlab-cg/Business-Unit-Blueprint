@@ -26,7 +26,7 @@ marcata **"Solo locale"** in sidebar finché non premi **"Condividi su
 GitHub"** (compare in testa non appena c'è un token). Dettagli in
 [`src/cartella.js`](src/cartella.js).
 
-## Le quattro viste
+## Le cinque viste
 
 - **Compila** — questionario per sezioni (Identità, Mercato, Offerta,
   Risorse, Economia, Pilota, Test), apribili/chiudibili una per una, più le
@@ -39,6 +39,12 @@ GitHub"** (compare in testa non appena c'è un token). Dettagli in
   tabelle, badge di stato), con il download del file .md grezzo.
 - **Validazione** — risultati del test e decisione finale: **Continua /
   Modifica / Ferma**.
+- **Output** — checklist di tutto ciò che un art director/copywriter
+  potrebbe produrre a partire da questa BU (claim, copy landing, annunci,
+  post LinkedIn, logo, identità visiva, ecc. — 32 voci fisse, testi e
+  design). Si spunta cosa serve davvero per questa BU specifica; non
+  influisce su completezza o campi critici, è solo un promemoria per il
+  brief di consegna al team creativo.
 
 ## I 16 generatori
 

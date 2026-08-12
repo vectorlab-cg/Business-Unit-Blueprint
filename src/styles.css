@@ -635,6 +635,39 @@ textarea {
   padding: 6px 8px;
 }
 
+.consegna-riga {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.consegna-riga--selezionata .consegna-etichetta {
+  color: var(--text);
+}
+
+.consegna-etichetta {
+  width: 340px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+}
+
+.consegna-checkbox {
+  flex-shrink: 0;
+}
+
+.consegna-nota {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 8px;
+}
+
 .decisione-motivazione, .decisione-data {
   width: 100%;
   background: var(--bg-input);

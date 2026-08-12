@@ -254,6 +254,36 @@ test('schema: nuovaBU produce una struttura completa', function () {
   schema.RISULTATI.forEach(function (def) {
     assicuraUguale(bu.risultati[def.chiave], '');
   });
+  schema.OUTPUT_CREATIVI.forEach(function (def) {
+    assicura(bu.consegna[def.chiave], 'voce di consegna assente: ' + def.chiave);
+    assicuraUguale(bu.consegna[def.chiave].selezionato, false);
+    assicuraUguale(bu.consegna[def.chiave].nota, '');
+  });
+});
+
+test('schema: OUTPUT_CREATIVI ha solo le categorie testi/design, nessuna chiave duplicata', function () {
+  var chiavi = {};
+  schema.OUTPUT_CREATIVI.forEach(function (def) {
+    assicura(def.categoria === 'testi' || def.categoria === 'design', 'categoria non valida per "' + def.chiave + '": ' + def.categoria);
+    assicura(!chiavi[def.chiave], 'chiave duplicata in OUTPUT_CREATIVI: ' + def.chiave);
+    chiavi[def.chiave] = true;
+  });
+});
+
+test('normalizzazione: consegna preserva selezionato/nota, scarta chiavi sconosciute e valori non validi', function () {
+  var grezzo = {
+    consegna: {
+      claim: { selezionato: true, nota: 'Da fare entro venerdì' },
+      logo: { selezionato: 'sì', nota: 42 }, // valori non validi: selezionato forzato a booleano, nota scartata
+      chiave_inesistente: { selezionato: true, nota: 'ignorata' }
+    }
+  };
+  var bu = schema.normalizzaBU(grezzo);
+  assicuraUguale(bu.consegna.claim.selezionato, true);
+  assicuraUguale(bu.consegna.claim.nota, 'Da fare entro venerdì');
+  assicuraUguale(bu.consegna.logo.selezionato, true, 'una stringa truthy dovrebbe normalizzarsi a true');
+  assicuraUguale(bu.consegna.logo.nota, '', 'un valore non stringa per nota dovrebbe ricadere sul default');
+  assicura(!bu.consegna.chiave_inesistente, 'una chiave non in OUTPUT_CREATIVI non dovrebbe sopravvivere alla normalizzazione');
 });
 
 test('regola: i tre stati validi restano invariati', function () {

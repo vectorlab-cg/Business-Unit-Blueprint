@@ -1,7 +1,7 @@
 /*
  * ui.js
- * Le quattro viste di una business unit: COMPILA, MATERIALI, DOCUMENTO,
- * VALIDAZIONE.
+ * Le cinque viste di una business unit: COMPILA, MATERIALI, DOCUMENTO,
+ * VALIDAZIONE, OUTPUT.
  * Le funzioni qui dentro mutano direttamente l'oggetto `bu` passato (è un
  * riferimento vivo nello stato di app.js) e chiamano `segnalaModifica()`
  * per notificare che qualcosa è cambiato (salvataggio differito, sidebar).
@@ -484,6 +484,57 @@
   }
 
   // ---------------------------------------------------------------------
+  // VISTA: OUTPUT — checklist di tutto ciò che un art director/copywriter
+  // potrebbe produrre a partire da questa BU. Non tutto serve per ogni BU:
+  // si spunta cosa serve davvero. Non influisce su completezza o campi
+  // critici, è solo uno strumento per il brief di consegna.
+  // ---------------------------------------------------------------------
+
+  function rigaConsegna(bu, def, segnalaModifica) {
+    var voce = bu.consegna[def.chiave];
+
+    var checkbox = el('input', {
+      type: 'checkbox', class: 'consegna-checkbox',
+      checked: voce.selezionato,
+      onchange: function (e) {
+        voce.selezionato = e.target.checked;
+        segnalaModifica();
+      }
+    });
+
+    var nota = el('input', {
+      type: 'text', class: 'consegna-nota', placeholder: 'Note (opzionale)',
+      value: voce.nota,
+      oninput: function (e) {
+        voce.nota = e.target.value;
+        segnalaModifica();
+      }
+    });
+
+    return el('div', { class: 'consegna-riga' + (voce.selezionato ? ' consegna-riga--selezionata' : '') }, [
+      el('label', { class: 'consegna-etichetta' }, [checkbox, ' ' + def.etichetta]),
+      nota
+    ]);
+  }
+
+  function renderConsegna(container, bu, segnalaModifica) {
+    container.innerHTML = '';
+
+    container.appendChild(el('div', { class: 'campo-aiuto' },
+      ['Cosa può servire chiedere al team creativo (art director, copywriter) per questa BU. Spunta quello che serve davvero: il resto resta come promemoria di cosa esiste.']));
+
+    ['testi', 'design'].forEach(function (categoria) {
+      var sezioneEl = el('section', { class: 'sezione' }, [
+        el('h2', { class: 'sezione-titolo', text: categoria === 'testi' ? 'Testi' : 'Design' })
+      ]);
+      schema.OUTPUT_CREATIVI.filter(function (def) { return def.categoria === categoria; }).forEach(function (def) {
+        sezioneEl.appendChild(rigaConsegna(bu, def, segnalaModifica));
+      });
+      container.appendChild(sezioneEl);
+    });
+  }
+
+  // ---------------------------------------------------------------------
   // Esportazione
   // ---------------------------------------------------------------------
 
@@ -494,6 +545,7 @@
     renderMateriali: renderMateriali,
     renderDocumento: renderDocumento,
     renderValidazione: renderValidazione,
+    renderConsegna: renderConsegna,
     MAPPA_DECISIONE_STATO: MAPPA_DECISIONE_STATO
   };
 

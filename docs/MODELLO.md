@@ -14,6 +14,7 @@ ragione.
   leve: [ ... ],
   materiali: { <idGeneratore>: {...} },
   risultati: { ... },
+  consegna: { <chiaveOutput>: { selezionato, nota } },
   decisione: null | 'continua' | 'modifica' | 'ferma',
   noteDecisione: { motivazione, data }
 }
@@ -190,6 +191,18 @@ modello dati. Le tre decisioni possibili aggiornano anche `stato`:
 Questa mappa è una scelta di design (vedi la sezione "Decisioni prese" nel
 README), non parte del modello dati in senso stretto — vive in
 `BU.ui.MAPPA_DECISIONE_STATO` (`src/ui.js`), non in `schema.js`.
+
+## Consegna
+
+`consegna` (`BU.schema.OUTPUT_CREATIVI`) è un catalogo fisso di 32 possibili
+output che un art director o un copywriter potrebbero produrre a partire da
+questa BU — non tutti servono per ogni BU. Ogni voce ha `{ selezionato,
+nota }`: si spunta cosa serve davvero, il resto resta visibile come
+promemoria di cosa esiste. A differenza di `campi`, non ha uno `stato`
+ipotesi/generato-da-IA/mandatorio (non è un dato della BU, è uno strumento
+di consegna) e non entra mai in `completezza()` o in "cosa fermerebbe
+questa business unit": una BU non è "meno pronta" se non hai ancora deciso
+quali output servono al team creativo.
 
 ## Normalizzazione / migrazione
 

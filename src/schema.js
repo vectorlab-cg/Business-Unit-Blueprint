@@ -223,6 +223,52 @@
   ];
 
   // ---------------------------------------------------------------------
+  // Output possibili per il team creativo (vista OUTPUT) — un elenco fisso
+  // di ciò che un art director/copywriter potrebbe produrre a partire da
+  // questa BU. Non tutti servono per ogni BU: si spunta cosa serve davvero,
+  // il resto resta lì come promemoria di cosa esiste. Non influisce su
+  // completezza/campi critici: è uno strumento di consegna, non di
+  // validazione della BU.
+  // ---------------------------------------------------------------------
+
+  var OUTPUT_CREATIVI = [
+    // Testi
+    { chiave: 'claim', etichetta: 'Claim / tagline', categoria: 'testi' },
+    { chiave: 'naming', etichetta: 'Naming', categoria: 'testi' },
+    { chiave: 'copy_landing', etichetta: 'Copy landing page (per sezione)', categoria: 'testi' },
+    { chiave: 'headline_varianti', etichetta: 'Headline / varianti per test A/B', categoria: 'testi' },
+    { chiave: 'copy_annunci', etichetta: 'Copy annunci a pagamento', categoria: 'testi' },
+    { chiave: 'post_linkedin_aziendali', etichetta: 'Post organici LinkedIn (aziendali)', categoria: 'testi' },
+    { chiave: 'post_linkedin_personali', etichetta: 'Post organici LinkedIn (founder/personal branding)', categoria: 'testi' },
+    { chiave: 'post_altri_social', etichetta: 'Post altri social', categoria: 'testi' },
+    { chiave: 'messaggio_primo_contatto', etichetta: 'Messaggio di primo contatto LinkedIn / InMail', categoria: 'testi' },
+    { chiave: 'sequenza_email_freddo', etichetta: 'Sequenza email di outreach a freddo', categoria: 'testi' },
+    { chiave: 'sequenza_email_nurture', etichetta: 'Sequenza email di follow-up / nurture', categoria: 'testi' },
+    { chiave: 'script_discovery_call', etichetta: 'Script discovery call (raffinato)', categoria: 'testi' },
+    { chiave: 'copy_presentazione', etichetta: 'Copy presentazione commerciale', categoria: 'testi' },
+    { chiave: 'copy_proposta_economica', etichetta: 'Copy proposta economica / preventivo', categoria: 'testi' },
+    { chiave: 'case_study', etichetta: 'Case study / testimonianza (template)', categoria: 'testi' },
+    { chiave: 'comunicato_stampa', etichetta: 'Comunicato stampa / annuncio di lancio', categoria: 'testi' },
+    { chiave: 'bio_azienda', etichetta: 'Bio / descrizione azienda', categoria: 'testi' },
+    { chiave: 'faq_standalone', etichetta: 'FAQ standalone', categoria: 'testi' },
+    { chiave: 'comunicazione_interna', etichetta: 'Comunicazione interna di lancio', categoria: 'testi' },
+    { chiave: 'script_video', etichetta: 'Script video', categoria: 'testi' },
+    // Design
+    { chiave: 'logo', etichetta: 'Logo', categoria: 'design' },
+    { chiave: 'identita_visiva', etichetta: 'Palette e sistema di identità visiva', categoria: 'design' },
+    { chiave: 'design_landing', etichetta: 'Design landing page', categoria: 'design' },
+    { chiave: 'design_presentazione', etichetta: 'Design presentazione commerciale', categoria: 'design' },
+    { chiave: 'design_proposta_economica', etichetta: 'Design proposta economica / preventivo', categoria: 'design' },
+    { chiave: 'creativita_annunci', etichetta: 'Creatività per annunci a pagamento', categoria: 'design' },
+    { chiave: 'template_social', etichetta: 'Template grafici per post social', categoria: 'design' },
+    { chiave: 'mockup_demo', etichetta: 'Mockup / demo del prodotto', categoria: 'design' },
+    { chiave: 'brochure', etichetta: 'Brochure / one-pager cliente', categoria: 'design' },
+    { chiave: 'materiali_stampa', etichetta: 'Materiali stampa', categoria: 'design' },
+    { chiave: 'video_motion', etichetta: 'Video / motion graphic', categoria: 'design' },
+    { chiave: 'template_email', etichetta: 'Template email (design)', categoria: 'design' }
+  ];
+
+  // ---------------------------------------------------------------------
   // Id
   // ---------------------------------------------------------------------
 
@@ -275,6 +321,14 @@
     return risultati;
   }
 
+  function nuovaConsegna() {
+    var consegna = {};
+    OUTPUT_CREATIVI.forEach(function (def) {
+      consegna[def.chiave] = { selezionato: false, nota: '' };
+    });
+    return consegna;
+  }
+
   function nuovaBU(nome) {
     var ora = new Date().toISOString();
     return {
@@ -287,6 +341,7 @@
       leve: [],
       materiali: {},
       risultati: nuoviRisultati(),
+      consegna: nuovaConsegna(),
       decisione: null,
       noteDecisione: { motivazione: '', data: '' }
     };
@@ -461,6 +516,20 @@
     return risultati;
   }
 
+  function normalizzaConsegna(grezzi) {
+    var consegna = nuovaConsegna();
+    if (grezzi && typeof grezzi === 'object') {
+      OUTPUT_CREATIVI.forEach(function (def) {
+        var g = grezzi[def.chiave];
+        if (g && typeof g === 'object') {
+          consegna[def.chiave].selezionato = !!g.selezionato;
+          if (typeof g.nota === 'string') consegna[def.chiave].nota = g.nota;
+        }
+      });
+    }
+    return consegna;
+  }
+
   function normalizzaBU(grezzo) {
     grezzo = (grezzo && typeof grezzo === 'object') ? grezzo : {};
     var base = nuovaBU(typeof grezzo.nome === 'string' && grezzo.nome.trim() ? grezzo.nome : undefined);
@@ -472,6 +541,7 @@
     base.leve = Array.isArray(grezzo.leve) ? grezzo.leve.map(normalizzaLeva) : [];
     base.materiali = normalizzaMateriali(grezzo.materiali);
     base.risultati = normalizzaRisultati(grezzo.risultati);
+    base.consegna = normalizzaConsegna(grezzo.consegna);
     base.decisione = DECISIONI.indexOf(grezzo.decisione) !== -1 ? grezzo.decisione : null;
     base.noteDecisione = {
       motivazione: (grezzo.noteDecisione && typeof grezzo.noteDecisione.motivazione === 'string') ? grezzo.noteDecisione.motivazione : '',
@@ -499,6 +569,7 @@
     SEZIONI: SEZIONI,
     CAMPI: CAMPI,
     RISULTATI: RISULTATI,
+    OUTPUT_CREATIVI: OUTPUT_CREATIVI,
 
     generaId: generaId,
     nuovaBU: nuovaBU,
