@@ -29,7 +29,7 @@ GitHub"** (compare in testa non appena c'è un token). Dettagli in
 ## Le quattro viste
 
 - **Compila** — questionario per sezioni (Identità, Mercato, Offerta,
-  Economia, Pilota, Risorse, Test), apribili/chiudibili una per una, più le
+  Risorse, Economia, Pilota, Test), apribili/chiudibili una per una, più le
   leve. Ogni campo ha uno stato (`ipotesi | generato_da_ia | mandatorio`),
   riportato con un'icona (💭 🤖 🔒) nel Markdown dei materiali interni — mai
   in quelli destinati a un cliente. Vedi [docs/MODELLO.md](docs/MODELLO.md).

@@ -84,13 +84,19 @@
     ferma: 'Ferma'
   };
 
+  // Ordine in COMPILA: prima le sezioni sempre da compilare (Identità,
+  // Mercato, Offerta, Risorse, Leve — quest'ultima non è in questo elenco,
+  // vedi ui.js), poi quelle di supporto (Economia, Pilota, Test) in coda —
+  // non perché contino meno (Economia e Test restano piene di campi
+  // critici), solo perché tipicamente si compilano dopo aver già chiarito
+  // identità/mercato/offerta e le leve.
   var SEZIONI = [
     { chiave: 'identita', etichetta: 'Identità', descrizione: 'Chi siete e cosa fate, in una frase.' },
     { chiave: 'mercato', etichetta: 'Mercato', descrizione: 'Chi comprerebbe, chi decide, e chi altro glielo offre già.' },
     { chiave: 'offerta', etichetta: 'Offerta', descrizione: 'Cosa vendete, a chi, e a quanto.' },
+    { chiave: 'risorse', etichetta: 'Risorse', descrizione: 'Cosa avete già e cosa manca per erogare il servizio.' },
     { chiave: 'economia', etichetta: 'Economia', descrizione: 'Se conviene: costo di erogazione, capacità e dimensione del mercato.' },
     { chiave: 'pilota', etichetta: 'Pilota', descrizione: 'Versione ridotta per il primo cliente — facoltativa.' },
-    { chiave: 'risorse', etichetta: 'Risorse', descrizione: 'Cosa avete già e cosa manca per erogare il servizio.' },
     { chiave: 'test', etichetta: 'Test', descrizione: 'Come e dove verificarlo tutto con un vero mercato.' }
   ];
 
@@ -147,6 +153,14 @@
     { sezione: 'offerta', chiave: 'tempi', etichetta: 'Tempi', tipo: 'testo', critico: false,
       aiuto: 'Dal sì alla consegna.' },
 
+    // RISORSE (liste, una voce per riga)
+    { sezione: 'risorse', chiave: 'competenze_presenti', etichetta: 'Competenze presenti', tipo: 'lista', critico: false,
+      aiuto: 'Una voce per riga.' },
+    { sezione: 'risorse', chiave: 'competenze_mancanti', etichetta: 'Competenze mancanti', tipo: 'lista', critico: true,
+      aiuto: 'Una voce per riga.' },
+    { sezione: 'risorse', chiave: 'persone', etichetta: 'Persone', tipo: 'lista', critico: false,
+      aiuto: 'Una voce per riga: nome — ruolo — cosa presidia.' },
+
     // ECONOMIA — i dati che dicono se la BU vale l'investimento, non solo
     // se il mercato la vuole: quanto costa erogarla, quante ne reggi in
     // parallelo, quanto è grande il mercato. Alimentano il generatore
@@ -176,14 +190,6 @@
       aiuto: 'Una voce per riga: cosa deve succedere perché il pilota sia un successo.' },
     { sezione: 'pilota', chiave: 'condizioni_passaggio', etichetta: 'Condizioni di passaggio', tipo: 'testo', critico: false,
       aiuto: 'Cosa deve succedere per passare dal pilota all\'offerta standard, se il pilota ha successo.' },
-
-    // RISORSE (liste, una voce per riga)
-    { sezione: 'risorse', chiave: 'competenze_presenti', etichetta: 'Competenze presenti', tipo: 'lista', critico: false,
-      aiuto: 'Una voce per riga.' },
-    { sezione: 'risorse', chiave: 'competenze_mancanti', etichetta: 'Competenze mancanti', tipo: 'lista', critico: true,
-      aiuto: 'Una voce per riga.' },
-    { sezione: 'risorse', chiave: 'persone', etichetta: 'Persone', tipo: 'lista', critico: false,
-      aiuto: 'Una voce per riga: nome — ruolo — cosa presidia.' },
 
     // TEST
     { sezione: 'test', chiave: 'canale_test', etichetta: 'Canale del test', tipo: 'testo', critico: true,

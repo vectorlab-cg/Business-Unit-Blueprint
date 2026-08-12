@@ -10,7 +10,7 @@ ragione.
 {
   id, nome, stato,
   creata, modificata,
-  campi: { identita: {...}, mercato: {...}, offerta: {...}, economia: {...}, pilota: {...}, risorse: {...}, test: {...} },
+  campi: { identita: {...}, mercato: {...}, offerta: {...}, risorse: {...}, economia: {...}, pilota: {...}, test: {...} },
   leve: [ ... ],
   materiali: { <idGeneratore>: {...} },
   risultati: { ... },
@@ -27,7 +27,7 @@ registra una decisione in VALIDAZIONE (vedi sotto).
 ## Campi
 
 Ogni campo (`BU.schema.CAMPI`) appartiene a una sezione (`identita`,
-`mercato`, `offerta`, `economia`, `pilota`, `risorse`, `test`) e ha un tipo:
+`mercato`, `offerta`, `risorse`, `economia`, `pilota`, `test`) e ha un tipo:
 
 - `testo` — stringa libera.
 - `lista` — array di stringhe, una voce per riga in COMPILA.

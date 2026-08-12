@@ -114,9 +114,15 @@
         titoloSezioneCollassabile(sezione.chiave, sezione.etichetta, sezione.descrizione, ridisegna),
         corpo
       ]));
-    });
 
-    container.appendChild(renderLeve(bu, segnalaModifica, ridisegna));
+      // Leve subito dopo Risorse: chiude le sezioni sempre da compilare
+      // (Identità, Mercato, Offerta, Risorse, Leve) prima di quelle di
+      // supporto che seguono nell'ordine di schema.SEZIONI (Economia,
+      // Pilota, Test).
+      if (sezione.chiave === 'risorse') {
+        container.appendChild(renderLeve(bu, segnalaModifica, ridisegna));
+      }
+    });
   }
 
   function classeStatoCampo(campo) {
