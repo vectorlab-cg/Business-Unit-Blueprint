@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Vademecum operativo per il lancio di una nuova business unit: regole, competenze, deliverable e checklist.">
+<title>Vademecum Nuova Business Unit</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+
+<style>
+:root{
+  --ground:#F4F6F7; --surface:#FFFFFF; --surface-2:#EAEFF0;
+  --line:#D3DCDE; --line-soft:#E4EAEB;
+  --ink:#0F1718; --ink-2:#3C4B4D; --ink-3:#6A7A7C;
+  --accent:#0F5F68; --accent-2:#0B474E; --accent-soft:#DBEEF0;
+  --warn:#7F4C00; --warn-soft:#FAEFDB; --warn-line:#DDBF83;
+  --shadow:0 1px 2px rgba(15,23,24,.05), 0 6px 20px -12px rgba(15,23,24,.18);
+  --f-disp:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0B1112; --surface:#111A1B; --surface-2:#172224;
+    --line:#243133; --line-soft:#1C2729;
+    --ink:#E5EDED; --ink-2:#B0C0C1; --ink-3:#7C8E90;
+    --accent:#4FBEC8; --accent-2:#7CD3DA; --accent-soft:#0E3439;
+    --warn:#DDA44A; --warn-soft:#28200F; --warn-line:#57431E;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 22px -14px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0B1112; --surface:#111A1B; --surface-2:#172224;
+  --line:#243133; --line-soft:#1C2729;
+  --ink:#E5EDED; --ink-2:#B0C0C1; --ink-3:#7C8E90;
+  --accent:#4FBEC8; --accent-2:#7CD3DA; --accent-soft:#0E3439;
+  --warn:#DDA44A; --warn-soft:#28200F; --warn-line:#57431E;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 6px 22px -14px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+body{margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--f-body); font-size:17px; line-height:1.62; -webkit-font-smoothing:antialiased}
+a{color:var(--accent); text-decoration:none; border-bottom:1px solid color-mix(in srgb, var(--accent) 35%, transparent)}
+a:hover{border-bottom-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:2px}
+code{font-family:var(--f-mono); font-size:.88em; background:var(--surface-2); padding:1px 4px; border-radius:2px}
+
+.shell{max-width:1180px; margin:0 auto; padding:0 22px;
+  display:grid; grid-template-columns:248px minmax(0,1fr); gap:56px; align-items:start}
+
+.mast{grid-column:1/-1; padding:52px 0 26px; border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-3); margin:0 0 14px}
+h1{font-family:var(--f-disp); font-weight:700; font-size:clamp(30px,4.6vw,46px); line-height:1.06;
+  letter-spacing:-.022em; margin:0 0 14px; text-wrap:balance; max-width:20ch}
+.dek{font-size:18px; color:var(--ink-2); max-width:64ch; margin:0 0 22px}
+.meta-row{display:flex; flex-wrap:wrap; gap:8px 10px; font-family:var(--f-mono); font-size:11.5px}
+.meta-row span{border:1px solid var(--line); border-radius:2px; padding:4px 8px; color:var(--ink-3); background:var(--surface)}
+
+.side{position:sticky; top:16px; padding:26px 0 40px; display:flex; flex-direction:column; gap:20px}
+.side h2{font-family:var(--f-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-3); margin:0 0 9px; font-weight:500}
+.srch{width:100%; font-family:var(--f-mono); font-size:13px; padding:9px 11px; color:var(--ink);
+  background:var(--surface); border:1px solid var(--line); border-radius:3px}
+.srch::placeholder{color:var(--ink-3)}
+.srch:focus{border-color:var(--accent); outline:none; box-shadow:0 0 0 3px var(--accent-soft)}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{font-family:var(--f-mono); font-size:11px; padding:5px 9px; cursor:pointer;
+  background:var(--surface); border:1px solid var(--line); border-radius:2px; color:var(--ink-2);
+  transition:background .12s, border-color .12s, color .12s}
+.chip:hover{border-color:var(--ink-3)}
+.chip[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:#FFFFFF}
+.count{font-family:var(--f-mono); font-size:11.5px; color:var(--ink-3)}
+nav.toc{display:flex; flex-direction:column; gap:1px; border-top:1px solid var(--line-soft); padding-top:12px}
+nav.toc a{font-family:var(--f-disp); font-size:13.5px; font-weight:500; color:var(--ink-2);
+  padding:5px 8px 5px 0; border:0; display:flex; gap:9px; align-items:baseline; border-radius:2px}
+nav.toc a:hover{color:var(--accent)}
+nav.toc a .n{font-family:var(--f-mono); font-size:11px; color:var(--ink-3); min-width:20px}
+nav.toc a.hi{color:var(--accent)}
+
+main{padding:26px 0 90px; min-width:0}
+section{margin:0 0 54px; scroll-margin-top:16px}
+.sec-head{display:flex; align-items:baseline; gap:12px; margin:0 0 6px;
+  padding-bottom:9px; border-bottom:2px solid var(--ink)}
+.sec-head .n{font-family:var(--f-mono); font-size:13px; color:var(--accent); font-weight:500}
+.sec-head h3{font-family:var(--f-disp); font-weight:700; font-size:22px; letter-spacing:-.015em; margin:0; flex:1}
+.sec-head .k{font-family:var(--f-mono); font-size:11px; color:var(--ink-3)}
+.sec-intro{color:var(--ink-2); font-size:16px; max-width:64ch; margin:14px 0 22px}
+
+.rule{display:grid; grid-template-columns:46px minmax(0,1fr); gap:16px;
+  padding:16px 0; border-bottom:1px solid var(--line-soft)}
+.rule:last-child{border-bottom:0}
+.rid{font-family:var(--f-mono); font-size:12px; color:var(--ink-3); padding-top:3px; font-variant-numeric:tabular-nums}
+.rule h4{font-family:var(--f-disp); font-weight:600; font-size:16.5px; line-height:1.34;
+  letter-spacing:-.008em; margin:0 0 6px; text-wrap:balance}
+.rule p{margin:0 0 6px; font-size:16px; color:var(--ink-2); max-width:66ch}
+.rule p:last-child{margin-bottom:0}
+.why{border-left:2px solid var(--accent); padding-left:12px; font-style:italic}
+.why b{font-style:normal; font-family:var(--f-mono); font-size:11px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--accent); display:block; margin-bottom:1px; font-weight:500}
+.tag{font-family:var(--f-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  padding:2px 6px; border-radius:2px; margin-left:7px; vertical-align:2px; white-space:nowrap; font-weight:500}
+.t-vincolo{background:var(--accent-soft); color:var(--accent-2)}
+.t-scelta{background:var(--surface-2); color:var(--ink-3); border:1px solid var(--line)}
+
+.callout{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--accent);
+  border-radius:3px; padding:18px 20px; margin:0 0 22px; box-shadow:var(--shadow)}
+.callout.caution{border-left-color:var(--warn); background:var(--warn-soft); border-color:var(--warn-line)}
+.callout h4{font-family:var(--f-disp); font-weight:700; font-size:15px; margin:0 0 8px; letter-spacing:-.005em}
+.callout p{margin:0 0 8px; font-size:15.5px; color:var(--ink-2)}
+.callout p:last-child{margin-bottom:0}
+.callout.caution h4{color:var(--warn)}
+
+.tw{overflow-x:auto; border:1px solid var(--line); border-radius:3px; background:var(--surface); margin:0 0 10px}
+table{border-collapse:collapse; width:100%; font-size:14.5px; min-width:660px}
+th,td{text-align:left; padding:10px 14px; border-bottom:1px solid var(--line-soft); vertical-align:top}
+th{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-3); font-weight:500; background:var(--surface-2); white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.w{font-family:var(--f-mono); font-size:12px; color:var(--ink-2); line-height:1.5}
+.st{font-family:var(--f-mono); font-size:10px; letter-spacing:.07em; text-transform:uppercase;
+  padding:2px 7px; border-radius:2px; font-weight:500; white-space:nowrap; display:inline-block}
+.s-out{background:var(--warn-soft); color:var(--warn); border:1px solid var(--warn-line)}
+.s-part{background:var(--surface-2); color:var(--ink-2); border:1px solid var(--line)}
+.s-in{background:var(--accent-soft); color:var(--accent-2)}
+.s-reuse{background:var(--accent-soft); color:var(--accent-2); margin-left:6px}
+.s-half{background:var(--surface-2); color:var(--ink-3); border:1px solid var(--line); margin-left:6px}
+tr.out td:first-child{box-shadow:inset 3px 0 0 var(--warn); font-weight:600}
+.tally{display:flex; flex-wrap:wrap; gap:10px; margin:0 0 22px}
+.tally div{flex:1 1 150px; border:1px solid var(--line); border-radius:3px; background:var(--surface);
+  padding:12px 14px}
+.tally .n{font-family:var(--f-disp); font-weight:700; font-size:26px; line-height:1; display:block;
+  margin-bottom:4px; font-variant-numeric:tabular-nums}
+.tally .l{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3)}
+.tally .out .n{color:var(--warn)}
+.tally .in .n{color:var(--accent)}
+.dgroup{display:flex; align-items:baseline; gap:10px; margin:30px 0 8px}
+.dgroup .ph{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--surface); background:var(--accent); padding:2px 7px; border-radius:2px; white-space:nowrap}
+.dgroup h4{font-family:var(--f-disp); font-weight:600; font-size:15.5px; margin:0; color:var(--ink)}
+.dnote{font-size:14.5px; color:var(--ink-3); margin:0 0 4px; max-width:70ch}
+
+.ck{list-style:none; margin:0 0 8px; padding:0; display:flex; flex-direction:column; gap:2px}
+.ck li{display:flex; gap:11px; align-items:flex-start; padding:7px 9px; border-radius:3px;
+  font-size:15.5px; color:var(--ink-2)}
+.ck li:hover{background:var(--surface-2)}
+.ck input{margin:5px 0 0; accent-color:var(--accent); width:15px; height:15px; flex:none; cursor:pointer}
+.ck label{cursor:pointer}
+.ck input:checked + label{color:var(--ink-3); text-decoration:line-through}
+.ck-head{display:flex; align-items:baseline; justify-content:space-between; gap:14px; margin:26px 0 6px}
+.ck-head h4{font-family:var(--f-disp); font-weight:600; font-size:15.5px; margin:0}
+.rst{font-family:var(--f-mono); font-size:11px; color:var(--ink-3); background:none; border:0;
+  cursor:pointer; padding:2px 4px; border-radius:2px}
+.rst:hover{color:var(--accent)}
+
+.empty{display:none; font-family:var(--f-mono); font-size:13px; color:var(--ink-3); padding:30px 0}
+.foot{grid-column:1/-1; border-top:1px solid var(--line); padding:22px 0 60px;
+  font-size:14.5px; color:var(--ink-3); max-width:70ch}
+.foot p{margin:0 0 8px}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr); gap:0}
+  .side{position:static; padding:20px 0 4px; border-bottom:1px solid var(--line)}
+  nav.toc{flex-direction:row; flex-wrap:wrap; gap:2px 12px}
+  .rule{grid-template-columns:40px minmax(0,1fr); gap:12px}
+  .mast{padding-top:36px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<header class="mast">
+  <p class="eyebrow">Vectorlab · Documento interno · Rev. 3</p>
+  <h1>Vademecum Nuova Business Unit</h1>
+  <p class="dek">Cosa serve, in che ordine e con quali competenze, per portare una nuova business unit dal nome al primo lead.</p>
+  <div class="meta-row">
+    <span>39 regole</span>
+    <span>18 competenze</span>
+    <span>39 deliverable · 13 riusabili</span>
+    <span>4 checklist</span>
+  </div>
+</header>
+
+<aside class="side">
+  <div>
+    <h2>Cerca</h2>
+    <input class="srch" id="q" type="search" placeholder="es. dominio, pixel, banner…" aria-label="Cerca nel vademecum">
+  </div>
+  <div>
+    <h2>Filtra</h2>
+    <div class="chips" id="chips">
+      <button class="chip" data-t="vincolo" aria-pressed="false">Vincolo</button>
+      <button class="chip" data-t="scelta" aria-pressed="false">Scelta</button>
+    </div>
+    <p class="count" id="count"></p>
+  </div>
+  <nav class="toc">
+    <a href="#s1"><span class="n">01</span> Prima di partire</a>
+    <a href="#s2"><span class="n">02</span> Sito</a>
+    <a href="#s3"><span class="n">03</span> Riscan</a>
+    <a href="#s4"><span class="n">04</span> Tracking e CRM</a>
+    <a href="#s5"><span class="n">05</span> Meta</a>
+    <a href="#s6"><span class="n">06</span> Privacy e consenso</a>
+    <a href="#s7"><span class="n">07</span> Social e contenuti</a>
+    <a href="#s8"><span class="n">08</span> Video</a>
+    <a href="#s9" class="hi"><span class="n">09</span> Competenze</a>
+    <a href="#s10" class="hi"><span class="n">10</span> Inventario deliverable</a>
+    <a href="#s11"><span class="n">11</span> Decisioni consapevoli</a>
+    <a href="#s12"><span class="n">12</span> Checklist</a>
+  </nav>
+</aside>
+
+<main>
+
+<p class="empty" id="empty">Nessuna regola corrisponde ai filtri attivi.</p>
+
+<div class="callout">
+  <h4>Come leggerlo</h4>
+  <p><b>Vincolo</b> = imposto da una piattaforma o da una norma: non è negoziabile, se lo ignori qualcosa si rompe o viene rifiutato. <b>Scelta</b> = metodo che ha funzionato una volta: si può cambiare, ma cambiarlo è una decisione, non una svista.</p>
+  <p>Il documento copre l'esecuzione. Non contiene il metodo per costruire un posizionamento o progettare un layout da zero: dice cosa deve esistere, in che ordine e chi serve per farlo.</p>
+</div>
+
+<!-- 01 -->
+<section id="s1">
+  <div class="sec-head"><span class="n">01</span><h3>Prima di partire</h3><span class="k">5 regole</span></div>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">1.1</div><div class="rbody">
+    <h4>Verificare dominio e username social nello stesso momento<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Il nome è utilizzabile solo se sono liberi entrambi. Controllare prima i domini e poi gli account porta a comprare un dominio per un nome che sui social non esiste, e a ripiegare su una variante.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">1.2</div><div class="rbody">
+    <h4>Se lo username esatto non è libero, usare il suffisso <code>HQ</code><span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Convenzione riconosciuta nel tech — SlackHQ, NotionHQ — che segnala l'account ufficiale. Da evitare trattini, punti e varianti storpiate del nome: peggiorano la percezione del brand invece di risolvere il problema.</p>
+  </div></article>
+
+  <article class="rule" data-tag="scelta"><div class="rid">1.3</div><div class="rbody">
+    <h4>Dominio primario <code>.com</code>, il <code>.it</code> registrato e in redirect<span class="tag t-scelta">Scelta</span></h4>
+    <p>Il <code>.it</code> si tiene solo a tutela del brand e reindirizza via DNS. La scelta va comunicata a chi configura <em>prima</em> che configuri, non durante.</p>
+  </div></article>
+
+  <article class="rule" data-tag="scelta"><div class="rid">1.4</div><div class="rbody">
+    <h4>Gerarchia degli account: mail madre, mail aziendali, mail di servizio<span class="tag t-scelta">Scelta</span></h4>
+    <p>Una gmail «madre» col nome del dominio apre i profili social mentre Workspace non è ancora pronto. Le mail aziendali si creano su Workspace, non sul registrar. Le mail transazionali del software vanno su un indirizzo di servizio dedicato (<code>nome@dominio</code>), mai su una casella personale o sulla madre.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">1.5</div><div class="rbody">
+    <h4>2FA sull'account brand, non sul telefono di una persona<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Authenticator legato alla mail del brand. Meno persone possibili dentro ogni account.</p>
+    <p class="why"><b>Perché</b>se gli OTP arrivano al telefono di qualcuno, ogni operazione si blocca finché quella persona non risponde. È il collo di bottiglia più stupido e più frequente.</p>
+  </div></article>
+</section>
+
+<!-- 02 -->
+<section id="s2">
+  <div class="sec-head"><span class="n">02</span><h3>Sito</h3><span class="k">3 regole</span></div>
+
+  <article class="rule" data-tag="scelta"><div class="rid">2.1</div><div class="rbody">
+    <h4>Nel flusso di conversione non esistono affordance di ritorno<span class="tag t-scelta">Scelta</span></h4>
+    <p>Frecce indietro, pulsanti «continua» che portano fuori dalla landing, link che disperdono: si tolgono. L'unica eccezione è la correzione di una risposta sbagliata dentro un form.</p>
+  </div></article>
+
+  <article class="rule" data-tag="scelta"><div class="rid">2.2</div><div class="rbody">
+    <h4>Due versioni del sito su due sottodomini<span class="tag t-scelta">Scelta</span></h4>
+    <p>Una corporate completa e una sola-landing per il traffico a pagamento, distinte dal sottodominio. Va deciso a inizio sviluppo: farlo a sito finito significa rifare la struttura di navigazione.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">2.3</div><div class="rbody">
+    <h4>Prima della messa online: title, Open Graph, noindex, anti-download<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Il <code>&lt;title&gt;</code> è il brand puro. L'immagine di anteprima social è <b>1200×630 JPEG</b>, caricata sul dominio e richiamata con URL assoluto https, dichiarando dimensioni e formato reali. Le pagine tecniche (form, step intermedi) vanno in <code>noindex</code> ed escluse dalla sitemap. Immagini e testi non devono essere scaricabili.</p>
+    <p class="why"><b>Perché</b>dopo il rilascio la preview social resta in cache lato Meta: va forzato uno scrape dal Sharing Debugger, altrimenti si continua a vedere la vecchia anche se è tutto corretto. E una pagina-form indicizzata compare su Google mostrando le domande al posto del sito.</p>
+  </div></article>
+</section>
+
+<!-- 03 -->
+<section id="s3">
+  <div class="sec-head"><span class="n">03</span><h3>Software di qualificazione (Riscan)</h3><span class="k">5 regole</span></div>
+  <p class="sec-intro">Il test che il visitatore compila per ricevere una diagnosi sul proprio progetto, e che in cambio lascia il contatto. È il meccanismo che trasforma la landing in pipeline.</p>
+
+  <article class="rule" data-tag="scelta"><div class="rid">3.1</div><div class="rbody">
+    <h4>6–8 domande sul rischio operativo, non sulle esigenze dichiarate<span class="tag t-scelta">Scelta</span></h4>
+    <p>Le domande devono far emergere il rischio che il prospect sta correndo senza saperlo. Pesi differenziati, aree diverse.</p>
+  </div></article>
+
+  <article class="rule" data-tag="scelta"><div class="rid">3.2</div><div class="rbody">
+    <h4>Output a tre fasce, non percentuale, più insight dinamici<span class="tag t-scelta">Scelta</span></h4>
+    <p>Con poche domande una percentuale è finta precisione. Tre fasce di rischio, più messaggi aggiuntivi attivati quando una singola area supera la soglia. Le aree vanno ordinate per priorità : se ne emergono più d'una, si mostra quella con priorità più alta.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">3.3</div><div class="rbody">
+    <h4>Ogni combinazione di risposte genera un punteggio e un esito<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Nessun caso resta senza risultato. Il punteggio sta sopra o sotto una soglia che smista su due flussi mail distinti. Il software va costruito modulare e parametrico: domande e pesi devono essere cambiabili senza riscriverlo.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">3.4</div><div class="rbody">
+    <h4>Una sola terminologia e una sola polarità , ovunque<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Il termine per il valore della singola risposta e quello per l'aggregato si fissano nei documenti e non si reinventano nel codice. La scala deve avere la stessa direzione nell'output al lead e nel report interno.</p>
+    <p class="why"><b>Perché</b>è già successo che il report commerciale usasse una scala invertita rispetto ai documenti: stesso valore, lettura opposta. Chi legge capisce il contrario e non se ne accorge.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">3.5</div><div class="rbody">
+    <h4>Comportamento del form: gate, reset, anti-fake, notifica<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Il contatto è l'ultima domanda e il risultato arriva solo lasciandolo. A scansione conclusa la sessione si azzera del tutto: chi torna riparte dalla prima domanda, anche dallo stesso browser. Il blocco dei numeri finti va testato con pattern ripetitivi (<code>333 333 3333</code> e simili), che passano quasi sempre. All'arrivo di un contatto scatta una notifica: l'obiettivo è richiamare entro dieci minuti.</p>
+  </div></article>
+</section>
+
+<!-- 04 -->
+<section id="s4">
+  <div class="sec-head"><span class="n">04</span><h3>Tracking e CRM</h3><span class="k">4 regole</span></div>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">4.1</div><div class="rbody">
+    <h4>Nove campi nascosti da tracciare<span class="tag t-vincolo">Vincolo</span></h4>
+    <p><code>utm_source</code> · <code>utm_medium</code> · <code>utm_campaign</code> · <code>utm_campaign_id</code> · <code>utm_adset</code> · <code>utm_adset_id</code> · <code>utm_ad</code> · <code>utm_ad_id</code> · <code>fbclid</code></p>
+    <p>Nel CRM vanno come campi dedicati, non come testo libero: solo così si filtra e si analizza per sorgente, campagna e contenuto. Aggiungerne altri è banale se servono.</p>
+  </div></article>
+
+  <article class="rule" data-tag="scelta"><div class="rid">4.2</div><div class="rbody">
+    <h4>Test degli UTM simulandoli a mano nell'URL<span class="tag t-scelta">Scelta</span></h4>
+    <p>Si incollano i parametri nell'URL e si verifica che arrivino tutti fino al CRM, non solo al form.</p>
+  </div></article>
+
+  <article class="rule" data-tag="scelta"><div class="rid">4.3</div><div class="rbody">
+    <h4>Lo stesso report che arriva nella mail interna arriva anche nel CRM<span class="tag t-scelta">Scelta</span></h4>
+    <p>Sul contatto, nei commenti. Il commerciale non deve cercare in due posti.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">4.4</div><div class="rbody">
+    <h4>Quattro eventi da testare su due canali, prima di spendere<span class="tag t-vincolo">Vincolo</span></h4>
+    <p><b>PageView · ViewContent · Lead · Schedule</b>, sia via Conversions API sia via pixel browser, più la verifica che i lead non vengano deduplicati tra i due canali.</p>
+    <p class="why"><b>Perché</b>è il test che salta sempre, perché arriva alla fine e sembra formale. Se salta, le campagne partono senza sapere se i dati tornano indietro — e ci si accorge dopo, sui soldi già spesi.</p>
+  </div></article>
+</section>
+
+<!-- 05 -->
+<section id="s5">
+  <div class="sec-head"><span class="n">05</span><h3>Meta</h3><span class="k">6 regole</span></div>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">5.1</div><div class="rbody">
+    <h4>Ordine delle verifiche<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Verifica del profilo personale che detiene le risorse — creazione del portfolio business — verifica del dominio — verifica dell'azienda. Solo dopo si costruiscono le campagne.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">5.2</div><div class="rbody">
+    <h4>Documenti: carta d'identità elettronica o passaporto, azienda con visura<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Un documento cartaceo di vecchio formato viene rifiutato, e Meta non dice perché. Meglio partire dal documento migliore disponibile, a fuoco e leggibile. Per l'azienda serve il PDF di iscrizione alla Camera di Commercio, con l'intestazione che coincide esattamente con la ragione sociale dichiarata.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">5.3</div><div class="rbody">
+    <h4>Mai partire da un profilo appena creato<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Un account nuovo che parte subito con attività business viene bloccato sul nascere. Serve un profilo con storico reale.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">5.4</div><div class="rbody">
+    <h4>Audit preventivo delle pagine collegate all'account<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Prima di costruirci sopra l'infrastruttura, verificare che nessuna pagina o profilo a cui quell'account ha accesso abbia mai subito restrizioni. L'assenza di restrizioni conta più dell'aver già fatto campagne.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">5.5</div><div class="rbody">
+    <h4>Su Meta non si elimina mai nulla: si archivia<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Vale per i post da rifare e per qualsiasi contenuto pubblicato.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">5.6</div><div class="rbody">
+    <h4>Custom audience: nome, cognome e almeno uno tra mail e telefono<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Servono due liste — chi ha pagato e chi sarebbe un buon cliente ma non lo è diventato. Senza né mail né telefono il contatto è invalido: un lead raggiungibile solo su LinkedIn non è targettabile.</p>
+    <p class="why"><b>Conseguenza a monte</b>se il CRM non raccoglie almeno uno dei due al primo contatto, quel lead non sarà mai utilizzabile per le audience. Si sistema nel form di acquisizione, non nell'export.</p>
+  </div></article>
+</section>
+
+<!-- 06 -->
+<section id="s6">
+  <div class="sec-head"><span class="n">06</span><h3>Privacy e consenso</h3><span class="k">4 regole</span></div>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">6.1</div><div class="rbody">
+    <h4>Tre documenti su misura, non generici<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Privacy policy, cookie policy, termini e condizioni, generati sul sito reale.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">6.2</div><div class="rbody">
+    <h4>La mappatura include i punti di raccolta dati, non solo i servizi terzi<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Il software di qualificazione è un punto di raccolta dati e va mappato come tale, insieme ai form e a ogni servizio di analytics.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">6.3</div><div class="rbody">
+    <h4>I tag partono solo dopo l'accettazione, e si verifica<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Procedura: <code>F12</code> — scheda <b>Network</b> — spuntare <b>Preserve log</b> — filtrare la chiamata del pixel. Si conferma che <b>PageView</b> parta solo dopo l'accettazione cookie e che <b>ViewContent</b> parta solo all'apertura del software di qualificazione.</p>
+    <p class="why"><b>Perché</b>è il punto in cui il consenso smette di essere formale e diventa effettivo. Senza questa prova il banner è decorativo, e il rischio è reale.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">6.4</div><div class="rbody">
+    <h4>Il banner in produzione deve corrispondere al configuratore<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Posizione, formato e comportamento vanno confrontati con quanto impostato: divergono più spesso di quanto sembri. Il link alla privacy policy va anche sulla pagina Facebook. Ogni consegna tecnica si chiude con una scheda di verifica punto per punto da eseguire a integrazione fatta.</p>
+  </div></article>
+</section>
+
+<!-- 07 -->
+<section id="s7">
+  <div class="sec-head"><span class="n">07</span><h3>Social e contenuti</h3><span class="k">5 regole</span></div>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">7.1</div><div class="rbody">
+    <h4>Post in 4:3, caricati da desktop, formato «Original»<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Il 4:3 lascia al contenuto più spazio verticale del quadrato. Da desktop si evita la compressione e si seleziona «Original» per non farsi ritagliare. Impostato l'account per la pubblicazione in alta qualità , si può poi postare anche da telefono.</p>
+  </div></article>
+
+  <article class="rule" data-tag="scelta"><div class="rid">7.2</div><div class="rbody">
+    <h4>La vetrina di lancio è una sequenza, non un insieme di post<span class="tag t-scelta">Scelta</span></h4>
+    <p>L'ordine di pubblicazione è vincolante. Ogni post è un carosello a due immagini — contenuto e call to action — più caption.</p>
+  </div></article>
+
+  <article class="rule" data-tag="scelta"><div class="rid">7.3</div><div class="rbody">
+    <h4>Chi segui conta più di chi ti segue<span class="tag t-scelta">Scelta</span></h4>
+    <p>Il following comunica settore, interessi e posizionamento a chi visita il profilo: stack tecnologici, realtà di ricerca, istituti con cui c'è un contatto reale. Va mantenuta una proporzione sensata con i follower.</p>
+    <p class="why"><b>Eccezione</b>sull'account aziendale può valere la regola opposta — seguire solo i fondatori e usare il criterio sopra per le <em>interazioni</em>, non per il following. È una scelta di posizionamento: decidila, non subirla.</p>
+  </div></article>
+
+  <article class="rule" data-tag="scelta"><div class="rid">7.4</div><div class="rbody">
+    <h4>Profili personali privati, profilo brand completo<span class="tag t-scelta">Scelta</span></h4>
+    <p>Sul profilo brand: nome visualizzato (campo distinto dal tag, spesso lasciato vuoto), bio, immagine profilo unica per tutte le piattaforme, orari, data di fondazione. Il sito in bio si aggiunge solo quando è pronto.</p>
+  </div></article>
+
+  <article class="rule" data-tag="scelta"><div class="rid">7.5</div><div class="rbody">
+    <h4>La bio è allineata al copy del sito, ovunque compaia<span class="tag t-scelta">Scelta</span></h4>
+    <p>Se cambia una parola nel copy, cambia in bio e nel footer. Con un solo vincolo: se la modifica manda a capo la riga, meglio tenere la versione precedente.</p>
+  </div></article>
+</section>
+
+<!-- 08 -->
+<section id="s8">
+  <div class="sec-head"><span class="n">08</span><h3>Video</h3><span class="k">3 regole</span></div>
+
+  <article class="rule" data-tag="scelta"><div class="rid">8.1</div><div class="rbody">
+    <h4>Un solo volto per sito e campagne<span class="tag t-scelta">Scelta</span></h4>
+    <p>La stessa persona è il riferimento visivo ovunque. Coerenza e resa in conversione.</p>
+  </div></article>
+
+  <article class="rule" data-tag="scelta"><div class="rid">8.2</div><div class="rbody">
+    <h4>Copy modulare: cambia l'hook, il resto resta<span class="tag t-scelta">Scelta</span></h4>
+    <p>Da un corpo unico e cinque aperture diverse nascono cinque campagne. Gli hook si registrano secchi e diretti, in due o tre versioni, e si sceglie in montaggio.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">8.3</div><div class="rbody">
+    <h4>Player sul sito: nessun controllo, un clic avvia, un clic ferma, loop<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Video ospitato su una piattaforma di streaming ed embeddato, così la pagina carica solo player e anteprima. Via playbar, volume, fullscreen, sottotitoli, capitoli, menu impostazioni. Il clic è su tutta l'area del contenitore. L'anteprima è un frame fornito, col play già disegnato nel colore accento. Verifica finale sempre su desktop <em>e</em> mobile.</p>
+  </div></article>
+</section>
+
+<!-- 09 -->
+<section id="s9">
+  <div class="sec-head"><span class="n">09</span><h3>Competenze</h3><span class="k">18 ruoli</span></div>
+  <p class="sec-intro">Tutti i ruoli che servono per portare una BU dal nome al primo lead. Sono ruoli, non persone: una sola persona può coprirne più d'uno. Le otto in <b>arancione</b> non le abbiamo in casa — vanno assunte, ingaggiate a progetto o esternalizzate, e la decisione va presa prima di aprire il cantiere, non quando la fase è già ferma.</p>
+
+  <div class="tally">
+    <div class="out"><span class="n">8</span><span class="l">Da procurare</span></div>
+    <div class="in"><span class="n">10</span><span class="l">Interne</span></div>
+  </div>
+
+  <div class="dgroup"><span class="ph">Da procurare</span><h4>Non presenti in azienda</h4></div>
+  <div class="tw"><table>
+    <thead><tr><th>Competenza</th><th>Stato</th><th>Serve in</th><th>Cosa produce</th></tr></thead>
+    <tbody>
+      <tr class="out"><td>Brand strategist</td><td><span class="st s-out">Da procurare</span></td><td class="w">Fase 1</td><td>Posizionamento, naming, criterio di selezione dei case study</td></tr>
+      <tr class="out"><td>Art director</td><td><span class="st s-out">Da procurare</span></td><td class="w">Fase 2, 3, 5</td><td>Identità visiva, direzione dei layout, vetrina social</td></tr>
+      <tr class="out"><td>Graphic designer</td><td><span class="st s-out">Da procurare</span></td><td class="w">Fase 2, 3</td><td>Logo, asset WEBP e SVG, social preview, device</td></tr>
+      <tr class="out"><td>UI designer</td><td><span class="st s-out">Da procurare</span></td><td class="w">Fase 3</td><td>Layout desktop e mobile, struttura del sito</td></tr>
+      <tr class="out"><td>Motion designer</td><td><span class="st s-out">Da procurare</span></td><td class="w">Fase 3</td><td>Documento animazioni e micro-interazioni</td></tr>
+      <tr class="out"><td>Copywriter</td><td><span class="st s-out">Da procurare</span></td><td class="w">Fase 2, 3, 5</td><td>Copy del sito, flussi mail, copy video, caption</td></tr>
+      <tr class="out"><td>Videomaker / video editor</td><td><span class="st s-out">Da procurare</span></td><td class="w">Fase 5</td><td>Riprese e montaggio: video sito, video campagne, sottotitoli, frame di anteprima</td></tr>
+      <tr class="out"><td>Media buyer</td><td><span class="st s-out">Da procurare</span></td><td class="w">Fase 4, 5</td><td>Verifiche Meta, struttura campagne, pubblici, spesa</td></tr>
+    </tbody>
+  </table></div>
+  <p class="dnote">Le tre a più alto impatto sono <b>art director</b>, <b>media buyer</b> e <b>videomaker</b>: compaiono nel maggior numero di deliverable e bloccano fasi intere. Art director e copywriter conviene valutarli insieme — lavorano sullo stesso materiale e separarli su due fornitori diversi raddoppia i giri di revisione.</p>
+
+  <div class="dgroup"><span class="ph">Interne</span><h4>Presenti in azienda</h4></div>
+  <div class="tw"><table>
+    <thead><tr><th>Competenza</th><th>Stato</th><th>Serve in</th><th>Cosa produce</th></tr></thead>
+    <tbody>
+      <tr><td>Frontend dev</td><td><span class="st s-in">Interna</span></td><td class="w">Fase 3</td><td>Sito, staging, implementazione dei layout</td></tr>
+      <tr><td>Full-stack dev / integrazioni</td><td><span class="st s-in">Interna</span></td><td class="w">Fase 3, 4</td><td>Software di qualificazione, pixel e CAPI, integrazione CRM</td></tr>
+      <tr><td>Sistemista / IT</td><td><span class="st s-in">Interna</span></td><td class="w">Fase 1</td><td>Domini, DNS, mail, gerarchia account, 2FA</td></tr>
+      <tr><td>Referente tecnico</td><td><span class="st s-in">Interna</span></td><td class="w">Fase 2, 3</td><td>Case study, dati team, logiche di punteggio</td></tr>
+      <tr><td>Referente commerciale</td><td><span class="st s-in">Interna</span></td><td class="w">Fase 3, 5</td><td>Domande del test, liste clienti e target</td></tr>
+      <tr><td>Amministrazione</td><td><span class="st s-in">Interna</span></td><td class="w">Fase 4</td><td>Visura camerale, carte, contratti fornitori</td></tr>
+      <tr><td>Referente privacy</td><td><span class="st s-in">Interna</span></td><td class="w">Fase 4</td><td>Documenti legali, mappatura, banner, consensi immagine</td></tr>
+      <tr><td>Project coordinator <span class="st s-part">1 persona</span></td><td><span class="st s-in">Interna</span></td><td class="w">Trasversale</td><td>Cartella condivisa, timeline, raccolta informazioni, template guida</td></tr>
+      <tr><td>Fotografo <span class="st s-part">1 persona</span></td><td><span class="st s-in">Interna</span></td><td class="w">Fase 2</td><td>4 scatti a persona. Serve solo per chi entra dopo: gli scatti già fatti valgono per tutte le BU</td></tr>
+      <tr><td>CRM / marketing automation <span class="st s-part">1 persona</span></td><td><span class="st s-in">Interna</span></td><td class="w">Fase 3, 5</td><td>Campi UTM, flussi mail, notifica lead, liste e pubblici</td></tr>
+    </tbody>
+  </table></div>
+
+  <p class="dnote">Le tre righe marcate <b>1 persona</b> sono sulla stessa testa, che è anche quella che coordina il progetto. Funziona finché quella persona è libera: è il primo punto in cui il piano si ferma se non lo è, e non se ne accorge nessuno finché non succede.</p>
+
+  <div class="callout caution">
+    <h4>Verifica le assegnazioni prima di usarle</h4>
+    <p>Quello che manca è tutta la catena creativa più l'advertising: non è un buco da tappare con un freelance, è una funzione intera che l'ultimo ciclo ha comprato fuori per intero. È l'unico punto del documento che dipende da chi c'è invece che da come funzionano le piattaforme — quando la squadra cambia, si aggiorna qui.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section id="s10">
+  <div class="sec-head"><span class="n">10</span><h3>Inventario deliverable</h3><span class="k">7 gruppi</span></div>
+  <p class="sec-intro">Ordinato per sequenza reale di lavoro: le fasi 1–5 vanno in quest'ordine, la trasversale corre in parallelo dall'inizio. La colonna <b>blocca</b> dice cosa non può partire finché quel pezzo non esiste.</p>
+
+  <div class="callout">
+    <h4>Un terzo è già fatto</h4>
+    <p>Non tutto si rifà a ogni business unit. Quello che descrive <em>l'azienda</em> — foto e ruoli del team, dati, partner, consensi immagine, liste contatti, verifica Meta dell'azienda, template e struttura documentale — si produce una volta e si riusa: sono i <b>13 deliverable marcati <span class="st s-reuse">riusabile</span></b>. Altri <b>4</b> sono <span class="st s-half">in parte</span> riutilizzabili: cambia il contenuto, resta l'impianto.</p>
+    <p>Restano <b>22 deliverable su 39</b> davvero da produrre da zero. È la differenza tra «rifare tutto» e «rifare il brand»: vale la pena tenerne conto quando si stima la seconda BU sulla base di quanto è costata la prima.</p>
+  </div>
+
+  <div class="dgroup"><span class="ph">Fase 1</span><h4>Posizionamento e nome</h4></div>
+  <div class="tw"><table>
+    <thead><tr><th>Deliverable</th><th>Competenze</th><th>Blocca</th></tr></thead>
+    <tbody>
+      <tr><td>Documento di posizionamento definitivo</td><td class="w">Strategist / brand strategist</td><td>Tutto il resto</td></tr>
+      <tr><td>Naming validato su domini e social</td><td class="w">Strategist + naming</td><td>Domini, account, identità </td></tr>
+      <tr><td>Domini registrati, primario e redirect</td><td class="w">Sistemista / dev</td><td>Mail, sito, verifiche</td></tr>
+      <tr><td>Account e mail secondo la gerarchia</td><td class="w">Sistemista / IT</td><td>Social, software, campagne</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="dgroup"><span class="ph">Fase 2</span><h4>Identità visiva</h4></div>
+  <div class="tw"><table>
+    <thead><tr><th>Deliverable</th><th>Competenze</th><th>Blocca</th></tr></thead>
+    <tbody>
+      <tr><td>Logo: monogram, logotipo, immagine profilo unica</td><td class="w">Art director + graphic designer</td><td>Sito, social, software</td></tr>
+      <tr><td>Palette con codici e logiche d'uso · font e dimensioni</td><td class="w">Art director</td><td>Sito, contenuti, video</td></tr>
+      <tr><td>Asset e immagini in WEBP e SVG</td><td class="w">Graphic designer</td><td>Sviluppo sito</td></tr>
+      <tr><td>Immagine social preview 1200×630 JPEG</td><td class="w">Graphic designer</td><td>Condivisione del link</td></tr>
+      <tr><td>Foto team — 4 scatti a persona, cartelle nominative <span class="st s-reuse">riusabile</span></td><td class="w">Fotografo (o referente interno)</td><td>Sezione team, personal brand</td></tr>
+    </tbody>
+  </table></div>
+  <p class="dnote">Quattro scatti a persona: uno ambientato, più frontale, profilo sinistro e profilo destro. Sfondo indifferente, conta il volto illuminato e a fuoco. Sono le informazioni minime per ricostruire un volto coerente nei contenuti digitali.</p>
+
+  <div class="dgroup"><span class="ph">Fase 2</span><h4>Contenuti</h4></div>
+  <div class="tw"><table>
+    <thead><tr><th>Deliverable</th><th>Competenze</th><th>Blocca</th></tr></thead>
+    <tbody>
+      <tr><td>Copy completo del sito</td><td class="w">Copywriter</td><td>Sviluppo, bio social</td></tr>
+      <tr><td>Case study compilati su template guida <span class="st s-half">in parte</span></td><td class="w">Referente tecnico + copywriter</td><td>Sezione case study</td></tr>
+      <tr><td>Team e ruoli: background, competenze, certificazioni <span class="st s-reuse">riusabile</span></td><td class="w">Referente interno / HR</td><td>Sezione team</td></tr>
+      <tr><td>Dati numerici: clienti, progetti, anni, crescita <span class="st s-reuse">riusabile</span></td><td class="w">Referente interno / controllo</td><td>Sezione credibilità </td></tr>
+      <tr><td>Partner, collaborazioni, certificazioni citabili <span class="st s-reuse">riusabile</span></td><td class="w">Referente interno</td><td>Sezione credibilità </td></tr>
+    </tbody>
+  </table></div>
+  <p class="dnote">I dati numerici devono poter reggere una domanda diretta. Un numero che nessun sistema misura è un problema rimandato, non risolto.</p>
+
+  <div class="dgroup"><span class="ph">Fase 3</span><h4>Sito</h4></div>
+  <div class="tw"><table>
+    <thead><tr><th>Deliverable</th><th>Competenze</th><th>Blocca</th></tr></thead>
+    <tbody>
+      <tr><td>Documento layout desktop</td><td class="w">UI designer / art director</td><td>Sviluppo</td></tr>
+      <tr><td>Documento layout mobile</td><td class="w">UI designer</td><td>Sviluppo</td></tr>
+      <tr><td>Documento animazioni e logiche di funzionamento</td><td class="w">UI designer + motion designer</td><td>Sviluppo</td></tr>
+      <tr><td>Struttura del sito: sezioni, scorrimento, logica case study <span class="st s-half">in parte</span></td><td class="w">UI designer + strategist</td><td>Sviluppo, copy</td></tr>
+      <tr><td>Ambiente di staging protetto <span class="st s-reuse">riusabile</span></td><td class="w">Frontend dev</td><td>Ciclo di feedback</td></tr>
+      <tr><td>Elenco tool e integrazioni da montare <span class="st s-reuse">riusabile</span></td><td class="w">Frontend dev + media buyer</td><td>Messa online</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="dgroup"><span class="ph">Fase 4</span><h4>Conformità e tracciamento</h4></div>
+  <div class="tw"><table>
+    <thead><tr><th>Deliverable</th><th>Competenze</th><th>Blocca</th></tr></thead>
+    <tbody>
+      <tr><td>Privacy policy, cookie policy, termini e condizioni <span class="st s-half">in parte</span></td><td class="w">Tool legale + referente privacy</td><td>Messa online</td></tr>
+      <tr><td>Banner cookie configurato</td><td class="w">Referente privacy</td><td>Attivazione tracking</td></tr>
+      <tr><td>Mappatura servizi terzi e punti di raccolta dati</td><td class="w">Referente privacy + dev</td><td>Validità del consenso</td></tr>
+      <tr><td>Consensi immagine delle persone sul sito <span class="st s-reuse">riusabile</span></td><td class="w">Referente interno / HR</td><td>Pubblicazione</td></tr>
+      <tr><td>Pixel e Conversions API configurati e testati</td><td class="w">Dev integrazioni + media buyer</td><td>Lancio campagne</td></tr>
+      <tr><td>Verifiche Meta: profilo, dominio, azienda <span class="st s-half">in parte</span></td><td class="w">Media buyer + amministrazione</td><td>Lancio campagne</td></tr>
+      <tr><td>Istruzioni di integrazione + scheda di verifica <span class="st s-reuse">riusabile</span></td><td class="w">Chi configura</td><td>Chiusura della fase</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="dgroup"><span class="ph">Fase 5</span><h4>Lancio: video, social, campagne</h4></div>
+  <div class="tw"><table>
+    <thead><tr><th>Deliverable</th><th>Competenze</th><th>Blocca</th></tr></thead>
+    <tbody>
+      <tr><td>Copy video modulare: corpo + hook alternativi</td><td class="w">Copywriter</td><td>Riprese</td></tr>
+      <tr><td>Video sito: video, device e frame anteprima — desktop e mobile</td><td class="w">Videomaker / editor + graphic designer</td><td>Above the fold del sito</td></tr>
+      <tr><td>Video campagne, uno per hook</td><td class="w">Videomaker / editor</td><td>Lancio campagne</td></tr>
+      <tr><td>Vetrina di lancio: caroselli + caption, in sequenza</td><td class="w">Art director + copywriter</td><td>Apertura profili</td></tr>
+      <tr><td>Profili social completi: bio, immagine, dati</td><td class="w">Social / referente interno</td><td>Campagne</td></tr>
+      <tr><td>Liste clienti e target in CSV, con contatti validi <span class="st s-reuse">riusabile</span></td><td class="w">Referente commerciale + CRM</td><td>Custom audience</td></tr>
+      <tr><td>Struttura campagne e pubblici</td><td class="w">Media buyer</td><td>Spesa</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="dgroup"><span class="ph">Trasversale</span><h4>Documentale e coordinamento</h4></div>
+  <div class="tw"><table>
+    <thead><tr><th>Deliverable</th><th>Competenze</th><th>Blocca</th></tr></thead>
+    <tbody>
+      <tr><td>Cartella condivisa strutturata, accessi nominali <span class="st s-reuse">riusabile</span></td><td class="w">Project coordinator</td><td>Ogni consegna</td></tr>
+      <tr><td>Documento punti operativi + timeline <span class="st s-reuse">riusabile</span></td><td class="w">Project coordinator</td><td>Pianificazione</td></tr>
+      <tr><td>Documento di raccolta informazioni, in due consegne <span class="st s-reuse">riusabile</span></td><td class="w">Project coordinator</td><td>Contenuti</td></tr>
+      <tr><td>Template guida per la compilazione dei case study <span class="st s-reuse">riusabile</span></td><td class="w">Project coordinator + copywriter</td><td>Qualità dei contenuti</td></tr>
+      <tr><td>Serie dei documenti di feedback, numerati</td><td class="w">Art director / UI designer</td><td>Chiusura sviluppo</td></tr>
+    </tbody>
+  </table></div>
+
+  <p class="dnote">Il documento di raccolta informazioni diviso in due consegne è il singolo strumento che ha funzionato meglio: chiedere tutto in una volta produce ritardi lunghi, chiedere in due tranche mantiene il flusso.</p>
+
+
+</section>
+
+<!-- 10 -->
+<section id="s11">
+  <div class="sec-head"><span class="n">11</span><h3>Decisioni da prendere consapevolmente</h3><span class="k">4 voci</span></div>
+
+  <div class="callout caution">
+    <h4>Non sono regole: sono bivi</h4>
+    <p>Quattro punti che nel ciclo precedente sono stati risolti in un modo che ha funzionato nel breve e ha lasciato una coda. Vanno decisi dal giorno zero, consapevolmente, invece di essere ereditati.</p>
+  </div>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">11.1</div><div class="rbody">
+    <h4>Chi intesta pagine, Business Manager e account pubblicitario<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Meta richiede che le risorse siano agganciate a un profilo personale con storico. La domanda vera è <em>quale</em>. Se le pagine risultano di proprietà del profilo di una persona fisica anziché di un Business Manager intestato alla società , l'esposizione non è una campagna: è l'intero asset — pagina, account, storico pubblicitario, pubblici.</p>
+    <p class="why"><b>Da decidere prima di aprire qualsiasi cosa</b>quale profilo detiene, chi è admin, e come si trasferisce se quella persona esce. Rifarlo dopo, con storico già costruito, costa molto di più.</p>
+  </div></article>
+
+  <article class="rule" data-tag="vincolo"><div class="rid">11.2</div><div class="rbody">
+    <h4>Come si porta un profilo alla soglia di verifica<span class="tag t-vincolo">Vincolo</span></h4>
+    <p>Meta chiede un profilo con storico e una base minima di connessioni prima di verificarlo. Le tecniche per arrivarci in fretta — far arrivare richieste di amicizia senza mandarne, per non essere letti come spam — esistono perché il comportamento è esattamente quello che il sistema classifica come spam.</p>
+    <p class="why"><b>La decisione</b>usare un profilo che ha già uno storico autentico, o costruirne uno. La prima strada è più lenta a monte e non lascia nulla dietro; la seconda è più veloce e mette il rischio sull'account che poi ospiterà tutta la spesa pubblicitaria.</p>
+  </div></article>
+
+  <article class="rule" data-tag="scelta"><div class="rid">11.3</div><div class="rbody">
+    <h4>Riscaldamento dell'account pubblicitario<span class="tag t-scelta">Scelta</span></h4>
+    <p>Un account nuovo senza storico parte con costi più alti, distribuzione peggiore e più rischio di blocco. Una prima campagna a budget basso, non di vendita, gli costruisce uno storico. Ordine di grandezza osservato: ~10 €/giorno per una decina di giorni.</p>
+    <p class="why"><b>Il punto</b>è la prassi meno problematica delle quattro. Ma costruisce valore sull'asset descritto in 11.1: prima si chiarisce l'intestazione, poi si scalda.</p>
+  </div></article>
+
+  <article class="rule" data-tag="scelta"><div class="rid">11.4</div><div class="rbody">
+    <h4>Quanto si può spingere su numeri e certificazioni<span class="tag t-scelta">Scelta</span></h4>
+    <p>La posizione marketing classica è che i numeri sul sito possano essere indicativi, perché conta la percezione complessiva di solidità . Vale per molti mercati. Vale molto meno quando il pubblico che vuoi intercettare è fatto di decisori tecnici, che è esattamente il pubblico di Riscan.</p>
+    <p class="why"><b>Il test</b>ogni numero pubblicato deve sopravvivere alla domanda «come lo calcolate». Se non sopravvive, o si costruisce il sistema che lo misura, o non si pubblica. Stesso ragionamento per una certificazione comunicata prima di essere ottenuta.</p>
+  </div></article>
+</section>
+
+<!-- 11 -->
+<section id="s12">
+  <div class="sec-head"><span class="n">12</span><h3>Checklist</h3><span class="k">4 liste</span></div>
+  <p class="sec-intro">Le spunte restano solo sul tuo browser.</p>
+
+  <div class="ck-head"><h4>A · Apertura — nome, domini, account</h4><button class="rst" data-ck="a">azzera</button></div>
+  <ul class="ck" data-ck="a">
+    <li><input type="checkbox" id="a1"><label for="a1">Nome validato in parallelo su domini <em>e</em> username social (§1.1)</label></li>
+    <li><input type="checkbox" id="a2"><label for="a2">Domini registrati, primario e redirect definiti (§1.3)</label></li>
+    <li><input type="checkbox" id="a3"><label for="a3">Mail madre, mail aziendali, mail di servizio (§1.4)</label></li>
+    <li><input type="checkbox" id="a4"><label for="a4">Profili social aperti, suffisso HQ se serve (§1.2)</label></li>
+    <li><input type="checkbox" id="a5"><label for="a5">2FA sull'account brand, non su una persona (§1.5)</label></li>
+    <li><input type="checkbox" id="a6"><label for="a6"><strong>Deciso chi intesta pagine, BM e ad account</strong> (§11.1)</label></li>
+    <li><input type="checkbox" id="a7"><label for="a7">Deciso come coprire le 8 competenze mancanti: assunzione, progetto o esterno (§09)</label></li>
+  </ul>
+
+  <div class="ck-head"><h4>B · Messa online del sito</h4><button class="rst" data-ck="b">azzera</button></div>
+  <ul class="ck" data-ck="b">
+    <li><input type="checkbox" id="b1"><label for="b1">Split corporate / landing-ads deciso a inizio sviluppo (§2.2)</label></li>
+    <li><input type="checkbox" id="b2"><label for="b2">Affordance di ritorno rimosse dal flusso di conversione (§2.1)</label></li>
+    <li><input type="checkbox" id="b3"><label for="b3">Title impostato sul brand puro (§2.3)</label></li>
+    <li><input type="checkbox" id="b4"><label for="b4">Open Graph 1200×630 + scrape forzato dal Sharing Debugger (§2.3)</label></li>
+    <li><input type="checkbox" id="b5"><label for="b5">Noindex sulle pagine tecniche + esclusione dalla sitemap (§2.3)</label></li>
+    <li><input type="checkbox" id="b6"><label for="b6">Download di immagini e testi bloccato (§2.3)</label></li>
+    <li><input type="checkbox" id="b7"><label for="b7">Player video: nessun controllo, loop, check desktop e mobile (§8.3)</label></li>
+    <li><input type="checkbox" id="b8"><label for="b8">Consensi immagine raccolti per chi compare sul sito (§10, fase 4)</label></li>
+  </ul>
+
+  <div class="ck-head"><h4>C · Tracking, consenso e Meta</h4><button class="rst" data-ck="c">azzera</button></div>
+  <ul class="ck" data-ck="c">
+    <li><input type="checkbox" id="c1"><label for="c1">Tre documenti legali generati sul sito reale (§6.1)</label></li>
+    <li><input type="checkbox" id="c2"><label for="c2">Mappatura servizi terzi + punti di raccolta, Riscan incluso (§6.2)</label></li>
+    <li><input type="checkbox" id="c3"><label for="c3">Banner in produzione = configuratore (§6.4)</label></li>
+    <li><input type="checkbox" id="c4"><label for="c4">Verificato con devtools che i tag partano post-consenso (§6.3)</label></li>
+    <li><input type="checkbox" id="c5"><label for="c5">Nove parametri tracciati fino al CRM, come campi dedicati (§4.1, §4.2)</label></li>
+    <li><input type="checkbox" id="c6"><label for="c6">Audit pagine collegate: nessuna restrizione pregressa (§5.4)</label></li>
+    <li><input type="checkbox" id="c7"><label for="c7">Verifiche Meta nell'ordine: profilo — portfolio — dominio — azienda (§5.1)</label></li>
+    <li><input type="checkbox" id="c8"><label for="c8"><strong>Quattro eventi testati su pixel e CAPI + deduplicazione</strong> (§4.4)</label></li>
+    <li><input type="checkbox" id="c9"><label for="c9">Liste clienti e target con contatti validi (§5.6)</label></li>
+    <li><input type="checkbox" id="c10"><label for="c10">Privacy policy linkata sulla pagina Facebook (§6.4)</label></li>
+  </ul>
+
+  <div class="ck-head"><h4>D · Riscan</h4><button class="rst" data-ck="d">azzera</button></div>
+  <ul class="ck" data-ck="d">
+    <li><input type="checkbox" id="d1"><label for="d1">6–8 domande sul rischio operativo, pesi definiti (§3.1)</label></li>
+    <li><input type="checkbox" id="d2"><label for="d2">Tre fasce + priorità delle aree per gli insight (§3.2)</label></li>
+    <li><input type="checkbox" id="d3"><label for="d3">Ogni combinazione produce un esito e smista su un flusso mail (§3.3)</label></li>
+    <li><input type="checkbox" id="d4"><label for="d4">Terminologia e polarità coerenti tra output al lead e report interno (§3.4)</label></li>
+    <li><input type="checkbox" id="d5"><label for="d5">Contatto come ultima domanda, gate del risultato (§3.5)</label></li>
+    <li><input type="checkbox" id="d6"><label for="d6">Reset sessione testato a scansione conclusa (§3.5)</label></li>
+    <li><input type="checkbox" id="d7"><label for="d7">Anti-numeri-fake testato con pattern ripetitivi (§3.5)</label></li>
+    <li><input type="checkbox" id="d8"><label for="d8">Notifica lead attiva, obiettivo richiamo entro 10 minuti (§3.5)</label></li>
+    <li><input type="checkbox" id="d9"><label for="d9">Report identico in mail interna e nel CRM (§4.3)</label></li>
+  </ul>
+</section>
+
+</main>
+
+<footer class="foot">
+  <p><strong>Origine.</strong> Le regole sono ricavate da un ciclo completo già eseguito — dal naming al lancio delle campagne — spogliato di tutto ciò che riguardava quel progetto specifico. Restano solo le cose che si ripeteranno identiche.</p>
+  <p><strong>Limite.</strong> Il documento copre l'esecuzione, non l'ideazione: cosa deve esistere, in che ordine, con quali competenze e con quali vincoli. Non contiene il metodo per costruire un posizionamento o progettare un layout da zero.</p>
+  <p><strong>Manutenzione.</strong> Ogni volta che una regola si rivela sbagliata su una nuova business unit, va corretta qui invece che ricordata. La sezione 11 va riletta all'inizio di ogni ciclo, non consultata quando il problema si presenta.</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  var q = document.getElementById('q');
+  var chips = Array.prototype.slice.call(document.querySelectorAll('.chip'));
+  var rules = Array.prototype.slice.call(document.querySelectorAll('.rule'));
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section'));
+  var countEl = document.getElementById('count');
+  var emptyEl = document.getElementById('empty');
+  var active = [];
+
+  rules.forEach(function(r){ r.dataset.text = r.textContent.toLowerCase(); });
+
+  function apply(){
+    var term = (q.value || '').trim().toLowerCase();
+    var shown = 0;
+    rules.forEach(function(r){
+      var tags = (r.dataset.tag || '').split(' ');
+      var okTag = active.length === 0 || active.some(function(t){ return tags.indexOf(t) !== -1; });
+      var okTxt = !term || r.dataset.text.indexOf(term) !== -1;
+      var on = okTag && okTxt;
+      r.style.display = on ? '' : 'none';
+      if (on) shown++;
+    });
+    var filtering = active.length > 0 || !!term;
+    sections.forEach(function(s){
+      var rs = s.querySelectorAll('.rule');
+      if (!rs.length) { s.style.display = filtering ? 'none' : ''; return; }
+      var vis = Array.prototype.some.call(rs, function(r){ return r.style.display !== 'none'; });
+      s.style.display = vis ? '' : 'none';
+      var extras = s.querySelectorAll('.callout, .tw, .sec-intro, .ck, .ck-head, .dgroup, .dnote');
+      Array.prototype.forEach.call(extras, function(e){ e.style.display = filtering ? 'none' : ''; });
+    });
+    countEl.textContent = filtering ? (shown + ' di ' + rules.length + ' regole') : (rules.length + ' regole');
+    emptyEl.style.display = (filtering && shown === 0) ? 'block' : 'none';
+  }
+
+  q.addEventListener('input', apply);
+  chips.forEach(function(c){
+    c.addEventListener('click', function(){
+      var t = c.dataset.t;
+      var i = active.indexOf(t);
+      if (i === -1) { active.push(t); c.setAttribute('aria-pressed','true'); }
+      else { active.splice(i,1); c.setAttribute('aria-pressed','false'); }
+      apply();
+    });
+  });
+
+  var KEY = 'vademecum-bu-ck-v3';
+  function load(){ try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ return {}; } }
+  function save(st){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch(e){} }
+  var state = load();
+  Array.prototype.forEach.call(document.querySelectorAll('.ck input'), function(box){
+    if (state[box.id]) box.checked = true;
+    box.addEventListener('change', function(){ state[box.id] = box.checked; save(state); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.rst'), function(btn){
+    btn.addEventListener('click', function(){
+      var list = document.querySelector('.ck[data-ck="' + btn.dataset.ck + '"]');
+      Array.prototype.forEach.call(list.querySelectorAll('input'), function(box){
+        box.checked = false; state[box.id] = false;
+      });
+      save(state);
+    });
+  });
+
+  apply();
+})();
+</script>
+
+</body>
+</html>

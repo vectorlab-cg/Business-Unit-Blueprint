@@ -15,6 +15,7 @@ ragione.
   materiali: { <idGeneratore>: {...} },
   risultati: { ... },
   consegna: { <chiaveOutput>: { selezionato, nota } },
+  lancio: { <chiaveVerifica>: { selezionato, nota } },
   decisione: null | 'continua' | 'modifica' | 'ferma',
   noteDecisione: { motivazione, data }
 }
@@ -203,6 +204,21 @@ ipotesi/generato-da-IA/mandatorio (non è un dato della BU, è uno strumento
 di consegna) e non entra mai in `completezza()` o in "cosa fermerebbe
 questa business unit": una BU non è "meno pronta" se non hai ancora deciso
 quali output servono al team creativo.
+
+## Lancio
+
+`lancio` (`BU.schema.CHECKLIST_LANCIO`) è lo stesso meccanismo di
+`consegna` — stessa forma `{ selezionato, nota }`, stessa esclusione da
+completezza/campi critici — ma per un contenuto diverso: 34 verifiche
+tecniche/operative di lancio (setup domini/social, sito, tracking e
+consenso, Meta, software di qualificazione), raggruppate in quattro
+categorie (`apertura`, `sito`, `tracking_meta`, `riscan`) invece delle due
+di `consegna` (`testi`, `design`). Il contenuto viene da
+[`docs/vademecum-nuova-bu.html`](vademecum-nuova-bu.html), un documento
+company-wide (uguale per ogni BU) linkato dalla sidebar — non duplicato
+nei dati della BU: solo le 34 voci-checklist e il loro stato per-BU vivono
+in `schema.js`, il resto (le regole, il perché, le tabelle di competenze e
+deliverable) resta nel documento.
 
 ## Normalizzazione / migrazione
 

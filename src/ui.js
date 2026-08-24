@@ -1,7 +1,7 @@
 /*
  * ui.js
- * Le cinque viste di una business unit: COMPILA, MATERIALI, DOCUMENTO,
- * VALIDAZIONE, OUTPUT.
+ * Le sei viste di una business unit: COMPILA, MATERIALI, DOCUMENTO,
+ * LANCIO, VALIDAZIONE, OUTPUT.
  * Le funzioni qui dentro mutano direttamente l'oggetto `bu` passato (è un
  * riferimento vivo nello stato di app.js) e chiamano `segnalaModifica()`
  * per notificare che qualcosa è cambiato (salvataggio differito, sidebar).
@@ -484,15 +484,15 @@
   }
 
   // ---------------------------------------------------------------------
-  // VISTA: OUTPUT — checklist di tutto ciò che un art director/copywriter
-  // potrebbe produrre a partire da questa BU. Non tutto serve per ogni BU:
-  // si spunta cosa serve davvero. Non influisce su completezza o campi
-  // critici, è solo uno strumento per il brief di consegna.
+  // VISTE checklist (OUTPUT, LANCIO) — stesso motore: un catalogo fisso di
+  // voci { chiave, etichetta, categoria }, spuntabili per questa BU con una
+  // nota opzionale. Contenuto e pubblico diversi (OUTPUT: cosa produce il
+  // team creativo; LANCIO: cosa è stato verificato operativamente), ma
+  // nessuna delle due influisce su completezza o campi critici — sono
+  // strumenti di consegna/verifica, non parte della validazione della BU.
   // ---------------------------------------------------------------------
 
-  function rigaConsegna(bu, def, segnalaModifica) {
-    var voce = bu.consegna[def.chiave];
-
+  function rigaChecklist(voce, etichetta, segnalaModifica) {
     var checkbox = el('input', {
       type: 'checkbox', class: 'consegna-checkbox',
       checked: voce.selezionato,
@@ -512,26 +512,49 @@
     });
 
     return el('div', { class: 'consegna-riga' + (voce.selezionato ? ' consegna-riga--selezionata' : '') }, [
-      el('label', { class: 'consegna-etichetta' }, [checkbox, ' ' + def.etichetta]),
+      el('label', { class: 'consegna-etichetta' }, [checkbox, ' ' + etichetta]),
       nota
     ]);
   }
 
-  function renderConsegna(container, bu, segnalaModifica) {
+  // introTesto: spiegazione in cima. statoOggetto: bu.consegna o bu.lancio.
+  // elencoDef: schema.OUTPUT_CREATIVI o schema.CHECKLIST_LANCIO. categorie:
+  // [{ chiave, etichetta }, ...], nell'ordine in cui vanno mostrate.
+  function renderChecklist(container, introTesto, statoOggetto, elencoDef, categorie, segnalaModifica) {
     container.innerHTML = '';
+    container.appendChild(el('div', { class: 'campo-aiuto' }, [introTesto]));
 
-    container.appendChild(el('div', { class: 'campo-aiuto' },
-      ['Cosa può servire chiedere al team creativo (art director, copywriter) per questa BU. Spunta quello che serve davvero: il resto resta come promemoria di cosa esiste.']));
-
-    ['testi', 'design'].forEach(function (categoria) {
+    categorie.forEach(function (cat) {
       var sezioneEl = el('section', { class: 'sezione' }, [
-        el('h2', { class: 'sezione-titolo', text: categoria === 'testi' ? 'Testi' : 'Design' })
+        el('h2', { class: 'sezione-titolo', text: cat.etichetta })
       ]);
-      schema.OUTPUT_CREATIVI.filter(function (def) { return def.categoria === categoria; }).forEach(function (def) {
-        sezioneEl.appendChild(rigaConsegna(bu, def, segnalaModifica));
+      elencoDef.filter(function (def) { return def.categoria === cat.chiave; }).forEach(function (def) {
+        sezioneEl.appendChild(rigaChecklist(statoOggetto[def.chiave], def.etichetta, segnalaModifica));
       });
       container.appendChild(sezioneEl);
     });
+  }
+
+  function renderConsegna(container, bu, segnalaModifica) {
+    renderChecklist(container,
+      'Cosa può servire chiedere al team creativo (art director, copywriter) per questa BU. Spunta quello che serve davvero: il resto resta come promemoria di cosa esiste.',
+      bu.consegna, schema.OUTPUT_CREATIVI,
+      [{ chiave: 'testi', etichetta: 'Testi' }, { chiave: 'design', etichetta: 'Design' }],
+      segnalaModifica);
+  }
+
+  function renderLancio(container, bu, segnalaModifica) {
+    renderChecklist(container,
+      'Checklist operativa per il lancio di questa BU — setup, sito, tracking/Meta, software di qualificazione. ' +
+        'Dettaglio di ogni voce nel Vademecum operativo (link in sidebar). Spunta cosa è stato verificato per questa BU.',
+      bu.lancio, schema.CHECKLIST_LANCIO,
+      [
+        { chiave: 'apertura', etichetta: 'Apertura' },
+        { chiave: 'sito', etichetta: 'Sito' },
+        { chiave: 'tracking_meta', etichetta: 'Tracking e Meta' },
+        { chiave: 'riscan', etichetta: 'Riscan' }
+      ],
+      segnalaModifica);
   }
 
   // ---------------------------------------------------------------------
@@ -546,6 +569,7 @@
     renderDocumento: renderDocumento,
     renderValidazione: renderValidazione,
     renderConsegna: renderConsegna,
+    renderLancio: renderLancio,
     MAPPA_DECISIONE_STATO: MAPPA_DECISIONE_STATO
   };
 

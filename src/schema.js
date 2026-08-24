@@ -269,6 +269,62 @@
   ];
 
   // ---------------------------------------------------------------------
+  // Checklist operativa di lancio (vista LANCIO) — un elenco fisso di
+  // verifiche tecniche/operative per portare una BU dal nome al primo
+  // lead: setup domini/social, messa online del sito, tracking/consenso/
+  // Meta, software di qualificazione (Riscan). Estratta da
+  // docs/vademecum-nuova-bu.html (dove ogni voce ha il dettaglio, citato
+  // qui col riferimento §). Non tutte le voci si applicano a ogni BU (es.
+  // una BU senza campagne Meta non avrà mai bisogno delle voci Riscan):
+  // si spunta cosa è stato verificato per QUESTA BU, non è un vincolo
+  // universale come i campi critici.
+  // ---------------------------------------------------------------------
+
+  var CHECKLIST_LANCIO = [
+    // A — Apertura: nome, domini, account
+    { chiave: 'nome_validato_domini_social', etichetta: 'Nome validato in parallelo su domini e username social (§1.1)', categoria: 'apertura' },
+    { chiave: 'domini_registrati', etichetta: 'Domini registrati, primario e redirect definiti (§1.3)', categoria: 'apertura' },
+    { chiave: 'gerarchia_mail', etichetta: 'Mail madre, mail aziendali, mail di servizio (§1.4)', categoria: 'apertura' },
+    { chiave: 'profili_social_aperti', etichetta: 'Profili social aperti, suffisso HQ se serve (§1.2)', categoria: 'apertura' },
+    { chiave: 'due_fa_account_brand', etichetta: '2FA sull\'account brand, non su una persona (§1.5)', categoria: 'apertura' },
+    { chiave: 'intestazione_pagine_bm', etichetta: 'Deciso chi intesta pagine, Business Manager e ad account (§11.1)', categoria: 'apertura' },
+    { chiave: 'copertura_competenze_mancanti', etichetta: 'Deciso come coprire le competenze mancanti: assunzione, progetto o esterno (§09)', categoria: 'apertura' },
+
+    // B — Messa online del sito
+    { chiave: 'split_corporate_landing', etichetta: 'Split corporate / landing-ads deciso a inizio sviluppo (§2.2)', categoria: 'sito' },
+    { chiave: 'affordance_ritorno_rimosse', etichetta: 'Affordance di ritorno rimosse dal flusso di conversione (§2.1)', categoria: 'sito' },
+    { chiave: 'title_brand_puro', etichetta: 'Title impostato sul brand puro (§2.3)', categoria: 'sito' },
+    { chiave: 'open_graph_scrape', etichetta: 'Open Graph 1200×630 + scrape forzato dal Sharing Debugger (§2.3)', categoria: 'sito' },
+    { chiave: 'noindex_pagine_tecniche', etichetta: 'Noindex sulle pagine tecniche + esclusione dalla sitemap (§2.3)', categoria: 'sito' },
+    { chiave: 'download_bloccato', etichetta: 'Download di immagini e testi bloccato (§2.3)', categoria: 'sito' },
+    { chiave: 'player_video_conforme', etichetta: 'Player video: nessun controllo, loop, check desktop e mobile (§8.3)', categoria: 'sito' },
+    { chiave: 'consensi_immagine_sito', etichetta: 'Consensi immagine raccolti per chi compare sul sito (§10, fase 4)', categoria: 'sito' },
+
+    // C — Tracking, consenso e Meta
+    { chiave: 'documenti_legali_generati', etichetta: 'Tre documenti legali generati sul sito reale (§6.1)', categoria: 'tracking_meta' },
+    { chiave: 'mappatura_servizi_terzi', etichetta: 'Mappatura servizi terzi + punti di raccolta, Riscan incluso (§6.2)', categoria: 'tracking_meta' },
+    { chiave: 'banner_produzione_configuratore', etichetta: 'Banner in produzione = configuratore (§6.4)', categoria: 'tracking_meta' },
+    { chiave: 'tag_post_consenso_verificati', etichetta: 'Verificato con devtools che i tag partano post-consenso (§6.3)', categoria: 'tracking_meta' },
+    { chiave: 'parametri_utm_tracciati', etichetta: 'Nove parametri tracciati fino al CRM, come campi dedicati (§4.1, §4.2)', categoria: 'tracking_meta' },
+    { chiave: 'audit_pagine_collegate', etichetta: 'Audit pagine collegate: nessuna restrizione pregressa (§5.4)', categoria: 'tracking_meta' },
+    { chiave: 'verifiche_meta_ordine', etichetta: 'Verifiche Meta nell\'ordine: profilo → portfolio → dominio → azienda (§5.1)', categoria: 'tracking_meta' },
+    { chiave: 'eventi_pixel_capi_testati', etichetta: 'Quattro eventi testati su pixel e CAPI + deduplicazione (§4.4)', categoria: 'tracking_meta' },
+    { chiave: 'liste_clienti_target', etichetta: 'Liste clienti e target con contatti validi (§5.6)', categoria: 'tracking_meta' },
+    { chiave: 'privacy_policy_facebook', etichetta: 'Privacy policy linkata sulla pagina Facebook (§6.4)', categoria: 'tracking_meta' },
+
+    // D — Riscan (software di qualificazione)
+    { chiave: 'domande_rischio_operativo', etichetta: '6-8 domande sul rischio operativo, pesi definiti (§3.1)', categoria: 'riscan' },
+    { chiave: 'fasce_priorita_insight', etichetta: 'Tre fasce + priorità delle aree per gli insight (§3.2)', categoria: 'riscan' },
+    { chiave: 'combinazioni_esito_flusso', etichetta: 'Ogni combinazione produce un esito e smista su un flusso mail (§3.3)', categoria: 'riscan' },
+    { chiave: 'terminologia_polarita_coerenti', etichetta: 'Terminologia e polarità coerenti tra output al lead e report interno (§3.4)', categoria: 'riscan' },
+    { chiave: 'contatto_ultima_domanda', etichetta: 'Contatto come ultima domanda, gate del risultato (§3.5)', categoria: 'riscan' },
+    { chiave: 'reset_sessione_testato', etichetta: 'Reset sessione testato a scansione conclusa (§3.5)', categoria: 'riscan' },
+    { chiave: 'anti_fake_testato', etichetta: 'Anti-numeri-fake testato con pattern ripetitivi (§3.5)', categoria: 'riscan' },
+    { chiave: 'notifica_lead_attiva', etichetta: 'Notifica lead attiva, obiettivo richiamo entro 10 minuti (§3.5)', categoria: 'riscan' },
+    { chiave: 'report_crm_coerente', etichetta: 'Report identico in mail interna e nel CRM (§4.3)', categoria: 'riscan' }
+  ];
+
+  // ---------------------------------------------------------------------
   // Id
   // ---------------------------------------------------------------------
 
@@ -329,6 +385,14 @@
     return consegna;
   }
 
+  function nuovoLancio() {
+    var lancio = {};
+    CHECKLIST_LANCIO.forEach(function (def) {
+      lancio[def.chiave] = { selezionato: false, nota: '' };
+    });
+    return lancio;
+  }
+
   function nuovaBU(nome) {
     var ora = new Date().toISOString();
     return {
@@ -342,6 +406,7 @@
       materiali: {},
       risultati: nuoviRisultati(),
       consegna: nuovaConsegna(),
+      lancio: nuovoLancio(),
       decisione: null,
       noteDecisione: { motivazione: '', data: '' }
     };
@@ -530,6 +595,20 @@
     return consegna;
   }
 
+  function normalizzaLancio(grezzi) {
+    var lancio = nuovoLancio();
+    if (grezzi && typeof grezzi === 'object') {
+      CHECKLIST_LANCIO.forEach(function (def) {
+        var g = grezzi[def.chiave];
+        if (g && typeof g === 'object') {
+          lancio[def.chiave].selezionato = !!g.selezionato;
+          if (typeof g.nota === 'string') lancio[def.chiave].nota = g.nota;
+        }
+      });
+    }
+    return lancio;
+  }
+
   function normalizzaBU(grezzo) {
     grezzo = (grezzo && typeof grezzo === 'object') ? grezzo : {};
     var base = nuovaBU(typeof grezzo.nome === 'string' && grezzo.nome.trim() ? grezzo.nome : undefined);
@@ -542,6 +621,7 @@
     base.materiali = normalizzaMateriali(grezzo.materiali);
     base.risultati = normalizzaRisultati(grezzo.risultati);
     base.consegna = normalizzaConsegna(grezzo.consegna);
+    base.lancio = normalizzaLancio(grezzo.lancio);
     base.decisione = DECISIONI.indexOf(grezzo.decisione) !== -1 ? grezzo.decisione : null;
     base.noteDecisione = {
       motivazione: (grezzo.noteDecisione && typeof grezzo.noteDecisione.motivazione === 'string') ? grezzo.noteDecisione.motivazione : '',
@@ -570,6 +650,7 @@
     CAMPI: CAMPI,
     RISULTATI: RISULTATI,
     OUTPUT_CREATIVI: OUTPUT_CREATIVI,
+    CHECKLIST_LANCIO: CHECKLIST_LANCIO,
 
     generaId: generaId,
     nuovaBU: nuovaBU,

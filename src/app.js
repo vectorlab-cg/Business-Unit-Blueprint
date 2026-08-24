@@ -23,8 +23,8 @@
     fileHandleDiBU: {} // buId -> { nomeFile, percorso, sha, downloadUrl }
   };
 
-  var VISTE = ['compila', 'materiali', 'documento', 'validazione', 'consegna'];
-  var VISTE_ETICHETTE = { compila: 'Compila', materiali: 'Materiali', documento: 'Documento', validazione: 'Validazione', consegna: 'Output' };
+  var VISTE = ['compila', 'materiali', 'documento', 'lancio', 'validazione', 'consegna'];
+  var VISTE_ETICHETTE = { compila: 'Compila', materiali: 'Materiali', documento: 'Documento', lancio: 'Lancio', validazione: 'Validazione', consegna: 'Output' };
 
   var timerSalvataggio = null;
   var sidebarRefs = {};
@@ -494,6 +494,8 @@
       BU.ui.renderMateriali(container, bu, callback);
     } else if (stato.vista === 'documento') {
       BU.ui.renderDocumento(container, bu, function () { scaricaDocumento(bu); });
+    } else if (stato.vista === 'lancio') {
+      BU.ui.renderLancio(container, bu, callback);
     } else if (stato.vista === 'validazione') {
       BU.ui.renderValidazione(container, bu, callback);
     } else if (stato.vista === 'consegna') {

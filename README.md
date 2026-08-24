@@ -26,7 +26,14 @@ marcata **"Solo locale"** in sidebar finché non premi **"Condividi su
 GitHub"** (compare in testa non appena c'è un token). Dettagli in
 [`src/cartella.js`](src/cartella.js).
 
-## Le cinque viste
+In fondo alla sidebar, **"Vademecum operativo"** apre
+[docs/vademecum-nuova-bu.html](docs/vademecum-nuova-bu.html): regole,
+competenze e checklist per il lancio di una BU (setup domini/social,
+tracking, Meta, privacy, deliverable). È un documento a sé, uguale per ogni
+BU — non cambia in base a quale hai selezionato, quindi vive fuori dal
+flusso Compila/Materiali/.../Output invece che come tab.
+
+## Le sei viste
 
 - **Compila** — questionario per sezioni (Identità, Mercato, Offerta,
   Risorse, Economia, Pilota, Test), apribili/chiudibili una per una, più le
@@ -37,6 +44,12 @@ GitHub"** (compare in testa non appena c'è un token). Dettagli in
   testo modificabile a mano.
 - **Documento** — tutti i materiali concatenati e renderizzati (titoli,
   tabelle, badge di stato), con il download del file .md grezzo.
+- **Lancio** — checklist operativa di 34 verifiche tecniche per portare la
+  BU dal nome al primo lead (setup domini/social, sito, tracking/Meta,
+  software di qualificazione), estratta dal
+  [Vademecum operativo](docs/vademecum-nuova-bu.html) — il § in ogni voce
+  rimanda al dettaglio. Come Output: si spunta cosa è stato verificato per
+  questa BU, non è un vincolo universale.
 - **Validazione** — risultati del test e decisione finale: **Continua /
   Modifica / Ferma**.
 - **Output** — checklist di tutto ciò che un art director/copywriter

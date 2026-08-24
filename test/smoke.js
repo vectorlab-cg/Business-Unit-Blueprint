@@ -259,6 +259,11 @@ test('schema: nuovaBU produce una struttura completa', function () {
     assicuraUguale(bu.consegna[def.chiave].selezionato, false);
     assicuraUguale(bu.consegna[def.chiave].nota, '');
   });
+  schema.CHECKLIST_LANCIO.forEach(function (def) {
+    assicura(bu.lancio[def.chiave], 'voce di lancio assente: ' + def.chiave);
+    assicuraUguale(bu.lancio[def.chiave].selezionato, false);
+    assicuraUguale(bu.lancio[def.chiave].nota, '');
+  });
 });
 
 test('schema: OUTPUT_CREATIVI ha solo le categorie testi/design, nessuna chiave duplicata', function () {
@@ -266,6 +271,16 @@ test('schema: OUTPUT_CREATIVI ha solo le categorie testi/design, nessuna chiave 
   schema.OUTPUT_CREATIVI.forEach(function (def) {
     assicura(def.categoria === 'testi' || def.categoria === 'design', 'categoria non valida per "' + def.chiave + '": ' + def.categoria);
     assicura(!chiavi[def.chiave], 'chiave duplicata in OUTPUT_CREATIVI: ' + def.chiave);
+    chiavi[def.chiave] = true;
+  });
+});
+
+test('schema: CHECKLIST_LANCIO ha solo le categorie apertura/sito/tracking_meta/riscan, nessuna chiave duplicata', function () {
+  var categorieValide = ['apertura', 'sito', 'tracking_meta', 'riscan'];
+  var chiavi = {};
+  schema.CHECKLIST_LANCIO.forEach(function (def) {
+    assicura(categorieValide.indexOf(def.categoria) !== -1, 'categoria non valida per "' + def.chiave + '": ' + def.categoria);
+    assicura(!chiavi[def.chiave], 'chiave duplicata in CHECKLIST_LANCIO: ' + def.chiave);
     chiavi[def.chiave] = true;
   });
 });
@@ -284,6 +299,19 @@ test('normalizzazione: consegna preserva selezionato/nota, scarta chiavi sconosc
   assicuraUguale(bu.consegna.logo.selezionato, true, 'una stringa truthy dovrebbe normalizzarsi a true');
   assicuraUguale(bu.consegna.logo.nota, '', 'un valore non stringa per nota dovrebbe ricadere sul default');
   assicura(!bu.consegna.chiave_inesistente, 'una chiave non in OUTPUT_CREATIVI non dovrebbe sopravvivere alla normalizzazione');
+});
+
+test('normalizzazione: lancio preserva selezionato/nota, scarta chiavi sconosciute', function () {
+  var grezzo = {
+    lancio: {
+      domini_registrati: { selezionato: true, nota: 'Fatto il 3/9' },
+      chiave_inesistente: { selezionato: true, nota: 'ignorata' }
+    }
+  };
+  var bu = schema.normalizzaBU(grezzo);
+  assicuraUguale(bu.lancio.domini_registrati.selezionato, true);
+  assicuraUguale(bu.lancio.domini_registrati.nota, 'Fatto il 3/9');
+  assicura(!bu.lancio.chiave_inesistente, 'una chiave non in CHECKLIST_LANCIO non dovrebbe sopravvivere alla normalizzazione');
 });
 
 test('regola: i tre stati validi restano invariati', function () {

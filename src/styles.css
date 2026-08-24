@@ -166,6 +166,20 @@ textarea {
   gap: 6px;
 }
 
+#sidebar-riferimenti {
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+#sidebar-riferimenti .pulsante {
+  display: block;
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
 #indicatore-salvataggio {
   padding: 6px 10px 10px;
   color: var(--text-debole);
