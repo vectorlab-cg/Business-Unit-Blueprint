@@ -551,8 +551,7 @@
       [
         { chiave: 'apertura', etichetta: 'Apertura' },
         { chiave: 'sito', etichetta: 'Sito' },
-        { chiave: 'tracking_meta', etichetta: 'Tracking e Meta' },
-        { chiave: 'riscan', etichetta: 'Riscan' }
+        { chiave: 'tracking_meta', etichetta: 'Tracking e Meta' }
       ],
       segnalaModifica);
   }

@@ -44,9 +44,9 @@ flusso Compila/Materiali/.../Output invece che come tab.
   testo modificabile a mano.
 - **Documento** — tutti i materiali concatenati e renderizzati (titoli,
   tabelle, badge di stato), con il download del file .md grezzo.
-- **Lancio** — checklist operativa di 34 verifiche tecniche per portare la
-  BU dal nome al primo lead (setup domini/social, sito, tracking/Meta,
-  software di qualificazione), estratta dal
+- **Lancio** — checklist operativa di 25 verifiche tecniche per portare la
+  BU dal nome al primo lead (setup domini/social, sito, tracking/Meta),
+  estratta dal
   [Vademecum operativo](docs/vademecum-nuova-bu.html) — il § in ogni voce
   rimanda al dettaglio. Come Output: si spunta cosa è stato verificato per
   questa BU, non è un vincolo universale.

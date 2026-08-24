@@ -275,8 +275,8 @@ test('schema: OUTPUT_CREATIVI ha solo le categorie testi/design, nessuna chiave 
   });
 });
 
-test('schema: CHECKLIST_LANCIO ha solo le categorie apertura/sito/tracking_meta/riscan, nessuna chiave duplicata', function () {
-  var categorieValide = ['apertura', 'sito', 'tracking_meta', 'riscan'];
+test('schema: CHECKLIST_LANCIO ha solo le categorie apertura/sito/tracking_meta, nessuna chiave duplicata', function () {
+  var categorieValide = ['apertura', 'sito', 'tracking_meta'];
   var chiavi = {};
   schema.CHECKLIST_LANCIO.forEach(function (def) {
     assicura(categorieValide.indexOf(def.categoria) !== -1, 'categoria non valida per "' + def.chiave + '": ' + def.categoria);

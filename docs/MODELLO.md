@@ -209,14 +209,14 @@ quali output servono al team creativo.
 
 `lancio` (`BU.schema.CHECKLIST_LANCIO`) è lo stesso meccanismo di
 `consegna` — stessa forma `{ selezionato, nota }`, stessa esclusione da
-completezza/campi critici — ma per un contenuto diverso: 34 verifiche
+completezza/campi critici — ma per un contenuto diverso: 25 verifiche
 tecniche/operative di lancio (setup domini/social, sito, tracking e
-consenso, Meta, software di qualificazione), raggruppate in quattro
-categorie (`apertura`, `sito`, `tracking_meta`, `riscan`) invece delle due
-di `consegna` (`testi`, `design`). Il contenuto viene da
+consenso, Meta), raggruppate in tre categorie (`apertura`, `sito`,
+`tracking_meta`) invece delle due di `consegna` (`testi`, `design`). Il
+contenuto viene da
 [`docs/vademecum-nuova-bu.html`](vademecum-nuova-bu.html), un documento
 company-wide (uguale per ogni BU) linkato dalla sidebar — non duplicato
-nei dati della BU: solo le 34 voci-checklist e il loro stato per-BU vivono
+nei dati della BU: solo le 25 voci-checklist e il loro stato per-BU vivono
 in `schema.js`, il resto (le regole, il perché, le tabelle di competenze e
 deliverable) resta nel documento.
 
