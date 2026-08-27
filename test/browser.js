@@ -33,6 +33,7 @@ function assicura(condizione, messaggio) {
 function installaCartellaFinta() {
   window.__repoFinto = {};
   window.__prossimoConflitto = false;
+  window.__prossimoErroreLettura = null; // percorso il cui prossimo GET raw fallisce, senza sparire dall'elenco
 
   window.fetch = function (url, opzioni) {
     opzioni = opzioni || {};
@@ -52,6 +53,17 @@ function installaCartellaFinta() {
 
     if (metodo === 'GET' && url.indexOf('https://raw.test/') === 0) {
       var percorsoLettura = url.slice('https://raw.test/'.length);
+      if (window.__prossimoErroreLettura === percorsoLettura) {
+        window.__prossimoErroreLettura = null;
+        // Il file resta nell'elenco della cartella (GET /contents/BU lo
+        // mostra ancora): solo la lettura del contenuto grezzo fallisce
+        // questa volta, come un errore di rete/propagazione transitorio.
+        return Promise.resolve({
+          ok: false, status: 503,
+          json: function () { return Promise.resolve({ message: 'errore transitorio simulato' }); },
+          text: function () { return Promise.resolve('errore transitorio simulato'); }
+        });
+      }
       var voceLettura = window.__repoFinto[percorsoLettura];
       return Promise.resolve({
         ok: !!voceLettura, status: voceLettura ? 200 : 404,
@@ -184,6 +196,39 @@ async function main() {
   assicura(ultimoAlert && ultimoAlert.indexOf('nel frattempo') !== -1 && ultimoAlert.indexOf('Aggiorna da GitHub') !== -1,
     'il messaggio di conflitto non è comprensibile/azionabile: ' + JSON.stringify(ultimoAlert));
   esiti.push({ nome: 'un conflitto 409 sul salvataggio mostra un messaggio comprensibile', ok: true });
+
+  // -------------------------------------------------------------------
+  // Scenario 4 (regressione): una BU già condivisa il cui file è ancora
+  // elencato nella cartella ma il cui contenuto fallisce a leggersi in
+  // questo giro (errore di rete/propagazione transitorio) non deve
+  // sparire né perdere il proprio fileHandle — a differenza di una BU
+  // davvero eliminata da qualcun altro (il cui file non è più elencato).
+  // -------------------------------------------------------------------
+  var percorsoCondiviso = await page.evaluate(function () {
+    var stato = window.BU.app.stato;
+    var id = stato.buAttivaId;
+    return stato.fileHandleDiBU[id] ? stato.fileHandleDiBU[id].percorso : null;
+  });
+  assicura(percorsoCondiviso, 'la BU attiva dovrebbe avere un fileHandle condiviso prima dello scenario 4');
+
+  await page.evaluate(function (percorso) { window.__prossimoErroreLettura = percorso; }, percorsoCondiviso);
+  await page.click('#bottone-aggiorna-cartella');
+  await attesa(400);
+
+  var statoDopoErroreLettura = await page.evaluate(function () {
+    return {
+      nomi: Array.from(document.querySelectorAll('.sidebar-voce-nome')).map(function (n) { return n.textContent; }),
+      etichettaLocale: !!document.querySelector('.sidebar-voce-locale'),
+      haSalvaSuGitHub: Array.from(document.querySelectorAll('#bu-header button')).some(function (b) { return b.textContent.trim() === 'Salva su GitHub'; })
+    };
+  });
+  assicura(statoDopoErroreLettura.nomi.indexOf('BU di test E2E') !== -1,
+    'la BU condivisa è sparita dopo un errore di lettura transitorio (il file era ancora elencato): ' + JSON.stringify(statoDopoErroreLettura));
+  assicura(!statoDopoErroreLettura.etichettaLocale,
+    'la BU condivisa è stata retrocessa a "Solo locale" dopo un errore di lettura transitorio');
+  assicura(statoDopoErroreLettura.haSalvaSuGitHub,
+    'la BU condivisa ha perso il pulsante "Salva su GitHub" (fileHandle perso) dopo un errore di lettura transitorio');
+  esiti.push({ nome: 'un errore di lettura transitorio non fa sparire una BU già condivisa', ok: true });
 
   await browser.close();
 }

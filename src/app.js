@@ -227,26 +227,49 @@
   // questa funzione sostituisse l'elenco, sparirebbe dalla vista al
   // prossimo caricamento, e il salvataggio automatico successivo la
   // cancellerebbe per sempre da localStorage. Una BU già condivisa
-  // (presente in stato.fileHandleDiBU) che non ricompare più tra i file
-  // GitHub è considerata eliminata da qualcun altro, non "solo locale": la
-  // cartella condivisa è la fonte di verità per ciò che ha già condiviso.
+  // (presente in stato.fileHandleDiBU) il cui file non compare più
+  // nell'elenco della cartella è considerata eliminata da qualcun altro, non
+  // "solo locale": la cartella condivisa è la fonte di verità per ciò che ha
+  // già condiviso. Ma "il file non è più elencato" e "il file è elencato ma
+  // non sono riuscito a leggerne il contenuto adesso" sono due cose diverse:
+  // solo la prima significa "eliminato". La seconda è quasi sempre un errore
+  // di rete o di propagazione transitorio (es. appena dopo un salvataggio) e
+  // non deve far sparire la BU — si tiene la copia locale già nota.
   function caricaDaCartella() {
     return BU.cartella.elencaFile().then(function (voci) {
+      var nomiFileNellaCartella = {};
+      voci.forEach(function (v) { nomiFileNellaCartella[v.nomeFile] = true; });
+
       var nuovoElenco = [];
       var nuoveMappe = {};
+      var erroriLettura = [];
       var letture = voci.map(function (voce) {
         return BU.cartella.leggiBU(voce).then(function (bu) {
           nuovoElenco.push(bu);
           nuoveMappe[bu.id] = voce;
         }).catch(function (e) {
+          erroriLettura.push(voce.nomeFile);
           console.warn('BU Blueprint: impossibile leggere "' + voce.nomeFile + '": ' + e.message);
         });
       });
       return Promise.all(letture).then(function () {
-        var soloLocali = stato.elenco.filter(function (bu) {
-          return !stato.fileHandleDiBU[bu.id] && !nuoveMappe[bu.id];
+        stato.elenco.forEach(function (bu) {
+          if (nuoveMappe[bu.id]) return; // già ripresa con una lettura riuscita
+          var voceCondivisa = stato.fileHandleDiBU[bu.id];
+          if (voceCondivisa && nomiFileNellaCartella[voceCondivisa.nomeFile]) {
+            // Il file esiste ancora nella cartella ma non è stato possibile
+            // rileggerlo in questo giro: si tiene la copia locale invece di
+            // farla sparire, mantenendo il suo fileHandle noto.
+            nuovoElenco.push(bu);
+            nuoveMappe[bu.id] = voceCondivisa;
+          } else if (!voceCondivisa) {
+            // Mai condivisa: resta locale.
+            nuovoElenco.push(bu);
+          }
+          // Altrimenti: era condivisa e il suo file non è più nella cartella
+          // -> eliminata da qualcun altro, non viene ripresa.
         });
-        stato.elenco = nuovoElenco.concat(soloLocali);
+        stato.elenco = nuovoElenco;
         stato.fileHandleDiBU = nuoveMappe;
         stato.usaCartella = true;
         leggiHash();
@@ -254,6 +277,9 @@
         aggiornaControlliCartella();
         renderSidebar();
         renderMain();
+        if (erroriLettura.length) {
+          console.warn('BU Blueprint: file non rileggibili in questo aggiornamento (copia locale mantenuta dove nota): ' + erroriLettura.join(', '));
+        }
       });
     }).catch(function (e) {
       aggiornaControlliCartella();
