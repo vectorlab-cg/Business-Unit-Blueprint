@@ -77,6 +77,7 @@
     nome: 'Dimensionamento',
     descrizione: 'Prezzo, costo di erogazione, capacità e dimensione del mercato fianco a fianco: la base per stimare se la BU vale l\'investimento.',
     richiede: ['offerta.prezzo', 'economia.costo_erogazione', 'economia.capacita_erogazione', 'economia.dimensione_mercato'],
+    haPrompt: true,
     genera: genera
   });
 

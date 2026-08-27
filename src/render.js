@@ -162,29 +162,55 @@
     return testo.replace(/[.!?]+\s*$/, '');
   }
 
-  // Tutti i materiali di una BU concatenati in un unico documento Markdown —
-  // usato sia dalla vista DOCUMENTO (renderizzata) sia dal download del
-  // singolo file .md. Usa il testo già generato (ed eventualmente
-  // modificato a mano) se presente, altrimenti genera al volo, senza mai
-  // sovrascrivere modifiche manuali salvate.
-  function documentoCompleto(bu) {
+  // Titolo e stato della BU, in testa al documento — condiviso fra
+  // documentoCompleto e la vista DOCUMENTO (src/ui.js), così restano
+  // allineati.
+  function introDocumento(bu) {
     var schema = BU.schema;
-    var righe = [];
-    righe.push('# ' + bu.nome + ' — Materiali');
-    righe.push('');
-    righe.push('Stato: ' + (schema.STATI_BU_ETICHETTE[bu.stato] || bu.stato));
-    righe.push('');
-    BU.gen.elencaGeneratori().forEach(function (generatore) {
+    return '# ' + bu.nome + ' — Materiali\n\nStato: ' + (schema.STATI_BU_ETICHETTE[bu.stato] || bu.stato);
+  }
+
+  // Un blocco per generatore: usato sia da documentoCompleto (concatenato
+  // in un'unica stringa, per il download del file .md) sia dalla vista
+  // DOCUMENTO (renderizzata generatore per generatore, per poter agganciare
+  // un campo interattivo dopo ogni prompt — vedi src/ui.js). Usa il testo
+  // già generato (ed eventualmente modificato a mano) se presente,
+  // altrimenti genera al volo, senza mai sovrascrivere modifiche manuali
+  // salvate.
+  function blocchiDocumento(bu) {
+    var schema = BU.schema;
+    return BU.gen.elencaGeneratori().map(function (generatore) {
       var materiale = bu.materiali[generatore.id];
       var testo = materiale ? materiale.testo : generatore.genera(bu);
-      righe.push('---');
-      righe.push('');
-      righe.push('<!-- Generatore: ' + generatore.nome +
-        (materiale ? ' — stato revisione: ' + schema.STATI_MATERIALE_ETICHETTE[materiale.stato] : ' — non ancora salvato, generato al momento dell\'export') +
-        ' -->');
-      righe.push('');
-      righe.push(testo);
-      righe.push('');
+      var markdown = [
+        '---', '',
+        '<!-- Generatore: ' + generatore.nome +
+          (materiale ? ' — stato revisione: ' + schema.STATI_MATERIALE_ETICHETTE[materiale.stato] : ' — non ancora salvato, generato al momento dell\'export') +
+          ' -->',
+        '', testo, ''
+      ].join('\n');
+      return { generatore: generatore, materiale: materiale, markdown: markdown };
+    });
+  }
+
+  // Markdown del risultato di un prompt, incollato a mano dal materiale — il
+  // prompt, quando c'è, è sempre l'ultima cosa nel testo del generatore
+  // (vedi gen/_registry.js): il risultato va subito dopo.
+  function risultatoPromptMarkdown(materiale) {
+    var testo = (materiale && materiale.risultatoPrompt && materiale.risultatoPrompt.trim())
+      ? materiale.risultatoPrompt.trim()
+      : daScrivere('il risultato del prompt qui sopra, incollato dallo strumento esterno');
+    return '**Risultato del prompt:**\n\n' + testo;
+  }
+
+  function documentoCompleto(bu) {
+    var righe = [introDocumento(bu), ''];
+    blocchiDocumento(bu).forEach(function (blocco) {
+      righe.push(blocco.markdown);
+      if (blocco.generatore.haPrompt && blocco.materiale) {
+        righe.push(risultatoPromptMarkdown(blocco.materiale));
+        righe.push('');
+      }
     });
     return righe.join('\n');
   }
@@ -205,6 +231,8 @@
     badgeStatoLeva: badgeStatoLeva,
     legendaStatiCampo: legendaStatiCampo,
     senzaPuntoFinale: senzaPuntoFinale,
+    introDocumento: introDocumento,
+    blocchiDocumento: blocchiDocumento,
     documentoCompleto: documentoCompleto
   };
 

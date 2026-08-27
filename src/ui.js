@@ -312,7 +312,8 @@
         stato: esistente ? esistente.stato : 'bozza',
         testo: generatore.genera(bu),
         generatoIl: new Date().toISOString(),
-        modificatoAMano: false
+        modificatoAMano: false,
+        risultatoPrompt: esistente ? esistente.risultatoPrompt : ''
       };
     });
     segnalaModifica();
@@ -394,7 +395,8 @@
           stato: materiale ? materiale.stato : 'bozza',
           testo: testo,
           generatoIl: new Date().toISOString(),
-          modificatoAMano: false
+          modificatoAMano: false,
+          risultatoPrompt: materiale ? materiale.risultatoPrompt : ''
         };
         segnalaModifica();
         ridisegna();
@@ -471,8 +473,39 @@
     container.appendChild(intestazione);
 
     var corpo = el('div', { class: 'md-render' });
-    corpo.innerHTML = BU.markdown.renderizza(BU.render.documentoCompleto(bu));
+    var intro = el('div');
+    intro.innerHTML = BU.markdown.renderizza(BU.render.introDocumento(bu));
+    corpo.appendChild(intro);
+
+    BU.render.blocchiDocumento(bu).forEach(function (blocco) {
+      var blocchettoDom = el('div');
+      blocchettoDom.innerHTML = BU.markdown.renderizza(blocco.markdown);
+      corpo.appendChild(blocchettoDom);
+
+      // Il prompt, quando c'è, è sempre l'ultima cosa nel blocco (vedi
+      // gen/_registry.js): il campo per il risultato va subito dopo, come
+      // vero elemento interattivo — non può stare dentro il markdown
+      // renderizzato sopra, che è testo statico.
+      if (blocco.generatore.haPrompt && blocco.materiale) {
+        corpo.appendChild(renderRisultatoPrompt(bu, blocco.generatore, blocco.materiale, segnalaModifica));
+      }
+    });
     container.appendChild(corpo);
+  }
+
+  function renderRisultatoPrompt(bu, generatore, materiale, segnalaModifica) {
+    return el('div', { class: 'risultato-prompt' }, [
+      el('label', { class: 'risultato-prompt-etichetta', text: 'Risultato del prompt (' + generatore.nome + ')' }),
+      el('textarea', {
+        class: 'risultato-prompt-valore', rows: '6',
+        placeholder: 'Incolla qui cosa ha risposto lo strumento esterno al prompt sopra.',
+        value: materiale.risultatoPrompt,
+        oninput: function (e) {
+          materiale.risultatoPrompt = e.target.value;
+          segnalaModifica();
+        }
+      })
+    ]);
   }
 
   // ---------------------------------------------------------------------

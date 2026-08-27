@@ -104,10 +104,12 @@
     righe.push('## Tabella di contrasto');
     righe.push(tabellaContrasto(bu));
     righe.push('');
+    // Ultima sezione: in DOCUMENTO il campo per incollare il risultato del
+    // prompt (le 8 headline) compare subito dopo la fine di questo testo
+    // (vedi haPrompt nella registrazione più sotto) — sostituisce quello che
+    // prima era un placeholder [DA SCRIVERE] senza un posto dove scrivere.
     righe.push('## Prompt per 8 headline');
     righe.push(promptHeadline(bu));
-    righe.push('');
-    righe.push(render.daScrivere('8 headline, usando il prompt sopra in uno strumento di scrittura esterno'));
     righe.push('');
     return righe.join('\n');
   }
@@ -120,6 +122,7 @@
       'mercato.decisore', 'mercato.cliente_ideale', 'mercato.contesto_decisore',
       'identita.meccanismo', 'offerta.risultato_promesso', 'mercato.alternativa_attuale'
     ],
+    haPrompt: true,
     genera: genera
   });
 

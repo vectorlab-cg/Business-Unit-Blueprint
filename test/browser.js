@@ -351,6 +351,46 @@ async function main() {
     '"Rigenera tutto" con un materiale modificato a mano dovrebbe chiedere conferma, elencandolo: ' + JSON.stringify(ultimoAlert));
   esiti.push({ nome: '"Rigenera tutto" chiede conferma quando almeno un materiale è modificato a mano', ok: true });
 
+  // -------------------------------------------------------------------
+  // Scenario 7: in Documento, i 4 generatori con haPrompt hanno un campo
+  // "Risultato del prompt" (gli altri 12 no); il testo incollato persiste
+  // e finisce anche nel documento completo (export .md).
+  // -------------------------------------------------------------------
+  await page.evaluate(function () {
+    Array.from(document.querySelectorAll('#tabs button')).find(function (b) { return b.textContent.trim() === 'Documento'; }).click();
+  });
+  await attesa(200);
+
+  var etichetteRisultato = await page.evaluate(function () {
+    return Array.from(document.querySelectorAll('.risultato-prompt-etichetta')).map(function (l) { return l.textContent; });
+  });
+  assicura(etichetteRisultato.length === 4,
+    'dovrebbero comparire esattamente 4 campi "Risultato del prompt" in Documento: ' + JSON.stringify(etichetteRisultato));
+
+  await page.evaluate(function () {
+    var ta = document.querySelector('.risultato-prompt-valore');
+    ta.value = 'Contenuto incollato dallo strumento esterno.';
+    ta.dispatchEvent(new Event('input'));
+  });
+  await attesa(700); // salvataggio differito
+
+  var risultatoPersistito = await page.evaluate(function () {
+    var stato = window.BU.app.stato;
+    var bu = window.BU.store.carica().find(function (b) { return b.id === stato.buAttivaId; });
+    var id = Object.keys(bu.materiali).find(function (id) { return bu.materiali[id].risultatoPrompt; });
+    return { id: id, valore: id ? bu.materiali[id].risultatoPrompt : null };
+  });
+  assicura(risultatoPersistito.valore === 'Contenuto incollato dallo strumento esterno.',
+    'il risultato incollato dovrebbe persistere nel modello dati: ' + JSON.stringify(risultatoPersistito));
+
+  var inclusoNellExport = await page.evaluate(function () {
+    var stato = window.BU.app.stato;
+    var bu = window.BU.store.carica().find(function (b) { return b.id === stato.buAttivaId; });
+    return window.BU.render.documentoCompleto(bu).indexOf('Contenuto incollato dallo strumento esterno.') !== -1;
+  });
+  assicura(inclusoNellExport, 'il risultato incollato dovrebbe comparire anche nel documento completo (export .md)');
+  esiti.push({ nome: 'i campi "Risultato del prompt" in Documento compaiono solo per i generatori giusti, persistono ed entrano nell\'export', ok: true });
+
   await browser.close();
 }
 

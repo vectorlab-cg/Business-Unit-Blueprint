@@ -72,11 +72,14 @@
     righe.push('- Parole chiave nel profilo/nei post: ' +
       (parole ? parole.map(render.senzaPuntoFinale).join('; ') : render.manca('parole chiave dalle leve')));
     righe.push('');
-    righe.push('## Prompt per impostare la ricerca');
-    righe.push(promptRicerca(bu));
-    righe.push('');
     righe.push('## Obiettivo');
     righe.push('50 nominativi qualificati secondo questi criteri, raccolti a mano da LinkedIn.');
+    righe.push('');
+    // Ultima sezione: in DOCUMENTO il campo per incollare il risultato del
+    // prompt compare subito dopo la fine del testo del generatore (vedi
+    // haPrompt nella registrazione più sotto).
+    righe.push('## Prompt per impostare la ricerca');
+    righe.push(promptRicerca(bu));
     righe.push('');
     return righe.join('\n');
   }
@@ -86,6 +89,7 @@
     nome: 'Criteri di ricerca prospect',
     descrizione: 'Titolo, settore, dimensione e parole chiave per cercare 50 prospect su LinkedIn — mai una lista inventata.',
     richiede: ['mercato.cliente_ideale', 'mercato.decisore'],
+    haPrompt: true,
     genera: genera
   });
 

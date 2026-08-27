@@ -2,7 +2,10 @@
  * gen/_registry.js
  * Registro dei generatori di materiali. Ogni file in src/gen/NN-*.js si
  * registra da solo chiamando BU.registraGeneratore({id, nome, descrizione,
- * richiede, genera}).
+ * richiede, genera, haPrompt}). haPrompt è facoltativo: solo per i
+ * generatori che finiscono il proprio testo con un prompt da usare in uno
+ * strumento esterno (vedi DOCUMENTO: un campo per incollarne il risultato
+ * compare solo per questi, sempre come ultima cosa del generatore).
  *
  * Namespace globale: window.BU.registraGeneratore, window.BU.gen
  */
@@ -29,6 +32,10 @@
       nome: def.nome || def.id,
       descrizione: def.descrizione || '',
       richiede: Array.isArray(def.richiede) ? def.richiede.slice() : [],
+      // true per i generatori che finiscono il proprio testo con un prompt
+      // da usare in uno strumento esterno (vedi DOCUMENTO: un campo per
+      // incollarne il risultato compare solo per questi).
+      haPrompt: !!def.haPrompt,
       genera: def.genera
     };
     indiceId[def.id] = voce;

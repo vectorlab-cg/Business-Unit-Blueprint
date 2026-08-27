@@ -175,12 +175,22 @@ Uno per generatore registrato, indicizzato per `id` del generatore:
 
 ```
 { stato: 'bozza' | 'da_revisionare' | 'approvato' | 'pubblicabile',
-  testo, generatoIl, modificatoAMano }
+  testo, generatoIl, modificatoAMano, risultatoPrompt }
 ```
 
 Se manca la chiave, il materiale non è mai stato generato: la vista
 MATERIALI lo mostra come "Non ancora generato", non ricostruisce un
 oggetto vuoto solo per popolare la UI.
+
+`risultatoPrompt` esiste solo per i 4 generatori con `haPrompt: true`
+(Criteri di ricerca prospect, Proposta di valore, Landing, Dimensionamento —
+ognuno finisce il proprio testo con un prompt da usare in uno strumento di
+scrittura esterno). È il risultato incollato a mano di quel prompt,
+indipendente dal testo generato: sopravvive alla rigenerazione del
+materiale (rigenerare il testo non deve far sparire un risultato già
+raccolto). Compare come campo interattivo in DOCUMENTO subito dopo il testo
+del generatore — mai in MATERIALI, dove si vede il prompt ma non un posto
+sensato per il suo risultato — e finisce anche nel file .md scaricato.
 
 ### Rigenerazione e obsolescenza
 

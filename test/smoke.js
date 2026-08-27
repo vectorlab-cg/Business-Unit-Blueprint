@@ -876,6 +876,70 @@ test('documento completo: BU.render.documentoCompleto concatena tutti i generato
   assicura(html.indexOf('<!-- Generatore:') !== -1, 'i commenti HTML dei separatori dovrebbero passare invariati nell\'output renderizzato');
 });
 
+test('generatori: esattamente 4 hanno haPrompt, ed è sempre l\'ultima cosa nel loro testo', function () {
+  var ctx = creaContesto();
+  var bu = creaBuCompilata(ctx);
+  var conHaPrompt = ctx.BU.gen.elencaGeneratori().filter(function (g) { return g.haPrompt; });
+  assicuraUguale(conHaPrompt.map(function (g) { return g.id; }).sort().join(','),
+    'criteri-prospect,dimensionamento,landing,proposta-valore',
+    'i generatori con haPrompt dovrebbero essere esattamente questi quattro');
+  conHaPrompt.forEach(function (g) {
+    var testo = g.genera(bu).replace(/\s+$/, '');
+    assicura(/```$/.test(testo), 'il testo di "' + g.nome + '" dovrebbe finire col blocco di codice del prompt, non con altro: ' + JSON.stringify(testo.slice(-80)));
+  });
+});
+
+test('documento completo: il risultato di un prompt incollato compare subito dopo, un placeholder [DA SCRIVERE] se vuoto', function () {
+  var ctx = creaContesto();
+  var bu = creaBuCompilata(ctx);
+
+  // Un generatore mai generato (materiale assente) non ha nessuna sezione
+  // risultato: coerente con la regola già esistente in MATERIALI, dove non
+  // c'è niente su cui incollare un risultato finché non si genera almeno
+  // una volta.
+  var mdMaiGenerato = ctx.BU.render.documentoCompleto(bu);
+  assicura(mdMaiGenerato.indexOf('Risultato del prompt') === -1,
+    'un generatore mai generato non dovrebbe avere una sezione "Risultato del prompt"');
+
+  // Generato ma senza ancora un risultato incollato: placeholder [DA SCRIVERE].
+  bu.materiali['criteri-prospect'] = {
+    stato: 'bozza', testo: ctx.BU.gen.trovaGeneratore('criteri-prospect').genera(bu),
+    generatoIl: new Date().toISOString(), modificatoAMano: false, risultatoPrompt: ''
+  };
+  var mdVuoto = ctx.BU.render.documentoCompleto(bu);
+  assicura(mdVuoto.indexOf('**Risultato del prompt:**\n\n[DA SCRIVERE:') !== -1,
+    'un materiale generato ma senza risultatoPrompt salvato dovrebbe mostrare un placeholder [DA SCRIVERE]');
+
+  bu.materiali['criteri-prospect'] = {
+    stato: 'bozza', testo: ctx.BU.gen.trovaGeneratore('criteri-prospect').genera(bu),
+    generatoIl: new Date().toISOString(), modificatoAMano: false, risultatoPrompt: 'Mario Rossi, Acme SpA'
+  };
+  var mdCompilato = ctx.BU.render.documentoCompleto(bu);
+  var posPrompt = mdCompilato.indexOf('## Prompt per impostare la ricerca');
+  var posRisultato = mdCompilato.indexOf('Mario Rossi, Acme SpA');
+  assicura(posPrompt !== -1 && posRisultato !== -1 && posRisultato > posPrompt,
+    'il risultato incollato dovrebbe comparire dopo il prompt di "criteri-prospect"');
+
+  // Un generatore senza haPrompt (es. bu-one-page) non deve mai avere la sezione risultato
+  var vuota = ctx.BU.render.documentoCompleto(ctx.BU.schema.normalizzaBU({ nome: 'X' }));
+  var idx = vuota.indexOf('Generatore: BU One-Page');
+  var prossimoSeparatore = vuota.indexOf('---', idx + 1);
+  var sottostringa = prossimoSeparatore !== -1 ? vuota.slice(idx, prossimoSeparatore) : vuota.slice(idx);
+  assicura(sottostringa.indexOf('Risultato del prompt') === -1, 'BU One-Page non ha un prompt: non dovrebbe avere una sezione "Risultato del prompt"');
+});
+
+test('materiali: risultatoPrompt nasce vuoto, un valore salvato sopravvive alla normalizzazione', function () {
+  var ctx = creaContesto();
+  var bu = ctx.BU.schema.normalizzaBU({
+    nome: 'Prova',
+    materiali: { 'criteri-prospect': { stato: 'bozza', testo: 'x', generatoIl: '2024-01-01T00:00:00.000Z', risultatoPrompt: 'nomi già raccolti' } }
+  });
+  assicuraUguale(bu.materiali['criteri-prospect'].risultatoPrompt, 'nomi già raccolti', 'un risultatoPrompt salvato dovrebbe sopravvivere alla normalizzazione');
+
+  var altro = ctx.BU.schema.normalizzaBU({ nome: 'Senza', materiali: { x: { stato: 'bozza', testo: 'y', generatoIl: '2024-01-01T00:00:00.000Z' } } });
+  assicuraUguale(altro.materiali.x.risultatoPrompt, '', 'senza risultatoPrompt salvato dovrebbe nascere stringa vuota, non undefined');
+});
+
 // ---------------------------------------------------------------------
 // Test: cartella condivisa su GitHub (src/cartella.js), con un mock
 // minimale di fetch — nessuna rete vera: simula le risposte dell'API

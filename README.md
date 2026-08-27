@@ -48,7 +48,10 @@ flusso Compila/Materiali/.../Output invece che come tab.
 - **Documento** — tutti i materiali concatenati e renderizzati (titoli,
   tabelle, badge di stato), con il download del file .md grezzo. Stesso
   avviso di Materiali se qualcosa non è aggiornato, con lo stesso
-  "Rigenera tutto" a portata di mano.
+  "Rigenera tutto" a portata di mano. I 4 generatori che finiscono con un
+  prompt per uno strumento esterno (Criteri di ricerca prospect, Proposta
+  di valore, Landing, Dimensionamento) hanno un campo subito sotto per
+  incollarne il risultato — persiste ed entra anche nel file scaricato.
 - **Lancio** — checklist operativa di 25 verifiche tecniche per portare la
   BU dal nome al primo lead (setup domini/social, sito, tracking/Meta),
   estratta dal

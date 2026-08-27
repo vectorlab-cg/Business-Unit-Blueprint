@@ -585,7 +585,11 @@
           stato: STATI_MATERIALE.indexOf(m.stato) !== -1 ? m.stato : 'bozza',
           testo: typeof m.testo === 'string' ? m.testo : '',
           generatoIl: typeof m.generatoIl === 'string' ? m.generatoIl : '',
-          modificatoAMano: !!m.modificatoAMano
+          modificatoAMano: !!m.modificatoAMano,
+          // Solo per i generatori haPrompt (vedi gen/_registry.js): il
+          // risultato incollato a mano dal prompt generato, indipendente dal
+          // testo — sopravvive alla rigenerazione del materiale.
+          risultatoPrompt: typeof m.risultatoPrompt === 'string' ? m.risultatoPrompt : ''
         };
       });
     }

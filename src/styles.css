@@ -869,6 +869,34 @@ textarea {
   background: var(--bg-panel-alt);
 }
 
+.risultato-prompt {
+  margin: -4px 0 24px;
+  padding: 10px 12px;
+  background: var(--bg-input);
+  border: 1px dashed var(--border-forte);
+  border-radius: 4px;
+}
+
+.risultato-prompt-etichetta {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-debole);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.risultato-prompt-valore {
+  width: 100%;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 /* ----------------------------------------------------------------- */
 /* Disclaimer piccolo (es. cartella condivisa: Chromium richiesto) */
 /* ----------------------------------------------------------------- */

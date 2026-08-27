@@ -208,6 +208,7 @@
       'offerta.risultato_promesso', 'test.azione_richiesta', 'offerta.servizio',
       'offerta.prezzo', 'mercato.alternativa_attuale'
     ],
+    haPrompt: true,
     genera: genera
   });
 
