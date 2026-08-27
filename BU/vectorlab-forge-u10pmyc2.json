@@ -1,13 +1,13 @@
 {
   "versione": 2,
-  "esportatoIl": "2026-08-27T07:39:38.309Z",
+  "esportatoIl": "2026-08-27T07:49:55.379Z",
   "businessUnit": [
     {
       "id": "bu_msfuzl3u_1_0pmyc2",
       "nome": "Vectorlab Forge",
       "stato": "validata",
       "creata": "2026-08-05T09:02:36.953Z",
-      "modificata": "2026-08-27T07:39:37.221Z",
+      "modificata": "2026-08-27T07:48:28.668Z",
       "campi": {
         "identita": {
           "descrizione": {
@@ -20,7 +20,7 @@
           },
           "apertura": {
             "valore": "perdita",
-            "stato": "mandatorio"
+            "stato": "ipotesi"
           },
           "responsabile": {
             "valore": "Davide Ruzzenenti — CEO.",
@@ -34,15 +34,15 @@
           },
           "decisore": {
             "valore": "Nelle PMI: titolare, AD o direttore generale. Nelle aziende strutturate: CIO/CTO o responsabile innovazione — la decisione economica è del management, la valutazione tecnica spesso di un referente IT.",
-            "stato": "mandatorio"
+            "stato": "ipotesi"
           },
           "contesto_decisore": {
             "valore": "Un processo gestito manualmente o con strumenti frammentati, un software standard che non si adatta, o un progetto fermo per mancanza di competenze o coordinamento — cerca chi si prenda in carico il problema, non solo sviluppatori.",
-            "stato": "generato_da_ia"
+            "stato": "ipotesi"
           },
           "alternativa_attuale": {
             "valore": "Sviluppo interno (se hanno struttura tecnica propria), staff augmentation/Ynsera (se hanno già PM e direzione progettuale e serve solo capacità produttiva), un altro fornitore a corpo (la concorrenza diretta), o restare su soluzioni standard/rinviare il progetto.",
-            "stato": "mandatorio"
+            "stato": "ipotesi"
           },
           "differenziazione_competitiva": {
             "valore": "Non partiamo da una tecnologia predefinita: analizziamo il contesto per capire cosa serve davvero costruire. Prendiamo in carico il progetto intero con un solo interlocutore responsabile, non vendiamo ore di sviluppo. Gestiamo progetti non standard che non rientrano in un prodotto o gestionale già pronto, con soluzioni proporzionate — non sovradimensionate, non difficili da mantenere.",
@@ -54,11 +54,11 @@
               "Boutique di consulenza tecnica con posizionamento simile ma senza competenze avanzate su realtime/AI/XR.",
               "Team indipendenti/freelance assemblati ad hoc dal cliente per il singolo progetto, senza un unico responsabile."
             ],
-            "stato": "ipotesi"
+            "stato": "mandatorio"
           },
           "sinergia_altre_bu": {
             "valore": "Alcuni prospect di Vectorlab Forge sono aziende già in contatto per staff augmentation con Ynsera ma senza PM o direzione progettuale interna: Forge intercetta chi ha bisogno del progetto intero, non solo di capacità produttiva — stesso canale di ingresso, offerta complementare.",
-            "stato": "ipotesi"
+            "stato": "mandatorio"
           }
         },
         "offerta": {
@@ -101,14 +101,14 @@
               "Web 3D applications",
               "System integration e protocolli industriali"
             ],
-            "stato": "ipotesi"
+            "stato": "generato_da_ia"
           },
           "competenze_mancanti": {
             "valore": [
               "Un secondo project manager dedicato alla gestione dei progetti a corpo",
               "Copertura su fusi orari diversi dall'Italia"
             ],
-            "stato": "mandatorio"
+            "stato": "generato_da_ia"
           },
           "persone": {
             "valore": [
@@ -123,7 +123,7 @@
               "Claudiu Stefano Nae — Web3D & XR Developer — prototipazione realtime e interfacce 3D",
               ""
             ],
-            "stato": "generato_da_ia"
+            "stato": "mandatorio"
           }
         },
         "economia": {
@@ -168,26 +168,26 @@
         "test": {
           "canale_test": {
             "valore": "Outbound mirato su LinkedIn: segmento preciso, contatto diretto di decisori selezionati, messaggi personalizzati costruiti intorno a un problema osservabile. Niente advertising generico in questa fase: \"software custom\" è una proposta troppo ampia per la domanda fredda prima di capire quale leva produce incontri qualificati.",
-            "stato": "ipotesi"
+            "stato": "generato_da_ia"
           },
           "budget_test": {
             "valore": "1.000-2.500 € (esclude tempo interno): Sales Navigator, costruzione/pulizia lista, strumenti di outreach, eventuale landing essenziale. Campione: 150-250 aziende, 300-500 decisori, un segmento e massimo 2 varianti di messaggio alla volta.",
-            "stato": "ipotesi"
+            "stato": "generato_da_ia"
           },
           "durata_test": {
             "valore": {
               "testo": "6 settimane",
               "dataFine": "2026-09-16"
             },
-            "stato": "mandatorio"
+            "stato": "generato_da_ia"
           },
           "azione_richiesta": {
             "valore": "Prenota un confronto di 30 minuti per capire se il problema è adatto a una soluzione software custom e quale potrebbe essere il primo perimetro realistico.",
-            "stato": "mandatorio"
+            "stato": "generato_da_ia"
           },
           "soglia_messaggio": {
             "valore": "Su almeno 400 contatti raggiunti: 8-10% risposte complessive, 4-5% risposte positive (riconoscono il problema, chiedono info, accettano un confronto — non cortesia), 3% call qualificate → almeno 32-40 risposte, 16-20 positive, 12 call.",
-            "stato": "ipotesi"
+            "stato": "generato_da_ia"
           },
           "soglia_mercato": {
             "valore": "Nelle 6 settimane: almeno 10-12 call qualificate, 4-5 opportunità concrete (problema rilevante, progetto plausibile, referente interno, orizzonte temporale, capacità di spesa compatibile), 2 richieste di proposta/discovery, almeno una trattativa potenziale sopra 20.000 €.",
@@ -408,7 +408,7 @@
           "nota": ""
         },
         "comunicazione_interna": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": "Annuncio interno del via libera alla BU"
         },
         "script_video": {
@@ -424,15 +424,15 @@
           "nota": ""
         },
         "design_landing": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": ""
         },
         "design_presentazione": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": ""
         },
         "design_proposta_economica": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": ""
         },
         "creativita_annunci": {
@@ -444,7 +444,7 @@
           "nota": ""
         },
         "mockup_demo": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": "Serve per la Software Discovery: mostrare esempi di lavori simili"
         },
         "brochure": {
