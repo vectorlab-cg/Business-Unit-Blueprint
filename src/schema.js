@@ -345,7 +345,14 @@
       fatto_osservabile: '',
       come_lo_chiama_lui: '',
       come_lo_chiami_tu: '',
-      come_lo_elimini: ''
+      come_lo_elimini: '',
+      // Stesso enum di STATI_CAMPO (ipotesi/generato_da_ia/mandatorio): la
+      // leva è di per sé un'ipotesi da testare, quindi il concetto vale
+      // tanto quanto per un campo — anzi di più. Uno stato per l'intera
+      // leva, non per ciascuno dei 4 campi sopra: nascono e si validano
+      // insieme (stessa intervista, stesso insight), separarli avrebbe
+      // aggiunto granularità senza un uso reale.
+      stato: 'ipotesi'
     };
   }
 
@@ -449,6 +456,11 @@
     return STATI_CAMPO.indexOf(campo.stato) !== -1 ? campo.stato : 'ipotesi';
   }
 
+  function statoEffettivoLeva(leva) {
+    if (!leva) return 'ipotesi';
+    return STATI_CAMPO.indexOf(leva.stato) !== -1 ? leva.stato : 'ipotesi';
+  }
+
   function campoHaValore(campo, tipo) {
     if (!campo) return false;
     var v = campo.valore;
@@ -539,6 +551,7 @@
       ['fatto_osservabile', 'come_lo_chiama_lui', 'come_lo_chiami_tu', 'come_lo_elimini'].forEach(function (k) {
         if (typeof grezza[k] === 'string') leva[k] = grezza[k];
       });
+      if (STATI_CAMPO.indexOf(grezza.stato) !== -1) leva.stato = grezza.stato;
     }
     return leva;
   }
@@ -652,6 +665,7 @@
     ottieniCampo: ottieniCampo,
 
     statoEffettivoCampo: statoEffettivoCampo,
+    statoEffettivoLeva: statoEffettivoLeva,
     apertura: apertura,
     aperturaDecisa: aperturaDecisa,
     campoHaValore: campoHaValore,

@@ -104,13 +104,24 @@ una BU con 1 o 6 leve resta salvabile, l'interfaccia segnala solo quando sono
 meno di 3). Struttura:
 
 ```
-{ id, fatto_osservabile, come_lo_chiama_lui, come_lo_chiami_tu, come_lo_elimini }
+{ id, fatto_osservabile, come_lo_chiama_lui, come_lo_chiami_tu, come_lo_elimini, stato }
 ```
 
-Le leve non hanno `stato`: sono l'unità grezza da cui i generatori
-derivano blocco problema, riga di contrasto, angolo di campagna, FAQ e
-ipotesi da testare. Non hanno una casa in una sezione di `campi` perché non
-sono un "campo" nel senso sopra — sono una lista propria (`bu.leve`).
+Sono l'unità grezza da cui i generatori derivano blocco problema, riga di
+contrasto, angolo di campagna, FAQ e ipotesi da testare. Non hanno una casa
+in una sezione di `campi` perché non sono un "campo" nel senso sopra — sono
+una lista propria (`bu.leve`).
+
+`stato` usa lo stesso enum di `campi` (`ipotesi | generato_da_ia |
+mandatorio`, vedi sopra) — il concetto vale per una leva tanto quanto per
+un campo: una leva è di per sé un'ipotesi finché il ciclo
+ipotesi→materiali→test→decisione non la conferma. È **uno stato per
+l'intera leva**, non uno per ciascuno dei suoi 4 campi: nascono e si
+validano insieme (stessa intervista, stesso insight), separarli avrebbe
+aggiunto granularità senza un uso reale — lo stesso ragionamento che tiene
+`decisione`/`noteDecisione` a livello di BU e non di singolo risultato.
+Come per i campi, compare come badge solo nei materiali interni
+(`render.badgeStatoLeva`), mai in quelli destinati a un cliente.
 
 ### Perché non c'è un tipo `dolore | obiettivo`
 

@@ -22,7 +22,7 @@
     if (!bu.leve || !bu.leve.length) return render.manca('almeno una leva');
     return bu.leve.map(function (leva, i) {
       var righe = [];
-      righe.push((i + 1) + '. ' + (leva.fatto_osservabile || render.manca('fatto osservabile')));
+      righe.push((i + 1) + '. ' + (leva.fatto_osservabile || render.manca('fatto osservabile')) + ' ' + render.badgeStatoLeva(leva));
       righe.push('   Il cliente lo descrive così: "' + (leva.come_lo_chiama_lui || render.manca('come lo chiama lui')) + '"');
       righe.push('   Nome tecnico: ' + (leva.come_lo_chiami_tu || render.manca('come lo chiami tu')));
       return righe.join('\n');

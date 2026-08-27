@@ -37,9 +37,10 @@ flusso Compila/Materiali/.../Output invece che come tab.
 
 - **Compila** — questionario per sezioni (Identità, Mercato, Offerta,
   Risorse, Economia, Pilota, Test), apribili/chiudibili una per una, più le
-  leve. Ogni campo ha uno stato (`ipotesi | generato_da_ia | mandatorio`),
-  riportato con un'icona (💭 🤖 🔒) nel Markdown dei materiali interni — mai
-  in quelli destinati a un cliente. Vedi [docs/MODELLO.md](docs/MODELLO.md).
+  leve. Ogni campo — e ogni leva nel suo insieme — ha uno stato (`ipotesi |
+  generato_da_ia | mandatorio`), riportato con un'icona (💭 🤖 🔒) nel
+  Markdown dei materiali interni — mai in quelli destinati a un cliente.
+  Vedi [docs/MODELLO.md](docs/MODELLO.md).
 - **Materiali** — un blocco per generatore, con generazione/rigenerazione e
   testo modificabile a mano.
 - **Documento** — tutti i materiali concatenati e renderizzati (titoli,

@@ -497,6 +497,7 @@ textarea {
 .leva-card {
   background: var(--bg-panel);
   border: 1px solid var(--border);
+  border-left: 3px solid var(--ipotesi); /* colore sovrascritto da .campo--X, come per .campo */
   border-radius: 6px;
   padding: 10px 12px;
 }

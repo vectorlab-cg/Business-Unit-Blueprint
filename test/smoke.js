@@ -201,7 +201,8 @@ function creaBuCompilata(sandbox) {
       fatto_osservabile: 'Il responsabile vuole ridurre i fermi macchina annuali.',
       come_lo_chiama_lui: 'Vogliamo meno fermi linea.',
       come_lo_chiami_tu: 'Riduzione del downtime non pianificato.',
-      come_lo_elimini: 'Accordo quadro con tempi di consegna garantiti.'
+      come_lo_elimini: 'Accordo quadro con tempi di consegna garantiti.',
+      stato: 'mandatorio' // confermata dal test: le altre due restano ipotesi (default)
     })
   ];
 
@@ -751,6 +752,37 @@ test('leve: il campo tipo dello schema v1 non sopravvive alla normalizzazione', 
   });
   assicura(bu.leve[0].tipo === undefined, 'il campo tipo è ancora presente sulle leve');
   assicuraUguale(bu.leve[0].fatto_osservabile, 'x', 'la normalizzazione ha perso il contenuto della leva');
+});
+
+test('leve: stato — nasce ipotesi, un valore valido sopravvive alla normalizzazione, uno non valido ricade su ipotesi', function () {
+  var ctx = creaContesto();
+  assicuraUguale(ctx.BU.schema.nuovaLeva().stato, 'ipotesi', 'una leva nuova dovrebbe nascere ipotesi');
+
+  var bu = ctx.BU.schema.normalizzaBU({
+    nome: 'Prova', leve: [
+      { fatto_osservabile: 'a', stato: 'mandatorio' },
+      { fatto_osservabile: 'b', stato: 'uno-stato-inventato' },
+      { fatto_osservabile: 'c' }
+    ]
+  });
+  assicuraUguale(bu.leve[0].stato, 'mandatorio', 'uno stato valido dovrebbe sopravvivere alla normalizzazione');
+  assicuraUguale(bu.leve[1].stato, 'ipotesi', 'uno stato non valido dovrebbe ricadere su ipotesi');
+  assicuraUguale(bu.leve[2].stato, 'ipotesi', 'una leva senza stato dovrebbe ricadere su ipotesi');
+  assicuraUguale(ctx.BU.schema.statoEffettivoLeva(null), 'ipotesi', 'statoEffettivoLeva su null dovrebbe restituire ipotesi');
+});
+
+test('stato leva nel markdown: un materiale interno annota la leva mandatoria, uno esterno no', function () {
+  var rInterno = generaPerBuCompilata('bu-one-page');
+  assicura(rInterno.md.indexOf('`🔒 Mandatorio`') !== -1,
+    'la leva mandatoria nella fixture non è annotata in "Leve principali"');
+  var rProblema = generaPerBuCompilata('problem-statement');
+  assicura(rProblema.md.indexOf('`🔒 Mandatorio`') !== -1,
+    'la leva mandatoria nella fixture non è annotata nel problem statement');
+
+  var rEsterno = generaPerBuCompilata('landing');
+  assicura(rEsterno.md.indexOf('🔒 Mandatorio') === -1, 'la landing non dovrebbe esporre lo stato interno di una leva');
+  var rPresentazione = generaPerBuCompilata('presentazione-commerciale');
+  assicura(rPresentazione.md.indexOf('🔒 Mandatorio') === -1, 'la presentazione commerciale non dovrebbe esporre lo stato interno di una leva');
 });
 
 // ---------------------------------------------------------------------

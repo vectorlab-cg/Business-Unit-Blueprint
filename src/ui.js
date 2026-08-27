@@ -245,7 +245,7 @@
   }
 
   function renderLevaCard(bu, leva, indice, segnalaModifica, ridisegna) {
-    var card = el('div', { class: 'leva-card' });
+    var card = el('div', { class: 'leva-card campo--' + schema.statoEffettivoLeva(leva) });
 
     var bottoneRimuovi = el('button', {
       type: 'button', class: 'pulsante pulsante--pericolo pulsante--piccolo', title: 'Rimuovi leva',
@@ -259,6 +259,11 @@
 
     card.appendChild(el('div', { class: 'leva-intestazione' }, [
       el('span', { class: 'leva-titolo', text: 'Leva ' + (indice + 1) }),
+      selettoreStato(leva.stato, function (v) {
+        leva.stato = v;
+        card.className = 'leva-card campo--' + schema.statoEffettivoLeva(leva);
+        segnalaModifica();
+      }),
       bottoneRimuovi
     ]));
 

@@ -56,7 +56,8 @@
     if (!bu.leve || !bu.leve.length) return render.manca('almeno una leva');
     var righe = bu.leve.map(function (leva) {
       return (leva.fatto_osservabile || render.manca('fatto osservabile')) +
-        ' → ' + (leva.come_lo_elimini || render.manca('come lo elimini'));
+        ' → ' + (leva.come_lo_elimini || render.manca('come lo elimini')) +
+        ' ' + render.badgeStatoLeva(leva);
     });
     return render.elencoPuntato(righe);
   }

@@ -124,6 +124,23 @@
     return testo + ' `' + etichettaStatoCampo(campo) + '`';
   }
 
+  // "🤖 Generato da IA" per una leva — stesso stato dei campi (vedi
+  // schema.js), ma uno solo per l'intera leva, non per ciascuno dei suoi 4
+  // campi.
+  function etichettaStatoLeva(leva) {
+    var stato = BU.schema.statoEffettivoLeva(leva);
+    var etichetta = BU.schema.STATI_CAMPO_ETICHETTE[stato] || stato;
+    return (ICONE_STATO_CAMPO[stato] || '') + ' ' + etichetta;
+  }
+
+  // Badge di stato per una leva, da appendere in coda alla riga che la
+  // presenta — negli stessi materiali interni che usano testoCampoConStato,
+  // mai in quelli esterni (vedi commento sopra). "`🤖 Generato da IA`",
+  // pronto per essere concatenato.
+  function badgeStatoLeva(leva) {
+    return '`' + etichettaStatoLeva(leva) + '`';
+  }
+
   // Riga di legenda da inserire una volta in testa ai materiali interni che
   // usano testoCampoConStato, così chi legge sa cosa significano le icone
   // prima di incontrarle nel testo.
@@ -184,6 +201,8 @@
     iconaStatoCampo: iconaStatoCampo,
     etichettaStatoCampo: etichettaStatoCampo,
     testoCampoConStato: testoCampoConStato,
+    etichettaStatoLeva: etichettaStatoLeva,
+    badgeStatoLeva: badgeStatoLeva,
     legendaStatiCampo: legendaStatiCampo,
     senzaPuntoFinale: senzaPuntoFinale,
     documentoCompleto: documentoCompleto
