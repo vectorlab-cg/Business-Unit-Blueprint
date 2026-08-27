@@ -183,7 +183,33 @@ async function main() {
   esiti.push({ nome: '"Condividi su GitHub" condivide una BU solo locale', ok: true });
 
   // -------------------------------------------------------------------
-  // Scenario 3: un conflitto di scrittura (409) mostra un messaggio
+  // Scenario 3: un salvataggio riuscito dà un feedback visibile sul
+  // pulsante stesso ("Salvato ✓"), non solo in un indicatore lontano e
+  // facile da non notare.
+  // -------------------------------------------------------------------
+  await page.evaluate(function () {
+    Array.from(document.querySelectorAll('#bu-header button')).find(function (b) { return b.textContent.trim() === 'Salva su GitHub'; }).click();
+  });
+  await attesa(150); // prima del revert a 1800ms, dopo che il fetch finto (istantaneo) si è risolto
+
+  var statoDopoSalva = await page.evaluate(function () {
+    var b = Array.from(document.querySelectorAll('#bu-header button')).find(function (btn) { return btn.textContent.trim() === 'Salvato ✓'; });
+    return b ? { testo: b.textContent.trim(), disabilitato: b.disabled } : null;
+  });
+  assicura(statoDopoSalva && statoDopoSalva.testo === 'Salvato ✓' && statoDopoSalva.disabilitato,
+    'dopo un salvataggio riuscito il pulsante dovrebbe mostrare "Salvato ✓" (disabilitato) come feedback visibile: ' + JSON.stringify(statoDopoSalva));
+
+  await attesa(1800); // oltre al timeout del revert
+  var testoDopoRevert = await page.evaluate(function () {
+    var b = document.querySelector('#bu-header button.pulsante--primario');
+    return b ? { testo: b.textContent.trim(), disabilitato: b.disabled } : null;
+  });
+  assicura(testoDopoRevert && testoDopoRevert.testo === 'Salva su GitHub' && !testoDopoRevert.disabilitato,
+    'il pulsante dovrebbe tornare a "Salva su GitHub" (riabilitato) dopo il feedback temporaneo: ' + JSON.stringify(testoDopoRevert));
+  esiti.push({ nome: 'un salvataggio riuscito mostra un feedback visibile sul pulsante', ok: true });
+
+  // -------------------------------------------------------------------
+  // Scenario 4: un conflitto di scrittura (409) mostra un messaggio
   // comprensibile, non l'errore grezzo dell'API GitHub.
   // -------------------------------------------------------------------
   await page.evaluate(function () { window.__prossimoConflitto = true; });
@@ -198,7 +224,7 @@ async function main() {
   esiti.push({ nome: 'un conflitto 409 sul salvataggio mostra un messaggio comprensibile', ok: true });
 
   // -------------------------------------------------------------------
-  // Scenario 4 (regressione): una BU già condivisa il cui file è ancora
+  // Scenario 5 (regressione): una BU già condivisa il cui file è ancora
   // elencato nella cartella ma il cui contenuto fallisce a leggersi in
   // questo giro (errore di rete/propagazione transitorio) non deve
   // sparire né perdere il proprio fileHandle — a differenza di una BU

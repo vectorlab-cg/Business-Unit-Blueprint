@@ -299,13 +299,28 @@
     });
   }
 
+  // Feedback sul pulsante stesso, non solo nell'indicatore in fondo alla
+  // sidebar (facile da non notare, lontano da dove si è appena cliccato):
+  // "Salvataggio…" disabilitato subito, poi "Salvato ✓" o il messaggio di
+  // errore, prima di tornare al testo originale.
   function salvaSuFile(bu) {
     var voce = stato.fileHandleDiBU[bu.id];
     if (!voce || !BU.cartella.haToken()) return;
+    var bottone = (headerRefs && headerRefs.buId === bu.id) ? headerRefs.bottoneSalva : null;
+    var testoOriginale = bottone ? bottone.textContent : 'Salva su GitHub';
+    if (bottone) { bottone.disabled = true; bottone.textContent = 'Salvataggio…'; }
     BU.cartella.scriviBU(voce, bu).then(function (nuovaVoce) {
       stato.fileHandleDiBU[bu.id] = nuovaVoce; // sha aggiornato: serve al prossimo salvataggio
       aggiornaIndicatoreSalvataggio('Salvato su GitHub alle ' + new Date().toLocaleTimeString('it-IT'));
+      if (bottone) {
+        bottone.textContent = 'Salvato ✓';
+        global.setTimeout(function () {
+          bottone.disabled = false;
+          bottone.textContent = testoOriginale;
+        }, 1800);
+      }
     }).catch(function (e) {
+      if (bottone) { bottone.disabled = false; bottone.textContent = testoOriginale; }
       global.alert('Impossibile salvare su GitHub: ' + e.message);
     });
   }
