@@ -1,13 +1,13 @@
 {
   "versione": 2,
-  "esportatoIl": "2026-08-27T07:38:57.563Z",
+  "esportatoIl": "2026-08-27T07:39:38.309Z",
   "businessUnit": [
     {
       "id": "bu_msfuzl3u_1_0pmyc2",
       "nome": "Vectorlab Forge",
       "stato": "validata",
       "creata": "2026-08-05T09:02:36.953Z",
-      "modificata": "2026-08-27T07:38:52.351Z",
+      "modificata": "2026-08-27T07:39:37.221Z",
       "campi": {
         "identita": {
           "descrizione": {
@@ -368,7 +368,7 @@
           "nota": ""
         },
         "messaggio_primo_contatto": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": "Già in uso nel test, va rifinito dal copy"
         },
         "sequenza_email_freddo": {
@@ -380,19 +380,19 @@
           "nota": ""
         },
         "script_discovery_call": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": "Raffinare lo script usato nelle 13 call del test"
         },
         "copy_presentazione": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": ""
         },
         "copy_proposta_economica": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": ""
         },
         "case_study": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": "Appena la prima Discovery è completata"
         },
         "comunicato_stampa": {
