@@ -73,11 +73,22 @@
   // Chiamate all'API
   // -----------------------------------------------------------------
 
-  function intestazioni() {
+  // Solo per scrivere/eliminare: richiede il token. Usarla anche per le
+  // letture allegherebbe il token a richieste che non ne hanno bisogno (il
+  // repo è pubblico) — e un token invalido o scaduto romperebbe anche le
+  // letture, che devono invece continuare a funzionare per chiunque.
+  function intestazioniScrittura() {
     var h = { 'Accept': 'application/vnd.github+json' };
     var token = leggiToken();
     if (token) h.Authorization = 'token ' + token;
     return h;
+  }
+
+  // Per leggere: mai il token. La lettura è sempre attiva e non richiede
+  // nulla, a prescindere da cosa c'è (o non c'è più di valido) salvato in
+  // localStorage.
+  function intestazioniLettura() {
+    return { 'Accept': 'application/vnd.github+json' };
   }
 
   function urlContenuti(percorso) {
@@ -106,7 +117,7 @@
   // -----------------------------------------------------------------
 
   function elencaFile() {
-    return global.fetch(urlContenuti(CARTELLA), { headers: intestazioni() }).then(function (risposta) {
+    return global.fetch(urlContenuti(CARTELLA), { headers: intestazioniLettura() }).then(function (risposta) {
       if (risposta.status === 404) return []; // la cartella non esiste ancora nel repo
       // verificaRisposta può restituire la risposta direttamente (non è
       // un thenable) oppure una Promise che rigetta: Promise.resolve
@@ -123,7 +134,7 @@
   // business unit dentro): si riusano store.esportaJSON/importaJSON
   // invece di inventare un secondo formato.
   function leggiBU(voce) {
-    return global.fetch(voce.downloadUrl, { headers: intestazioni() })
+    return global.fetch(voce.downloadUrl, { headers: intestazioniLettura() })
       .then(function (r) { return verificaRisposta(r); })
       .then(function (r) { return r.text(); })
       .then(function (testo) {
@@ -156,12 +167,12 @@
     };
     if (voce && voce.sha) corpo.sha = voce.sha;
 
-    var intestazioniScrittura = intestazioni();
-    intestazioniScrittura['Content-Type'] = 'application/json';
+    var intestazioniPut = intestazioniScrittura();
+    intestazioniPut['Content-Type'] = 'application/json';
 
     return global.fetch(urlContenuti(CARTELLA + '/' + nomeFile), {
       method: 'PUT',
-      headers: intestazioniScrittura,
+      headers: intestazioniPut,
       body: JSON.stringify(corpo)
     }).then(function (r) { return verificaRisposta(r); })
       .then(function (r) { return r.json(); })
@@ -180,12 +191,12 @@
   }
 
   function eliminaFile(voce) {
-    var intestazioniScrittura = intestazioni();
-    intestazioniScrittura['Content-Type'] = 'application/json';
+    var intestazioniDelete = intestazioniScrittura();
+    intestazioniDelete['Content-Type'] = 'application/json';
 
     return global.fetch(urlContenuti(voce.percorso), {
       method: 'DELETE',
-      headers: intestazioniScrittura,
+      headers: intestazioniDelete,
       body: JSON.stringify({
         message: 'BU Blueprint: elimina "' + voce.nomeFile + '"',
         sha: voce.sha,

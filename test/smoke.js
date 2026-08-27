@@ -857,6 +857,14 @@ function creaFetchFinto(repoFinto) {
     opzioni = opzioni || {};
     var metodo = opzioni.method || 'GET';
 
+    if (metodo === 'GET' && opzioni.headers && opzioni.headers.Authorization) {
+      // Le letture non devono mai allegare il token: il repo è pubblico e
+      // un token invalido/scaduto non deve poter rompere una richiesta che
+      // non ne aveva bisogno. Il fetch finto rifiuta qui per rendere questo
+      // un controllo vero, non solo un'assunzione.
+      return Promise.resolve(rispostaJson(401, { message: 'Bad credentials (simulato)' }));
+    }
+
     if (metodo === 'GET' && /\/contents\/BU$/.test(url)) {
       var percorsi = Object.keys(repoFinto).filter(function (p) { return p.indexOf('BU/') === 0; });
       if (!percorsi.length) return Promise.resolve(rispostaJson(404, { message: 'Not Found' }));
@@ -949,6 +957,17 @@ test('cartella: elencaFile su cartella inesistente (404) restituisce un elenco v
   var ctx = creaContestoConFetch({});
   return ctx.BU.cartella.elencaFile().then(function (voci) {
     assicuraUguale(voci.length, 0);
+  });
+});
+
+test('cartella: un token invalido salvato non rompe la lettura (elencaFile/leggiBU non lo allegano mai)', function () {
+  var ctx = creaContestoConFetch({ 'BU/a.json': JSON.stringify({ versione: 1, businessUnit: [{ id: 'x' }] }) });
+  ctx.BU.cartella.salvaToken('token-non-valido');
+  return ctx.BU.cartella.elencaFile().then(function (voci) {
+    assicuraUguale(voci.length, 1, 'la lettura dovrebbe riuscire anche con un token invalido salvato');
+    return ctx.BU.cartella.leggiBU(voci[0]);
+  }).then(function (bu) {
+    assicura(bu, 'leggiBU dovrebbe riuscire anche con un token invalido salvato');
   });
 });
 
