@@ -1,13 +1,13 @@
 {
   "versione": 2,
-  "esportatoIl": "2026-08-24T06:23:02.787Z",
+  "esportatoIl": "2026-08-27T06:57:02.581Z",
   "businessUnit": [
     {
       "id": "bu_msfuzl3u_1_0pmyc2",
       "nome": "Vectorlab Forge",
       "stato": "validata",
       "creata": "2026-08-05T09:02:36.953Z",
-      "modificata": "2026-08-24T06:23:02.779Z",
+      "modificata": "2026-08-27T06:56:59.696Z",
       "campi": {
         "identita": {
           "descrizione": {
@@ -114,7 +114,6 @@
             "valore": [
               "Davide Ruzzenenti — Chief Executive Officer — struttura, direzione e chiarezza operativa",
               "Andrea Ruzzenenti — Chief Technology Officer — esecuzione tecnica e referente per i clienti",
-              "Francesco Capetti — DevOps Engineer — infrastruttura, CI/CD e affidabilità dei sistemi in produzione",
               "Tommaso Ramella — AI & Data Scientist — machine learning, NLP e modelli predittivi",
               "Andrea Quidacciolu Turcatti — Advanced Software Engineer — algoritmi e modellazione matematica",
               "Marco Ottone Casagrande — Real-time Software Engineer — sistemi realtime ed embedded",
@@ -122,7 +121,7 @@
               "Riccardo Olivato — VR/AR & XR Developer — applicazioni immersive in Unreal Engine",
               "Alessandro Castrovillari — Web3D Developer — 3D su VR, AR e browser",
               "Claudiu Stefano Nae — Web3D & XR Developer — prototipazione realtime e interfacce 3D",
-              "Andrei Apostu — MLOps Engineer — deployment e monitoraggio dei modelli di machine learning in produzione"
+              ""
             ],
             "stato": "generato_da_ia"
           }
@@ -461,6 +460,108 @@
           "nota": ""
         },
         "template_email": {
+          "selezionato": false,
+          "nota": ""
+        }
+      },
+      "lancio": {
+        "nome_validato_domini_social": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "domini_registrati": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "gerarchia_mail": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "profili_social_aperti": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "due_fa_account_brand": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "intestazione_pagine_bm": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "copertura_competenze_mancanti": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "split_corporate_landing": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "affordance_ritorno_rimosse": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "title_brand_puro": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "open_graph_scrape": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "noindex_pagine_tecniche": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "download_bloccato": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "player_video_conforme": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "consensi_immagine_sito": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "documenti_legali_generati": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "mappatura_servizi_terzi": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "banner_produzione_configuratore": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "tag_post_consenso_verificati": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "parametri_utm_tracciati": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "audit_pagine_collegate": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "verifiche_meta_ordine": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "eventi_pixel_capi_testati": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "liste_clienti_target": {
+          "selezionato": false,
+          "nota": ""
+        },
+        "privacy_policy_facebook": {
           "selezionato": false,
           "nota": ""
         }
