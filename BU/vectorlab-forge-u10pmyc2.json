@@ -1,13 +1,13 @@
 {
   "versione": 2,
-  "esportatoIl": "2026-08-27T06:57:17.505Z",
+  "esportatoIl": "2026-08-27T07:38:57.563Z",
   "businessUnit": [
     {
       "id": "bu_msfuzl3u_1_0pmyc2",
       "nome": "Vectorlab Forge",
       "stato": "validata",
       "creata": "2026-08-05T09:02:36.953Z",
-      "modificata": "2026-08-27T06:56:59.696Z",
+      "modificata": "2026-08-27T07:38:52.351Z",
       "campi": {
         "identita": {
           "descrizione": {
@@ -336,7 +336,7 @@
       },
       "consegna": {
         "claim": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": "Da chiudere col copy prima del rilancio della landing"
         },
         "naming": {
@@ -344,11 +344,11 @@
           "nota": ""
         },
         "copy_landing": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": ""
         },
         "headline_varianti": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": "Test A/B perdita/risultato già impostato: serve la variante finale vincente"
         },
         "copy_annunci": {
@@ -356,7 +356,7 @@
           "nota": ""
         },
         "post_linkedin_aziendali": {
-          "selezionato": true,
+          "selezionato": false,
           "nota": "Annuncio di lancio dopo la prima Discovery firmata"
         },
         "post_linkedin_personali": {
