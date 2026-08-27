@@ -397,6 +397,13 @@
       stato: 'idea',
       creata: ora,
       modificata: ora,
+      // Quando campi o leve sono stati modificati l'ultima volta — non
+      // "modificata" in generale, che scatta anche per consegna/lancio/
+      // decisione, cose che nessun generatore legge. Confrontato con
+      // materiali[id].generatoIl da materialeObsoleto() per segnalare quali
+      // materiali sono stati generati PRIMA dell'ultima modifica ai dati che
+      // li alimentano.
+      campiModificatiIl: ora,
       campi: nuoviCampi(),
       leve: [],
       materiali: {},
@@ -459,6 +466,18 @@
   function statoEffettivoLeva(leva) {
     if (!leva) return 'ipotesi';
     return STATI_CAMPO.indexOf(leva.stato) !== -1 ? leva.stato : 'ipotesi';
+  }
+
+  // Un materiale è obsoleto quando campi/leve sono stati modificati DOPO
+  // l'ultima generazione — non quando è "vecchio" in assoluto, e non per
+  // modifiche a consegna/lancio/decisione, che nessun generatore legge.
+  // Confronto fra stringhe ISO 8601: ordina correttamente senza serve
+  // costruire oggetti Date.
+  function materialeObsoleto(bu, materiale) {
+    if (!materiale || !bu) return false;
+    var soglia = bu.campiModificatiIl;
+    if (!soglia) return false;
+    return materiale.generatoIl < soglia;
   }
 
   function campoHaValore(campo, tipo) {
@@ -618,6 +637,11 @@
     base.stato = STATI_BU.indexOf(grezzo.stato) !== -1 ? grezzo.stato : 'idea';
     base.creata = (typeof grezzo.creata === 'string' && grezzo.creata) ? grezzo.creata : base.creata;
     base.modificata = (typeof grezzo.modificata === 'string' && grezzo.modificata) ? grezzo.modificata : base.modificata;
+    // Dati salvati prima che questo campo esistesse: niente "ora" come
+    // default (marcherebbe come obsoleto ogni materiale già generato, al
+    // primo caricamento) — la creazione della BU è per costruzione sempre
+    // precedente a qualunque generatoIl.
+    base.campiModificatiIl = (typeof grezzo.campiModificatiIl === 'string' && grezzo.campiModificatiIl) ? grezzo.campiModificatiIl : base.creata;
     base.campi = normalizzaCampi(grezzo.campi);
     base.leve = Array.isArray(grezzo.leve) ? grezzo.leve.map(normalizzaLeva) : [];
     base.materiali = normalizzaMateriali(grezzo.materiali);
@@ -669,6 +693,7 @@
     apertura: apertura,
     aperturaDecisa: aperturaDecisa,
     campoHaValore: campoHaValore,
+    materialeObsoleto: materialeObsoleto,
     completezza: completezza,
 
     listaDaTesto: listaDaTesto,

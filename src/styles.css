@@ -361,6 +361,20 @@ textarea {
   font-size: 11px;
 }
 
+/* Materiale generato prima dell'ultima modifica a campi/leve: stesso
+   colore di avviso usato altrove (.materiale-avviso), non un rosso da
+   errore — è un promemoria, non un problema. */
+.pulsante--attenzione {
+  border-color: var(--avviso);
+  color: var(--avviso);
+  background: transparent;
+}
+
+.pulsante--attenzione:hover {
+  background: var(--avviso);
+  color: #fff;
+}
+
 /* ----------------------------------------------------------------- */
 /* COMPILA — campi */
 /* ----------------------------------------------------------------- */
@@ -600,6 +614,40 @@ textarea {
   margin-top: 10px;
   color: var(--text-debole);
   font-size: 11px;
+}
+
+.materiale-meta--obsoleto {
+  color: var(--avviso);
+}
+
+.materiali-azioni-globali {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.materiali-avviso-globale {
+  color: var(--avviso);
+  font-size: 13px;
+}
+
+.materiali-avviso-globale--ok {
+  color: var(--text-debole);
+}
+
+.documento-avviso-obsoleto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  background: rgba(217, 164, 65, 0.12);
+  border: 1px solid var(--avviso);
+  border-radius: 4px;
+  color: var(--avviso);
+  font-size: 12px;
 }
 
 .materiale-vuoto {

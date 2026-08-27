@@ -41,10 +41,14 @@ flusso Compila/Materiali/.../Output invece che come tab.
   generato_da_ia | mandatorio`), riportato con un'icona (💭 🤖 🔒) nel
   Markdown dei materiali interni — mai in quelli destinati a un cliente.
   Vedi [docs/MODELLO.md](docs/MODELLO.md).
-- **Materiali** — un blocco per generatore, con generazione/rigenerazione e
-  testo modificabile a mano.
+- **Materiali** — un blocco per generatore, con generazione/rigenerazione
+  (anche tutte insieme, con "Rigenera tutto") e testo modificabile a mano.
+  Un materiale generato prima dell'ultima modifica a un campo o una leva è
+  segnalato come da aggiornare, invece di restare un'istantanea silenziosa.
 - **Documento** — tutti i materiali concatenati e renderizzati (titoli,
-  tabelle, badge di stato), con il download del file .md grezzo.
+  tabelle, badge di stato), con il download del file .md grezzo. Stesso
+  avviso di Materiali se qualcosa non è aggiornato, con lo stesso
+  "Rigenera tutto" a portata di mano.
 - **Lancio** — checklist operativa di 25 verifiche tecniche per portare la
   BU dal nome al primo lead (setup domini/social, sito, tracking/Meta),
   estratta dal

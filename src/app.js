@@ -530,11 +530,18 @@
     if (!bu) return;
 
     var callback = function () { segnalaModifica(bu); };
+    // Solo Compila (campi e leve) sposta la soglia di "materiale obsoleto":
+    // consegna/lancio/decisione non sono letti da nessun generatore, non
+    // devono far sembrare vecchio un materiale appena generato.
+    var callbackCampi = function () {
+      bu.campiModificatiIl = new Date().toISOString();
+      segnalaModifica(bu);
+    };
 
     if (stato.vista === 'materiali') {
       BU.ui.renderMateriali(container, bu, callback);
     } else if (stato.vista === 'documento') {
-      BU.ui.renderDocumento(container, bu, function () { scaricaDocumento(bu); });
+      BU.ui.renderDocumento(container, bu, function () { scaricaDocumento(bu); }, callback);
     } else if (stato.vista === 'lancio') {
       BU.ui.renderLancio(container, bu, callback);
     } else if (stato.vista === 'validazione') {
@@ -542,7 +549,7 @@
     } else if (stato.vista === 'consegna') {
       BU.ui.renderConsegna(container, bu, callback);
     } else {
-      BU.ui.renderCompila(container, bu, callback);
+      BU.ui.renderCompila(container, bu, callbackCampi);
     }
   }
 

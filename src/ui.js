@@ -289,12 +289,64 @@
   // VISTA: MATERIALI
   // ---------------------------------------------------------------------
 
+  // Rigenera ogni materiale registrato in un colpo solo. Zero interruzioni
+  // nel caso comune (nessun materiale toccato a mano): un solo confirm,
+  // solo se almeno uno lo è stato — non un confirm per materiale, non un
+  // meccanismo che salta/elenca in silenzio i modificati a mano: se conferma,
+  // sovrascrive tutto, altrimenti non tocca niente.
+  function rigeneraTutto(bu, segnalaModifica, ridisegna) {
+    var generatori = BU.gen.elencaGeneratori();
+    var modificatiAMano = generatori
+      .filter(function (g) { var m = bu.materiali[g.id]; return m && m.modificatoAMano; })
+      .map(function (g) { return g.nome; });
+    if (modificatiAMano.length) {
+      var ok = global.confirm(
+        'Rigenerare tutti i materiali sovrascrive anche quelli modificati a mano: ' +
+        modificatiAMano.join(', ') + '. Continuare?'
+      );
+      if (!ok) return;
+    }
+    generatori.forEach(function (generatore) {
+      var esistente = bu.materiali[generatore.id];
+      bu.materiali[generatore.id] = {
+        stato: esistente ? esistente.stato : 'bozza',
+        testo: generatore.genera(bu),
+        generatoIl: new Date().toISOString(),
+        modificatoAMano: false
+      };
+    });
+    segnalaModifica();
+    ridisegna();
+  }
+
+  // Quanti materiali sono da generare (mai fatto) o da aggiornare (dati
+  // modificati dopo l'ultima generazione) — stesso conteggio mostrato in
+  // Materiali e in Documento.
+  function contaMaterialiDaAggiornare(bu) {
+    return BU.gen.elencaGeneratori().filter(function (g) {
+      var m = bu.materiali[g.id];
+      return !m || schema.materialeObsoleto(bu, m);
+    }).length;
+  }
+
   function renderMateriali(container, bu, segnalaModifica) {
     container.innerHTML = '';
 
     function ridisegna() {
       renderMateriali(container, bu, segnalaModifica);
     }
+
+    var daAggiornare = contaMaterialiDaAggiornare(bu);
+    container.appendChild(el('div', { class: 'materiali-azioni-globali' }, [
+      el('button', {
+        type: 'button', class: 'pulsante pulsante--primario',
+        onclick: function () { rigeneraTutto(bu, segnalaModifica, ridisegna); }
+      }, ['Rigenera tutto']),
+      daAggiornare
+        ? el('span', { class: 'materiali-avviso-globale' },
+          [daAggiornare + ' material' + (daAggiornare === 1 ? 'e' : 'i') + ' da generare o aggiornare'])
+        : el('span', { class: 'materiali-avviso-globale materiali-avviso-globale--ok' }, ['Tutti aggiornati'])
+    ]));
 
     BU.gen.elencaGeneratori().forEach(function (generatore) {
       container.appendChild(renderBloccoMateriale(bu, generatore, segnalaModifica, ridisegna));
@@ -328,9 +380,10 @@
     }
 
     var mancanti = BU.gen.campiRichiestiMancanti(bu, generatore);
+    var obsoleto = !!materiale && schema.materialeObsoleto(bu, materiale);
 
     var bottoneGenera = el('button', {
-      type: 'button', class: 'pulsante pulsante--primario',
+      type: 'button', class: 'pulsante ' + (obsoleto ? 'pulsante--attenzione' : 'pulsante--primario'),
       onclick: function () {
         if (materiale && materiale.modificatoAMano) {
           var ok = global.confirm('Questo materiale è stato modificato a mano. Rigenerarlo sovrascrive le modifiche. Continuare?');
@@ -346,7 +399,7 @@
         segnalaModifica();
         ridisegna();
       }
-    }, [materiale ? 'Rigenera' : 'Genera']);
+    }, [materiale ? (obsoleto ? 'Rigenera ⚠' : 'Rigenera') : 'Genera']);
 
     controlli.appendChild(bottoneGenera);
     intestazione.appendChild(controlli);
@@ -359,8 +412,10 @@
     }
 
     if (materiale) {
-      var metaTesto = 'Generato il ' + formattaData(materiale.generatoIl) + (materiale.modificatoAMano ? ' — modificato a mano' : '');
-      var meta = el('div', { class: 'materiale-meta', text: metaTesto });
+      var metaTesto = 'Generato il ' + formattaData(materiale.generatoIl) +
+        (materiale.modificatoAMano ? ' — modificato a mano' : '') +
+        (obsoleto ? ' — dati modificati dopo la generazione' : '');
+      var meta = el('div', { class: 'materiale-meta' + (obsoleto ? ' materiale-meta--obsoleto' : ''), text: metaTesto });
       blocco.appendChild(meta);
 
       blocco.appendChild(el('textarea', {
@@ -383,11 +438,30 @@
   // ---------------------------------------------------------------------
   // VISTA: DOCUMENTO — tutti i materiali renderizzati come un unico
   // documento (BU.render.documentoCompleto + BU.markdown), con il download
-  // del file .md grezzo. Vista di sola lettura: non passa segnalaModifica.
+  // del file .md grezzo. Sola lettura sul contenuto (nessun campo qui è
+  // modificabile) — segnalaModifica serve solo per il bottone "Rigenera
+  // tutto" del banner qui sotto, che scrive su bu.materiali.
   // ---------------------------------------------------------------------
 
-  function renderDocumento(container, bu, scarica) {
+  function renderDocumento(container, bu, scarica, segnalaModifica) {
     container.innerHTML = '';
+
+    function ridisegna() {
+      renderDocumento(container, bu, scarica, segnalaModifica);
+    }
+
+    var daAggiornare = contaMaterialiDaAggiornare(bu);
+    if (daAggiornare) {
+      container.appendChild(el('div', { class: 'documento-avviso-obsoleto' }, [
+        el('span', {}, [daAggiornare === 1
+          ? '1 materiale qui sotto non è aggiornato rispetto ai dati compilati.'
+          : daAggiornare + ' materiali qui sotto non sono aggiornati rispetto ai dati compilati.']),
+        el('button', {
+          type: 'button', class: 'pulsante pulsante--attenzione pulsante--piccolo',
+          onclick: function () { rigeneraTutto(bu, segnalaModifica, ridisegna); }
+        }, ['Rigenera tutto'])
+      ]));
+    }
 
     var intestazione = el('div', { class: 'documento-intestazione' }, [
       el('div', { class: 'documento-nota' },

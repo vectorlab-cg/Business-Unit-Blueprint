@@ -785,6 +785,37 @@ test('stato leva nel markdown: un materiale interno annota la leva mandatoria, u
   assicura(rPresentazione.md.indexOf('🔒 Mandatorio') === -1, 'la presentazione commerciale non dovrebbe esporre lo stato interno di una leva');
 });
 
+test('materialeObsoleto: falso senza materiale o senza soglia, vero solo se generato prima della soglia', function () {
+  var ctx = creaContesto();
+  var schema = ctx.BU.schema;
+  var bu = schema.nuovaBU('Prova');
+  bu.campiModificatiIl = '2024-01-10T00:00:00.000Z';
+
+  assicuraUguale(schema.materialeObsoleto(bu, null), false, 'senza materiale non può essere obsoleto');
+  assicuraUguale(
+    schema.materialeObsoleto(bu, { generatoIl: '2024-01-01T00:00:00.000Z' }), true,
+    'generato prima della soglia dovrebbe essere obsoleto'
+  );
+  assicuraUguale(
+    schema.materialeObsoleto(bu, { generatoIl: '2024-01-20T00:00:00.000Z' }), false,
+    'generato dopo la soglia non dovrebbe essere obsoleto'
+  );
+});
+
+test('campiModificatiIl: nasce alla creazione, un valore salvato sopravvive, dati vecchi senza il campo ricadono su "creata" (mai su "ora")', function () {
+  var ctx = creaContesto();
+  var schema = ctx.BU.schema;
+  var nuova = schema.nuovaBU('Prova');
+  assicuraUguale(nuova.campiModificatiIl, nuova.creata, 'una BU nuova dovrebbe avere campiModificatiIl uguale a creata');
+
+  var bu = schema.normalizzaBU({ nome: 'Prova', campiModificatiIl: '2024-05-01T00:00:00.000Z' });
+  assicuraUguale(bu.campiModificatiIl, '2024-05-01T00:00:00.000Z', 'un valore salvato valido dovrebbe sopravvivere alla normalizzazione');
+
+  var vecchia = schema.normalizzaBU({ nome: 'Vecchia', creata: '2023-01-01T00:00:00.000Z' });
+  assicuraUguale(vecchia.campiModificatiIl, '2023-01-01T00:00:00.000Z',
+    'dati salvati prima che il campo esistesse dovrebbero ricadere su "creata", non su "ora" (altrimenti ogni materiale già generato sembrerebbe obsoleto al primo caricamento)');
+});
+
 // ---------------------------------------------------------------------
 // Test: renderer Markdown → HTML (src/markdown.js) e documento completo
 // (BU.render.documentoCompleto, usato dalla vista DOCUMENTO)

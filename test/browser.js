@@ -256,6 +256,101 @@ async function main() {
     'la BU condivisa ha perso il pulsante "Salva su GitHub" (fileHandle perso) dopo un errore di lettura transitorio');
   esiti.push({ nome: 'un errore di lettura transitorio non fa sparire una BU già condivisa', ok: true });
 
+  // -------------------------------------------------------------------
+  // Scenario 6: un materiale generato, poi un campo modificato dopo —
+  // deve comparire come da aggiornare; "Rigenera tutto" lo rigenera (e
+  // genera anche tutti gli altri mai generati) senza chiedere conferma
+  // quando nessun materiale è stato modificato a mano.
+  // -------------------------------------------------------------------
+  promptDaRispondere.push('BU per test materiali');
+  await page.click('#bottone-nuova-bu');
+  await attesa(300);
+
+  // Genera il primo materiale disponibile (Materiali)
+  await page.evaluate(function () {
+    Array.from(document.querySelectorAll('#tabs button')).find(function (b) { return b.textContent.trim() === 'Materiali'; }).click();
+  });
+  await attesa(200);
+  await page.evaluate(function () {
+    Array.from(document.querySelectorAll('.materiale-blocco button')).find(function (b) { return b.textContent.trim() === 'Genera'; }).click();
+  });
+  await attesa(200);
+
+  var primoBloccoDopoGenera = await page.evaluate(function () {
+    var b = document.querySelector('.materiale-blocco');
+    return { bottone: b.querySelector('button.pulsante--primario, button.pulsante--attenzione').textContent.trim() };
+  });
+  assicura(primoBloccoDopoGenera.bottone === 'Rigenera', 'subito dopo Genera il bottone dovrebbe leggere "Rigenera": ' + JSON.stringify(primoBloccoDopoGenera));
+
+  // Torna a Compila e modifica un campo
+  await page.evaluate(function () {
+    Array.from(document.querySelectorAll('#tabs button')).find(function (b) { return b.textContent.trim() === 'Compila'; }).click();
+  });
+  await attesa(200);
+  await page.evaluate(function () {
+    var etichetta = Array.from(document.querySelectorAll('.campo-etichetta')).find(function (l) { return l.textContent.indexOf('Descrizione') === 0; });
+    var textarea = etichetta.closest('.campo').querySelector('textarea.campo-valore');
+    textarea.value = 'Testo aggiornato dopo la generazione del materiale.';
+    textarea.dispatchEvent(new Event('input'));
+  });
+  await attesa(200);
+
+  // Torna a Materiali: il primo blocco dovrebbe segnalare "da aggiornare"
+  await page.evaluate(function () {
+    Array.from(document.querySelectorAll('#tabs button')).find(function (b) { return b.textContent.trim() === 'Materiali'; }).click();
+  });
+  await attesa(200);
+
+  var statoObsoleto = await page.evaluate(function () {
+    var primoBlocco = document.querySelector('.materiale-blocco');
+    return {
+      bottone: primoBlocco.querySelector('button.pulsante--primario, button.pulsante--attenzione').textContent.trim(),
+      metaObsoleta: !!primoBlocco.querySelector('.materiale-meta--obsoleto'),
+      avvisoGlobale: document.querySelector('.materiali-avviso-globale').textContent.trim()
+    };
+  });
+  assicura(statoObsoleto.bottone.indexOf('⚠') !== -1, 'il materiale generato prima della modifica al campo dovrebbe mostrare "Rigenera ⚠": ' + JSON.stringify(statoObsoleto));
+  assicura(statoObsoleto.metaObsoleta, 'la riga "Generato il..." dovrebbe segnalare che i dati sono cambiati dopo la generazione');
+  assicura(/\d+ material[ei] da generare o aggiornare/.test(statoObsoleto.avvisoGlobale),
+    'l\'avviso globale dovrebbe contare i materiali da generare/aggiornare: ' + JSON.stringify(statoObsoleto));
+  esiti.push({ nome: 'un materiale generato prima di una modifica al campo viene segnalato come da aggiornare', ok: true });
+
+  // "Rigenera tutto" — nessun materiale modificato a mano, quindi nessun confirm
+  ultimoAlert = null;
+  await page.click('.materiali-azioni-globali button');
+  await attesa(400);
+
+  var statoDopoRigeneraTutto = await page.evaluate(function () {
+    var bottoni = Array.from(document.querySelectorAll('.materiale-blocco button')).filter(function (b) {
+      return b.className.indexOf('pulsante--primario') !== -1 || b.className.indexOf('pulsante--attenzione') !== -1;
+    });
+    return {
+      nBlocchi: document.querySelectorAll('.materiale-blocco').length,
+      tuttiRigenera: bottoni.every(function (b) { return b.textContent.trim() === 'Rigenera'; }),
+      avvisoGlobale: document.querySelector('.materiali-avviso-globale').textContent.trim()
+    };
+  });
+  assicura(ultimoAlert === null, '"Rigenera tutto" senza materiali modificati a mano non dovrebbe chiedere conferma: ' + JSON.stringify(ultimoAlert));
+  assicura(statoDopoRigeneraTutto.tuttiRigenera,
+    'dopo "Rigenera tutto" tutti i blocchi dovrebbero leggere "Rigenera" (tutti generati, nessuno obsoleto): ' + JSON.stringify(statoDopoRigeneraTutto));
+  assicura(statoDopoRigeneraTutto.avvisoGlobale === 'Tutti aggiornati',
+    'l\'avviso globale dovrebbe dire "Tutti aggiornati" dopo "Rigenera tutto": ' + JSON.stringify(statoDopoRigeneraTutto));
+  esiti.push({ nome: '"Rigenera tutto" aggiorna tutti i materiali senza conferma quando nessuno è modificato a mano', ok: true });
+
+  // Modifica un materiale a mano, poi "Rigenera tutto" deve chiedere conferma
+  await page.evaluate(function () {
+    var textarea = document.querySelector('.materiale-testo');
+    textarea.value = textarea.value + ' (ritocco a mano)';
+    textarea.dispatchEvent(new Event('input'));
+  });
+  await attesa(200);
+  ultimoAlert = null;
+  await page.click('.materiali-azioni-globali button'); // il dialog "confirm" viene auto-accettato dall'handler globale
+  await attesa(400);
+  assicura(ultimoAlert && ultimoAlert.indexOf('modificati a mano') !== -1,
+    '"Rigenera tutto" con un materiale modificato a mano dovrebbe chiedere conferma, elencandolo: ' + JSON.stringify(ultimoAlert));
+  esiti.push({ nome: '"Rigenera tutto" chiede conferma quando almeno un materiale è modificato a mano', ok: true });
+
   await browser.close();
 }
 

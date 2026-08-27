@@ -9,7 +9,7 @@ ragione.
 ```
 {
   id, nome, stato,
-  creata, modificata,
+  creata, modificata, campiModificatiIl,
   campi: { identita: {...}, mercato: {...}, offerta: {...}, risorse: {...}, economia: {...}, pilota: {...}, test: {...} },
   leve: [ ... ],
   materiali: { <idGeneratore>: {...} },
@@ -181,6 +181,31 @@ Uno per generatore registrato, indicizzato per `id` del generatore:
 Se manca la chiave, il materiale non è mai stato generato: la vista
 MATERIALI lo mostra come "Non ancora generato", non ricostruisce un
 oggetto vuoto solo per popolare la UI.
+
+### Rigenerazione e obsolescenza
+
+Ogni generatore è puro: `genera(bu)` legge campi/leve/risultati correnti e
+restituisce Markdown, senza mai scrivere da solo in `bu.materiali` — la
+scrittura avviene solo al click di "Genera"/"Rigenera" (o di "Rigenera
+tutto"), mai automaticamente. Questo vuol dire che un materiale già
+generato è un'**istantanea**: resta quello che era finché qualcuno non lo
+rigenera esplicitamente, anche se i campi che lo alimentano cambiano dopo.
+
+`bu.campiModificatiIl` traccia quando campi o leve sono stati modificati
+l'ultima volta — non `bu.modificata`, che scatta anche per consegna/
+lancio/decisione, cose che nessun generatore legge, e marcherebbe
+obsoleto ogni materiale per modifiche che non lo riguardano.
+`schema.materialeObsoleto(bu, materiale)` confronta questa soglia con
+`materiale.generatoIl`: se il materiale è stato generato prima dell'ultima
+modifica ai dati, è obsoleto. Le viste MATERIALI e DOCUMENTO lo segnalano
+(bottone "Rigenera ⚠", banner con conteggio) senza mai bloccare né
+rigenerare da sole — solo un click esplicito scrive.
+
+"Rigenera tutto" (in entrambe le viste) itera tutti i generatori
+registrati: genera chi non è mai stato generato, rigenera il resto. Un solo
+`confirm` — non uno per materiale — compare solo se almeno un materiale è
+stato modificato a mano, elencando quali verrebbero sovrascritti; se
+nessuno lo è stato, parte senza chiedere nulla.
 
 ## Risultati e decisione
 
