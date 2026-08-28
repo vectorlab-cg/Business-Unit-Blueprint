@@ -27,20 +27,25 @@
     righe.push('_Questo non è il materiale finale: è il brief per chi costruisce la demo o il mockup._');
     righe.push('');
     righe.push('## Obiettivo');
+    righe.push('_Cosa deve capire chi guarda la demo, in una frase._');
     righe.push('Dimostrare a ' + render.senzaPuntoFinale(render.testoCampo(bu, 'mercato', 'decisore')) + ' che ' +
       render.senzaPuntoFinale(render.testoCampo(bu, 'offerta', 'risultato_promesso')) + '.');
     righe.push('');
     righe.push('## Pubblico');
+    righe.push('_A chi la si mostra: chi decide, dentro che tipo di azienda._');
     righe.push(render.senzaPuntoFinale(render.testoCampo(bu, 'mercato', 'decisore')) + ' di ' +
       render.senzaPuntoFinale(render.testoCampo(bu, 'mercato', 'cliente_ideale')) + '.');
     righe.push('');
     righe.push('## Cosa dimostrare, leva per leva');
+    righe.push('_Per ogni leva, cosa deve vedersi nella demo che ne mostri la soluzione._');
     righe.push(cosaDimostraOgniLeva(bu));
     righe.push('');
     righe.push('## Percorso della demo');
+    righe.push('_L\'ordine delle schermate o dei passaggi da mostrare._');
     righe.push(render.daScrivere('schermate o passaggi della demo/mockup, in ordine'));
     righe.push('');
     righe.push('## Cosa non deve includere');
+    righe.push('_I limiti espliciti: cosa la demo non promette e non mostra._');
     righe.push(render.testoCampoConStato(bu, 'offerta', 'escluso'));
     righe.push('');
     return righe.join('\n');

@@ -54,7 +54,9 @@ Ogni campo, qualunque il tipo, ha sempre le stesse due proprietà:
   è giusto o sbagliato, solo da dove viene.
 - **`mandatorio`** — deciso, non negoziabile: non va cambiato senza una
   decisione esplicita a monte (es. un vincolo di prodotto o di prezzo già
-  fissato altrove).
+  fissato altrove). Il valore enum resta `mandatorio` (dati già salvati),
+  ma l'etichetta visibile è **"Confermato"** — "mandatorio" in italiano
+  suona come "obbligatorio", che non è il senso qui.
 
 I campi con `critico: true` nella definizione sono quelli la cui assenza
 finisce nella sezione "Cosa fermerebbe questa business unit" del generatore
@@ -65,8 +67,8 @@ BU One-Page.
 Alcuni generatori — quelli "interni" (letti da chi lavora sulla BU, mai
 spediti così a un cliente o pubblicati) — riportano lo stato accanto al
 valore del campo, tramite `render.testoCampoConStato()`: es. "600€ al mese
-`🔒 Mandatorio`" oppure "risolve X per Y `🤖 Generato da IA`". Ogni stato ha
-un'icona (💭 ipotesi, 🤖 generato da IA, 🔒 mandatorio) riconoscibile a colpo
+`🔒 Confermato`" oppure "risolve X per Y `🤖 Generato da IA`". Ogni stato ha
+un'icona (💭 ipotesi, 🤖 generato da IA, 🔒 confermato) riconoscibile a colpo
 d'occhio anche nel markdown grezzo, non renderizzato, dove il colore non è
 disponibile; il badge `` `testo` `` (inline code) lo separa visivamente dalla
 prosa circostante. Ogni materiale interno apre con una riga di legenda

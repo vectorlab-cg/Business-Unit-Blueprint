@@ -31,7 +31,7 @@
         (elimini || render.manca('come lo elimini')) + '" lo risolve davvero.');
     });
 
-    if (!righe.length) return 'Nessuna: tutti i campi compilati sono già segnati come mandatori.';
+    if (!righe.length) return 'Nessuna: tutti i campi compilati sono già segnati come confermati.';
     return render.elencoPuntato(righe);
   }
 
@@ -82,18 +82,23 @@
     righe.push(render.legendaStatiCampo());
     righe.push('');
     righe.push('## Ipotesi da testare');
+    righe.push('_I campi e le leve ancora non confermati: sono quello che il test deve verificare._');
     righe.push(ipotesiDaTestare(bu));
     righe.push('');
     righe.push('## Scheda del test');
+    righe.push('_Dove, con che budget e per quanto tempo si testa._');
     righe.push(schedaDelTest(bu));
     righe.push('');
     righe.push('## Le due soglie');
+    righe.push('_Due segnali diversi: uno dice che il messaggio arriva, l\'altro che qualcuno pagherebbe._');
     righe.push(dueSoglie(bu));
     righe.push('');
     righe.push('## Costo di scoprire di aver sbagliato');
+    righe.push('_Quanto costa il test in denaro, tempo e ore-persona — indipendentemente dall\'esito._');
     righe.push(costoDiScoprireDiAverSbagliato(bu));
     righe.push('');
     righe.push('## Criteri di decisione');
+    righe.push('_Cosa succede a seconda dell\'esito: continua, modifica o ferma._');
     righe.push(criteriDecisione(bu));
     righe.push('');
     righe.push('_Per i valori attuali delle metriche rispetto a queste soglie, vedi il generatore "Dashboard KPI"._');

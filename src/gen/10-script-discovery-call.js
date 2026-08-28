@@ -35,22 +35,28 @@
     righe.push('# Script discovery call — ' + bu.nome);
     righe.push('');
     righe.push('## Apertura');
+    righe.push('_Come iniziare la call: contesto breve, prima di entrare nelle domande._');
     righe.push(render.daScrivere('rapport e contesto della call, breve'));
     righe.push('');
     righe.push('## Domande di scoperta');
+    righe.push('_Per far emergere il problema con le parole del cliente, non le vostre._');
     righe.push(domandeDiScoperta(bu));
     righe.push('');
     righe.push('## Domande di qualificazione');
+    righe.push('_Per capire se questo cliente è davvero adatto, prima di proporre l\'offerta._');
     righe.push(domandeDiQualificazione(bu));
     righe.push('');
     righe.push('## Gestione obiezioni');
+    righe.push('_Le obiezioni più prevedibili e come rispondere, specialmente sull\'alternativa attuale._');
     righe.push(render.daScrivere('obiezioni comuni e come rispondere, in particolare sul confronto con: ' +
       render.testoCampo(bu, 'mercato', 'alternativa_attuale')));
     righe.push('');
     righe.push('## Transizione all\'offerta');
+    righe.push('_Come si passa dalla scoperta alla proposta, senza sembrare un salto._');
     righe.push(render.testoCampo(bu, 'offerta', 'servizio') + ' — ' + render.testoCampo(bu, 'offerta', 'risultato_promesso'));
     righe.push('');
     righe.push('## Chiusura / prossimo passo');
+    righe.push('_Cosa deve succedere subito dopo la call, in concreto._');
     righe.push(render.testoCampo(bu, 'test', 'azione_richiesta'));
     righe.push('');
     return righe.join('\n');

@@ -31,9 +31,11 @@
     righe.push('generazione. Non si aggiorna da sola: rigenera dopo aver aggiornato i risultati._');
     righe.push('');
     righe.push('## Metriche');
+    righe.push('_I numeri del test, così come inseriti in Validazione._');
     righe.push(tabellaMetriche(bu));
     righe.push('');
     righe.push('## Soglie di riferimento');
+    righe.push('_I due valori che, se raggiunti, autorizzano il passo successivo._');
     righe.push('- Segnale di messaggio (autorizza a telefonare): ' + render.testoCampo(bu, 'test', 'soglia_messaggio'));
     righe.push('- Segnale di mercato (autorizza a costruire): ' + render.testoCampo(bu, 'test', 'soglia_mercato'));
     righe.push('');

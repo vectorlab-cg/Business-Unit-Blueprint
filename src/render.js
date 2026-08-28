@@ -99,7 +99,7 @@
     return ICONE_STATO_CAMPO[stato] || '';
   }
 
-  // "🔒 Mandatorio" — icona ed etichetta insieme, così l'icona resta
+  // "🔒 Confermato" — icona ed etichetta insieme, così l'icona resta
   // interpretabile anche da chi non conosce ancora la legenda.
   function etichettaStatoCampo(campo) {
     var stato = BU.schema.statoEffettivoCampo(campo);
@@ -108,8 +108,8 @@
   }
 
   // Testo del campo con lo stato annotato in coda come badge inline —
-  // "valore `🔒 Mandatorio`" — per i materiali a uso interno, dove sapere se
-  // una riga è ipotesi, generata da IA o mandatoria conta quanto il valore
+  // "valore `🔒 Confermato`" — per i materiali a uso interno, dove sapere se
+  // una riga è ipotesi, generata da IA o confermata conta quanto il valore
   // stesso. Il markdown a spaziatura fissa (backtick) resta un blocco
   // visivamente separato dalla prosa anche senza un renderer markdown
   // sottomano. Non va usato nei materiali pensati per uscire così come sono

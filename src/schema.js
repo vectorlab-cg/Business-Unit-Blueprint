@@ -26,10 +26,15 @@
   //   mandatorio      valore definitivo, non va cambiato senza motivo
   var STATI_CAMPO = ['ipotesi', 'generato_da_ia', 'mandatorio'];
 
+  // Etichetta visibile diversa dal valore enum interno ('mandatorio', sopra):
+  // "Mandatorio" in italiano suona come "obbligatorio", mentre il senso
+  // reale è "deciso, non negoziabile senza una decisione esplicita a monte"
+  // — "Confermato" lo dice meglio. Il valore enum resta invariato apposta:
+  // cambiarlo avrebbe richiesto una migrazione dei dati già salvati.
   var STATI_CAMPO_ETICHETTE = {
     ipotesi: 'Ipotesi',
     generato_da_ia: 'Generato da IA',
-    mandatorio: 'Mandatorio'
+    mandatorio: 'Confermato'
   };
 
   var STATI_BU = [

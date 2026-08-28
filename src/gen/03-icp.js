@@ -24,9 +24,11 @@
     righe.push(render.legendaStatiCampo());
     righe.push('');
     righe.push('## Profilo');
+    righe.push('_Chi è, in sintesi, il cliente che questa BU serve meglio._');
     righe.push(render.testoCampoConStato(bu, 'mercato', 'cliente_ideale'));
     righe.push('');
     righe.push('## Chi decide');
+    righe.push('_Chi ha in mano la decisione d\'acquisto, e cosa sta già affrontando quando arrivate._');
     righe.push('- Ruolo: ' + render.testoCampoConStato(bu, 'mercato', 'decisore'));
     righe.push('- Cosa ha sul tavolo quando arrivate: ' + render.testoCampoConStato(bu, 'mercato', 'contesto_decisore'));
     righe.push('');
@@ -35,9 +37,11 @@
     righe.push(segnaliDaCercare(bu));
     righe.push('');
     righe.push('## Cosa fa oggi (la concorrenza reale)');
+    righe.push('_Non i concorrenti diretti: cosa fa il cliente adesso al posto di comprare da voi._');
     righe.push(render.testoCampoConStato(bu, 'mercato', 'alternativa_attuale'));
     righe.push('');
     righe.push('## Criteri di esclusione');
+    righe.push('_Chi somiglia al profilo ma non lo è davvero — per non sprecare tempo di prospecting._');
     righe.push(render.daScrivere('chi assomiglia al cliente ideale ma non lo è, e perché — per non sprecare tempo di prospecting'));
     righe.push('');
     return righe.join('\n');

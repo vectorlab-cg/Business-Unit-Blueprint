@@ -692,29 +692,29 @@ test('swot: opportunità e minacce segnalano esplicitamente cosa resta da scrive
   assicura(minacce.indexOf('[DA SCRIVERE:') !== -1, 'le minacce non segnalano la parte che richiede giudizio');
 });
 
-test('stato campo nel markdown: un materiale interno annota ipotesi/generato da IA/mandatorio con icona', function () {
+test('stato campo nel markdown: un materiale interno annota ipotesi/generato da IA/confermato con icona', function () {
   var r = generaPerBuCompilata('bu-one-page');
-  // descrizione è mandatorio, alternativa_attuale è generato_da_ia nella fixture.
-  assicura(r.md.indexOf('`🔒 Mandatorio`') !== -1, 'nessuna annotazione "🔒 Mandatorio" nel materiale');
+  // descrizione è mandatorio (etichetta "Confermato"), alternativa_attuale è generato_da_ia nella fixture.
+  assicura(r.md.indexOf('`🔒 Confermato`') !== -1, 'nessuna annotazione "🔒 Confermato" nel materiale');
   var sezionePerChi = sezione(r.md, '## Per chi');
   assicura(sezionePerChi.indexOf('`🤖 Generato da IA`') !== -1, 'l\'alternativa attuale (generato_da_ia) non è annotata nel materiale');
-  assicura(r.md.indexOf('Stato dei dati: 💭 Ipotesi · 🤖 Generato da IA · 🔒 Mandatorio') !== -1,
+  assicura(r.md.indexOf('Stato dei dati: 💭 Ipotesi · 🤖 Generato da IA · 🔒 Confermato') !== -1,
     'manca la legenda delle icone di stato in testa al materiale');
 });
 
 test('stato campo nel markdown: i materiali esterni (landing) non annotano lo stato interno', function () {
   var r = generaPerBuCompilata('landing');
-  assicura(r.md.indexOf('🔒 Mandatorio') === -1, 'la landing non dovrebbe esporre annotazioni di stato interno');
+  assicura(r.md.indexOf('🔒 Confermato') === -1, 'la landing non dovrebbe esporre annotazioni di stato interno');
   assicura(r.md.indexOf('🤖 Generato da IA') === -1, 'la landing non dovrebbe esporre annotazioni di stato interno');
 });
 
-test('problem statement: "cosa è già mandatorio" elenca solo i campi mandatori, col loro valore', function () {
+test('problem statement: "cosa è già confermato" elenca solo i campi confermati (mandatorio), col loro valore', function () {
   var r = generaPerBuCompilata('problem-statement');
-  var sezioneMandatori = sezione(r.md, '## Cosa è già mandatorio');
-  assicura(sezioneMandatori.indexOf(r.bu.campi.identita.descrizione.valore) !== -1,
-    'la descrizione (mandatoria nella fixture) non compare tra i dati consolidati');
-  assicura(sezioneMandatori.indexOf(r.bu.campi.offerta.servizio.valore) === -1,
-    'il servizio (ipotesi nella fixture, non mandatorio) non dovrebbe comparire tra i dati consolidati');
+  var sezioneConfermati = sezione(r.md, '## Cosa è già confermato');
+  assicura(sezioneConfermati.indexOf(r.bu.campi.identita.descrizione.valore) !== -1,
+    'la descrizione (confermata/mandatoria nella fixture) non compare tra i dati consolidati');
+  assicura(sezioneConfermati.indexOf(r.bu.campi.offerta.servizio.valore) === -1,
+    'il servizio (ipotesi nella fixture, non confermato) non dovrebbe comparire tra i dati consolidati');
 });
 
 test('dimensionamento: mette insieme prezzo/costo/capacità/mercato senza inventare un ricavo', function () {
@@ -771,18 +771,18 @@ test('leve: stato — nasce ipotesi, un valore valido sopravvive alla normalizza
   assicuraUguale(ctx.BU.schema.statoEffettivoLeva(null), 'ipotesi', 'statoEffettivoLeva su null dovrebbe restituire ipotesi');
 });
 
-test('stato leva nel markdown: un materiale interno annota la leva mandatoria, uno esterno no', function () {
+test('stato leva nel markdown: un materiale interno annota la leva confermata (mandatoria), uno esterno no', function () {
   var rInterno = generaPerBuCompilata('bu-one-page');
-  assicura(rInterno.md.indexOf('`🔒 Mandatorio`') !== -1,
-    'la leva mandatoria nella fixture non è annotata in "Leve principali"');
+  assicura(rInterno.md.indexOf('`🔒 Confermato`') !== -1,
+    'la leva confermata/mandatoria nella fixture non è annotata in "Leve principali"');
   var rProblema = generaPerBuCompilata('problem-statement');
-  assicura(rProblema.md.indexOf('`🔒 Mandatorio`') !== -1,
-    'la leva mandatoria nella fixture non è annotata nel problem statement');
+  assicura(rProblema.md.indexOf('`🔒 Confermato`') !== -1,
+    'la leva confermata/mandatoria nella fixture non è annotata nel problem statement');
 
   var rEsterno = generaPerBuCompilata('landing');
-  assicura(rEsterno.md.indexOf('🔒 Mandatorio') === -1, 'la landing non dovrebbe esporre lo stato interno di una leva');
+  assicura(rEsterno.md.indexOf('🔒 Confermato') === -1, 'la landing non dovrebbe esporre lo stato interno di una leva');
   var rPresentazione = generaPerBuCompilata('presentazione-commerciale');
-  assicura(rPresentazione.md.indexOf('🔒 Mandatorio') === -1, 'la presentazione commerciale non dovrebbe esporre lo stato interno di una leva');
+  assicura(rPresentazione.md.indexOf('🔒 Confermato') === -1, 'la presentazione commerciale non dovrebbe esporre lo stato interno di una leva');
 });
 
 test('materialeObsoleto: falso senza materiale o senza soglia, vero solo se generato prima della soglia', function () {

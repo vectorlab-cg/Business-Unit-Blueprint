@@ -30,12 +30,15 @@
     righe.push('del primo cliente (o dei primi clienti)._');
     righe.push('');
     righe.push('## Servizio');
+    righe.push('_Cosa include il pilota, a confronto con l\'offerta standard._');
     righe.push(confronto(bu, 'offerta', 'servizio', 'pilota', 'servizio_pilota'));
     righe.push('');
     righe.push('## Prezzo');
+    righe.push('_Il prezzo ridotto del pilota, a confronto con quello standard._');
     righe.push(confronto(bu, 'offerta', 'prezzo', 'pilota', 'prezzo_pilota'));
     righe.push('');
     righe.push('## Durata del pilota');
+    righe.push('_Per quanto tempo dura, prima di valutare se è andato bene._');
     righe.push(render.testoCampo(bu, 'pilota', 'durata_pilota'));
     righe.push('');
     righe.push('## Criteri di successo');
@@ -43,6 +46,7 @@
     righe.push(criteriSuccesso(bu));
     righe.push('');
     righe.push('## Dopo il pilota');
+    righe.push('_Cosa succede se il pilota va bene: come si passa all\'offerta standard._');
     righe.push(render.daScrivere('condizioni di passaggio dal pilota all\'offerta standard, se il pilota ha successo'));
     righe.push('');
     return righe.join('\n');

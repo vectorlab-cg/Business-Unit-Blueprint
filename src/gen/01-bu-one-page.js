@@ -85,7 +85,7 @@
 
     var campoPrezzo = schema.ottieniCampo(bu, 'offerta', 'prezzo');
     if (schema.campoHaValore(campoPrezzo, 'testo') && schema.statoEffettivoCampo(campoPrezzo) !== 'mandatorio') {
-      righe.push('Prezzo non mandatorio (stato: ' + render.etichettaStatoCampo(campoPrezzo) + ').');
+      righe.push('Prezzo non confermato (stato: ' + render.etichettaStatoCampo(campoPrezzo) + ').');
     }
 
     var presenti = render.righeLista(bu, 'risorse', 'competenze_presenti') || [];
@@ -114,26 +114,33 @@
     righe.push(render.legendaStatiCampo());
     righe.push('');
     righe.push('## Cosa facciamo');
+    righe.push('_Cosa fate, in una frase, e come lo fate davvero._');
     righe.push(render.testoCampoConStato(bu, 'identita', 'descrizione'));
     righe.push('');
     righe.push(render.testoCampoConStato(bu, 'identita', 'meccanismo'));
     righe.push('');
     righe.push('## Per chi');
+    righe.push('_Chi compra, chi decide, e cosa fa oggi invece di comprare da voi._');
     righe.push(sezionePerChi(bu));
     righe.push('');
     righe.push('## Offerta');
+    righe.push('_Cosa vendete, a quanto, e cosa promettete._');
     righe.push(sezioneOfferta(bu));
     righe.push('');
     righe.push('## Economia');
+    righe.push('_Se conviene: costo di erogazione, capacità e dimensione del mercato._');
     righe.push(sezioneEconomia(bu));
     righe.push('');
     righe.push('## Pilota');
+    righe.push('_La versione ridotta per il primo cliente, se prevista._');
     righe.push(sezionePilota(bu));
     righe.push('');
     righe.push('## Leve principali');
+    righe.push('_I problemi che risolvete, uno per riga: dal sintomo alla soluzione._');
     righe.push(levePrincipali(bu));
     righe.push('');
     righe.push('## Cosa fermerebbe questa business unit');
+    righe.push('_Cosa manca o non è ancora deciso, che renderebbe rischioso andare avanti._');
     righe.push(cosaFermerebbe(bu));
     righe.push('');
     return righe.join('\n');

@@ -58,13 +58,16 @@
     righe.push('questi criteri, non generati qui._');
     righe.push('');
     righe.push('## Chi cercare');
+    righe.push('_Il ruolo di chi decide e il tipo di azienda, per impostare i filtri di ricerca._');
     righe.push('- Titolo/ruolo: ' + render.testoCampoConStato(bu, 'mercato', 'decisore'));
     righe.push('- Tipo di azienda: ' + render.testoCampoConStato(bu, 'mercato', 'cliente_ideale'));
     righe.push('');
     righe.push('## Segnali da cercare (parole chiave)');
+    righe.push('_Frasi tratte dalle leve, utili come query o come filtro manuale sui risultati._');
     righe.push(segnaliDaCercare(bu));
     righe.push('');
     righe.push('## Filtri su LinkedIn');
+    righe.push('_Come tradurre chi cercare in filtri concreti dentro lo strumento di ricerca._');
     righe.push('- Titolo: ' + render.daScrivere('varianti esatte del titolo'));
     righe.push('- Settore: ' + render.daScrivere('settori LinkedIn standard pertinenti'));
     righe.push('- Dimensione azienda: ' + render.daScrivere('range dipendenti coerente con "' + render.testoCampo(bu, 'mercato', 'cliente_ideale') + '"'));
@@ -73,12 +76,14 @@
       (parole ? parole.map(render.senzaPuntoFinale).join('; ') : render.manca('parole chiave dalle leve')));
     righe.push('');
     righe.push('## Obiettivo');
+    righe.push('_Cosa deve produrre questa ricerca, in concreto._');
     righe.push('50 nominativi qualificati secondo questi criteri, raccolti a mano da LinkedIn.');
     righe.push('');
     // Ultima sezione: in DOCUMENTO il campo per incollare il risultato del
     // prompt compare subito dopo la fine del testo del generatore (vedi
     // haPrompt nella registrazione più sotto).
     righe.push('## Prompt per impostare la ricerca');
+    righe.push('_Da incollare in uno strumento esterno per ottenere una strategia di ricerca pronta._');
     righe.push(promptRicerca(bu));
     righe.push('');
     return righe.join('\n');

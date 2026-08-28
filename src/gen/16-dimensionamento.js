@@ -60,12 +60,15 @@
     righe.push('fianco a fianco i dati perché il conto lo faccia una persona, invece di indovinarlo._');
     righe.push('');
     righe.push('## Prezzo, costo e capacità');
+    righe.push('_I quattro numeri che insieme dicono se la BU vale l\'investimento._');
     righe.push(datiEconomici(bu));
     righe.push('');
     righe.push('## Contesto competitivo');
+    righe.push('_Chi altro serve lo stesso bisogno, e le sinergie con altre business unit._');
     righe.push(contestoCompetitivo(bu));
     righe.push('');
     righe.push('## Ricavo potenziale stimato a regime');
+    righe.push('_Una stima a partire dai dati sopra — un ordine di grandezza, non un numero preciso._');
     righe.push(render.daScrivere('ricavo potenziale annuo e margine indicativo, a partire dai dati sopra'));
     righe.push(promptRicavoPotenziale(bu));
     righe.push('');

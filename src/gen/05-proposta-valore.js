@@ -96,12 +96,15 @@
     righe.push('# Proposta di valore — ' + bu.nome);
     righe.push('');
     righe.push('## Formula');
+    righe.push('_La proposta di valore in una frase sola, composta dai campi compilati._');
     righe.push(formulaPrincipale(bu));
     righe.push('');
     righe.push('## Varianti di taglio');
+    righe.push('_La stessa proposta raccontata da tre angoli diversi: risultato, meccanismo, contrasto._');
     righe.push(variantiDiTaglio(bu));
     righe.push('');
     righe.push('## Tabella di contrasto');
+    righe.push('_Prima/dopo per ogni leva: il sintomo di oggi accanto alla soluzione._');
     righe.push(tabellaContrasto(bu));
     righe.push('');
     // Ultima sezione: in DOCUMENTO il campo per incollare il risultato del
@@ -109,6 +112,7 @@
     // (vedi haPrompt nella registrazione più sotto) — sostituisce quello che
     // prima era un placeholder [DA SCRIVERE] senza un posto dove scrivere.
     righe.push('## Prompt per 8 headline');
+    righe.push('_Da incollare in uno strumento di scrittura esterno per avere subito 8 titoli da provare._');
     righe.push(promptHeadline(bu));
     righe.push('');
     return righe.join('\n');

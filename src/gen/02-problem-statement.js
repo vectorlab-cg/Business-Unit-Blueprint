@@ -48,7 +48,7 @@
         righe.push(def.etichetta + ': ' + render.testoCampo(bu, def.sezione, def.chiave));
       }
     });
-    if (!righe.length) return render.manca('almeno un campo segnato come mandatorio');
+    if (!righe.length) return render.manca('almeno un campo segnato come confermato');
     return render.elencoPuntato(righe);
   }
 
@@ -58,21 +58,27 @@
     righe.push(render.legendaStatiCampo());
     righe.push('');
     righe.push('## Chi ha il problema');
+    righe.push('_Chi lo subisce (cliente) e chi decide di risolverlo (decisore) — spesso non la stessa persona._');
     righe.push(chiHaIlProblema(bu));
     righe.push('');
     righe.push('## Il problema');
+    righe.push('_Le leve, una per una: il sintomo, come lo chiama il cliente, il nome tecnico._');
     righe.push(ilProblema(bu));
     righe.push('');
     righe.push('## Perché adesso');
+    righe.push('_Cosa rende urgente risolverlo proprio ora, non fra sei mesi._');
     righe.push(render.testoCampoConStato(bu, 'mercato', 'contesto_decisore'));
     righe.push('');
     righe.push('## Perché le soluzioni attuali non bastano');
+    righe.push('_Cosa fa oggi il cliente per questo problema, e perché non basta._');
     righe.push(perNonBastano(bu));
     righe.push('');
     righe.push('## Costo di non risolverlo');
+    righe.push('_Quanto costa al cliente lasciare il problema com\'è — tempo, denaro, rischio._');
     righe.push(render.daScrivere('quantificare il costo per il cliente di lasciare il problema irrisolto — tempo, denaro, rischio'));
     righe.push('');
-    righe.push('## Cosa è già mandatorio');
+    righe.push('## Cosa è già confermato');
+    righe.push('_I campi già decisi (non ipotesi), su cui questo problem statement può appoggiarsi._');
     righe.push(cosaEGiaMandatorio(bu));
     righe.push('');
     return righe.join('\n');

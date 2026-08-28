@@ -31,13 +31,16 @@
     righe.push('BU Blueprint tenere quel dato aggiornato._');
     righe.push('');
     righe.push('## Fasi');
+    righe.push('_I passaggi da un primo contatto alla vendita, in ordine._');
     righe.push(fasi(bu));
     righe.push('');
     righe.push('## Dove si inseriscono le soglie del test');
+    righe.push('_In quale fase esatta contano i due segnali che autorizzano a procedere._');
     righe.push('- Segnale di messaggio (' + render.testoCampo(bu, 'test', 'soglia_messaggio') + ') — tra Lead e Qualificato: autorizza a telefonare.');
     righe.push('- Segnale di mercato (' + render.testoCampo(bu, 'test', 'soglia_mercato') + ') — fase "Conversazione al prezzo": autorizza a costruire.');
     righe.push('');
     righe.push('## Come tracciarla');
+    righe.push('_Con quale strumento si tiene traccia di ogni contatto, fase per fase._');
     righe.push(render.daScrivere('lo strumento scelto per tracciare i contatti fase per fase — foglio di calcolo, CRM leggero, ecc.'));
     righe.push('');
     return righe.join('\n');

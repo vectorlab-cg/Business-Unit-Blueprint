@@ -32,7 +32,7 @@
 
   // Stessa logica di "cosa fermerebbe questa business unit" (BU One-Page),
   // riletta come debolezze: campi critici mancanti, leve senza soluzione,
-  // prezzo non mandatorio, competenze mancanti elencate una per una.
+  // prezzo non confermato, competenze mancanti elencate una per una.
   function debolezze(bu) {
     var righe = [];
 
@@ -57,7 +57,7 @@
 
     var campoPrezzo = schema.ottieniCampo(bu, 'offerta', 'prezzo');
     if (schema.campoHaValore(campoPrezzo, 'testo') && schema.statoEffettivoCampo(campoPrezzo) !== 'mandatorio') {
-      righe.push('Prezzo non mandatorio (stato: ' + render.etichettaStatoCampo(campoPrezzo) + ').');
+      righe.push('Prezzo non confermato (stato: ' + render.etichettaStatoCampo(campoPrezzo) + ').');
     }
 
     if (!righe.length) return 'Nessuna debolezza rilevata dai dati compilati al momento.';
@@ -104,15 +104,19 @@
     righe.push('non viene inventata._');
     righe.push('');
     righe.push('## Forze');
+    righe.push('_Cosa già confermato o già chiaro nei dati, non un\'opinione._');
     righe.push(forze(bu));
     righe.push('');
     righe.push('## Debolezze');
+    righe.push('_Campi critici mancanti, leve senza soluzione, prezzo non confermato, competenze mancanti._');
     righe.push(debolezze(bu));
     righe.push('');
     righe.push('## Opportunità');
+    righe.push('_Cosa nei dati suggerisce una direzione favorevole — parziale, non un\'analisi di mercato._');
     righe.push(opportunita(bu));
     righe.push('');
     righe.push('## Minacce');
+    righe.push('_Concorrenza diretta nota — non trend di mercato o rischi macro, che lo strumento non conosce._');
     righe.push(minacce(bu));
     righe.push('');
     return righe.join('\n');

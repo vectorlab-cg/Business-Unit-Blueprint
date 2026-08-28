@@ -42,6 +42,15 @@ La specifica originale lasciava alcuni dettagli aperti. Scelte fatte, e perché
   nella nuova lista. Se serve ancora, va riaggiunto come generatore a parte
   — il contenuto (angoli dalle leve, email, messaggio LinkedIn) esisteva già
   e si recupera facilmente dallo storico.
+- **Una riga in corsivo sotto ogni titolo `##`** di ciascun generatore,
+  dentro il testo Markdown stesso (non un trucco solo nella vista DOCUMENTO):
+  spiega in una frase cosa contiene la sezione, così compare ovunque quel
+  testo finisca (Materiali, Documento renderizzato, export .md). Anche nei
+  generatori "esterni" (landing, presentazione, script, proposta economica):
+  restano appunti di lavoro utili in fase di revisione, coerente con
+  l'esempio già presente prima di questa scelta ("_Apertura dalla perdita:
+  ..._" in landing). Diverso dal divieto sui badge di stato interno
+  (💭/🤖/🔒), che quelli sì non devono mai comparire nei materiali esterni.
 - **"Lista di 50 prospect" produce solo i criteri di ricerca, mai nomi
   inventati.** Lo strumento non ha accesso a dati esterni: una lista di
   aziende o persone generata qui sarebbe per forza fabbricata. Il generatore
