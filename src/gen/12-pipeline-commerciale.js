@@ -48,6 +48,7 @@
 
   BU.registraGeneratore({
     id: 'pipeline-commerciale',
+    categoria: 'commerciale',
     nome: 'Pipeline commerciale',
     descrizione: 'Documento statico: le fasi della pipeline e dove si inseriscono le due soglie del test.',
     richiede: ['test.canale_test', 'test.soglia_mercato'],

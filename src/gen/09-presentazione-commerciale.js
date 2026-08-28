@@ -79,6 +79,7 @@
 
   BU.registraGeneratore({
     id: 'presentazione-commerciale',
+    categoria: 'marketing',
     nome: 'Presentazione commerciale',
     descrizione: 'Struttura slide-per-slide di un deck di vendita: problema, soluzione, prove, offerta, prossimi passi.',
     richiede: ['identita.descrizione', 'identita.meccanismo', 'offerta.servizio', 'offerta.prezzo'],

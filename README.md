@@ -41,17 +41,19 @@ flusso Compila/Materiali/.../Output invece che come tab.
   generato_da_ia | mandatorio`), riportato con un'icona (💭 🤖 🔒) nel
   Markdown dei materiali interni — mai in quelli destinati a un cliente.
   Vedi [docs/MODELLO.md](docs/MODELLO.md).
-- **Materiali** — un blocco per generatore, con generazione/rigenerazione
+- **Materiali** — un blocco per generatore, raggruppati in 4 capitoli (vedi
+  sotto) più BU One-Page da solo in apertura, con generazione/rigenerazione
   (anche tutte insieme, con "Rigenera tutto") e testo modificabile a mano.
   Un materiale generato prima dell'ultima modifica a un campo o una leva è
   segnalato come da aggiornare, invece di restare un'istantanea silenziosa.
 - **Documento** — tutti i materiali concatenati e renderizzati (titoli,
-  tabelle, badge di stato), con il download del file .md grezzo. Stesso
-  avviso di Materiali se qualcosa non è aggiornato, con lo stesso
-  "Rigenera tutto" a portata di mano. I 4 generatori che finiscono con un
-  prompt per uno strumento esterno (Criteri di ricerca prospect, Proposta
-  di valore, Landing, Dimensionamento) hanno un campo subito sotto per
-  incollarne il risultato — persiste ed entra anche nel file scaricato.
+  tabelle, badge di stato), con gli stessi capitoli di Materiali e il
+  download del file .md grezzo. Stesso avviso di Materiali se qualcosa non
+  è aggiornato, con lo stesso "Rigenera tutto" a portata di mano. I 4
+  generatori che finiscono con un prompt per uno strumento esterno (Criteri
+  di ricerca prospect, Proposta di valore, Landing, Dimensionamento) hanno
+  un campo subito sotto per incollarne il risultato — persiste ed entra
+  anche nel file scaricato.
 - **Lancio** — checklist operativa di 25 verifiche tecniche per portare la
   BU dal nome al primo lead (setup domini/social, sito, tracking/Meta),
   estratta dal
@@ -72,11 +74,18 @@ flusso Compila/Materiali/.../Output invece che come tab.
 Markdown dai dati compilati, buchi sempre segnalati (`[MANCA: ...]`,
 `[DA SCRIVERE: ...]`) invece di essere inventati o saltati in silenzio.
 
-BU One-Page · Problem Statement · Ideal Customer Profile · Criteri di
-ricerca prospect · Proposta di valore · Offerta pilota · Brief demo/mockup ·
-Landing page · Presentazione commerciale · Script discovery call · Template
-proposta economica · Pipeline commerciale · Dashboard KPI · Criteri di
-continuazione o chiusura · Analisi SWOT · Dimensionamento.
+Raggruppati in 4 capitoli (l'ordine di presentazione in Materiali e
+Documento, non l'id interno del file `gen/NN-*.js`) più **BU One-Page**, da
+solo in apertura come sintesi di tutto il resto:
+
+- **Fondamenta strategiche** — Problem Statement · Ideal Customer Profile ·
+  Analisi SWOT · Dimensionamento
+- **Materiali di marketing** — Proposta di valore · Brief demo/mockup ·
+  Landing page · Presentazione commerciale
+- **Processo commerciale** — Criteri di ricerca prospect · Script discovery
+  call · Template proposta economica · Pipeline commerciale
+- **Pilota, test e decisione** — Offerta pilota · Dashboard KPI · Criteri
+  di continuazione o chiusura
 
 **Dimensionamento** mette fianco a fianco prezzo, costo di erogazione,
 capacità e dimensione del mercato — i dati che dicono se una BU vale

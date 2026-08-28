@@ -86,6 +86,7 @@
 
   BU.registraGeneratore({
     id: 'problem-statement',
+    categoria: 'fondamenta',
     nome: 'Problem Statement',
     descrizione: 'Chi ha il problema, il problema dalle leve, perché adesso, perché le soluzioni attuali non bastano.',
     richiede: ['mercato.cliente_ideale', 'mercato.decisore', 'mercato.alternativa_attuale'],

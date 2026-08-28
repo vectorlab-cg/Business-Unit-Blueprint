@@ -194,6 +194,30 @@ raccolto). Compare come campo interattivo in DOCUMENTO subito dopo il testo
 del generatore — mai in MATERIALI, dove si vede il prompt ma non un posto
 sensato per il suo risultato — e finisce anche nel file .md scaricato.
 
+### Capitoli
+
+Ogni generatore ha una `categoria` obbligatoria (`BU.registraGeneratore`,
+validata contro `CATEGORIE` in `src/gen/_registry.js`), che raggruppa i 16
+generatori in "capitoli" nelle viste MATERIALI e DOCUMENTO — l'ordine di
+lettura, non l'ordine dei file `gen/NN-*.js` (quello resta solo un id
+interno, storico). `BU.gen.elencaGeneratoriRaggruppati()` restituisce i
+gruppi nell'ordine fisso di `CATEGORIE`, con l'ordine di registrazione
+preservato dentro ogni gruppo:
+
+- `sintesi` (BU One-Page) — nessun titolo di capitolo: è una fotografia di
+  tutto il resto, resta da sola in apertura invece di aprire un gruppo.
+- `fondamenta` — "Fondamenta strategiche"
+- `marketing` — "Materiali di marketing"
+- `commerciale` — "Processo commerciale"
+- `pilota_test` — "Pilota, test e decisione"
+
+I titoli di capitolo compaiono come "Parte N — Titolo" (numerati escludendo
+`sintesi`), sia nell'export .md (`render.documentoCompleto`, stesso livello
+`#` dei titoli dei singoli generatori — in Markdown grezzo non c'è un
+livello sopra h1) sia nelle due viste, dove sono invece un elemento a sé
+con uno stile deliberatamente più marcato, per non confondersi con un
+titolo di generatore.
+
 ### Rigenerazione e obsolescenza
 
 Ogni generatore è puro: `genera(bu)` legge campi/leve/risultati correnti e

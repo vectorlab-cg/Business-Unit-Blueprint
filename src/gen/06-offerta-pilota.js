@@ -54,6 +54,7 @@
 
   BU.registraGeneratore({
     id: 'offerta-pilota',
+    categoria: 'pilota_test',
     nome: 'Offerta pilota',
     descrizione: 'Confronto con l\'offerta standard, prezzo, durata, criteri di successo del pilota.',
     richiede: ['pilota.servizio_pilota', 'pilota.prezzo_pilota', 'offerta.servizio', 'offerta.prezzo'],

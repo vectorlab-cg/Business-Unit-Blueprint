@@ -124,6 +124,7 @@
 
   BU.registraGeneratore({
     id: 'swot',
+    categoria: 'fondamenta',
     nome: 'Analisi SWOT',
     descrizione: 'Forze e debolezze da risorse e dai campi critici, opportunità e minacce parziali: il giudizio di mercato resta da scrivere.',
     richiede: [

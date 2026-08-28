@@ -349,8 +349,18 @@
         : el('span', { class: 'materiali-avviso-globale materiali-avviso-globale--ok' }, ['Tutti aggiornati'])
     ]));
 
-    BU.gen.elencaGeneratori().forEach(function (generatore) {
-      container.appendChild(renderBloccoMateriale(bu, generatore, segnalaModifica, ridisegna));
+    var numeroCapitolo = 0;
+    BU.gen.elencaGeneratoriRaggruppati().forEach(function (gruppo) {
+      if (gruppo.titolo) {
+        numeroCapitolo += 1;
+        container.appendChild(el('div', { class: 'materiali-capitolo' }, [
+          el('span', { class: 'materiali-capitolo-numero', text: 'Parte ' + numeroCapitolo }),
+          el('h2', { class: 'materiali-capitolo-titolo', text: gruppo.titolo })
+        ]));
+      }
+      gruppo.generatori.forEach(function (generatore) {
+        container.appendChild(renderBloccoMateriale(bu, generatore, segnalaModifica, ridisegna));
+      });
     });
   }
 
@@ -477,18 +487,28 @@
     intro.innerHTML = BU.markdown.renderizza(BU.render.introDocumento(bu));
     corpo.appendChild(intro);
 
-    BU.render.blocchiDocumento(bu).forEach(function (blocco) {
-      var blocchettoDom = el('div');
-      blocchettoDom.innerHTML = BU.markdown.renderizza(blocco.markdown);
-      corpo.appendChild(blocchettoDom);
-
-      // Il prompt, quando c'è, è sempre l'ultima cosa nel blocco (vedi
-      // gen/_registry.js): il campo per il risultato va subito dopo, come
-      // vero elemento interattivo — non può stare dentro il markdown
-      // renderizzato sopra, che è testo statico.
-      if (blocco.generatore.haPrompt && blocco.materiale) {
-        corpo.appendChild(renderRisultatoPrompt(bu, blocco.generatore, blocco.materiale, segnalaModifica));
+    var numeroCapitolo = 0;
+    BU.render.blocchiDocumento(bu).forEach(function (gruppo) {
+      if (gruppo.titolo) {
+        numeroCapitolo += 1;
+        corpo.appendChild(el('div', { class: 'documento-capitolo' }, [
+          el('span', { class: 'documento-capitolo-numero', text: 'Parte ' + numeroCapitolo }),
+          el('h1', { class: 'documento-capitolo-titolo', text: gruppo.titolo })
+        ]));
       }
+      gruppo.blocchi.forEach(function (blocco) {
+        var blocchettoDom = el('div');
+        blocchettoDom.innerHTML = BU.markdown.renderizza(blocco.markdown);
+        corpo.appendChild(blocchettoDom);
+
+        // Il prompt, quando c'è, è sempre l'ultima cosa nel blocco (vedi
+        // gen/_registry.js): il campo per il risultato va subito dopo, come
+        // vero elemento interattivo — non può stare dentro il markdown
+        // renderizzato sopra, che è testo statico.
+        if (blocco.generatore.haPrompt && blocco.materiale) {
+          corpo.appendChild(renderRisultatoPrompt(bu, blocco.generatore, blocco.materiale, segnalaModifica));
+        }
+      });
     });
     container.appendChild(corpo);
   }

@@ -44,6 +44,7 @@
 
   BU.registraGeneratore({
     id: 'dashboard-kpi',
+    categoria: 'pilota_test',
     nome: 'Dashboard KPI',
     descrizione: 'Fotografia statica dei risultati del test rispetto alle metriche che decidono davvero.',
     richiede: ['test.soglia_messaggio', 'test.soglia_mercato'],

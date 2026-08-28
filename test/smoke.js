@@ -876,6 +876,36 @@ test('documento completo: BU.render.documentoCompleto concatena tutti i generato
   assicura(html.indexOf('<!-- Generatore:') !== -1, 'i commenti HTML dei separatori dovrebbero passare invariati nell\'output renderizzato');
 });
 
+test('generatori: raggruppati in 5 capitoli (16 generatori totali), ognuno con categoria valida', function () {
+  var ctx = creaContesto();
+  var gruppi = ctx.BU.gen.elencaGeneratoriRaggruppati();
+  assicuraUguale(gruppi.length, 5, 'dovrebbero esserci 5 categorie non vuote');
+  assicuraUguale(gruppi.reduce(function (n, g) { return n + g.generatori.length; }, 0), 16,
+    'il totale dei generatori raggruppati dovrebbe essere 16');
+  assicuraUguale(gruppi[0].categoria, 'sintesi', 'la prima categoria dovrebbe essere "sintesi" (BU One-Page)');
+  assicuraUguale(gruppi[0].titolo, null, '"sintesi" non dovrebbe avere un titolo di capitolo');
+  gruppi.slice(1).forEach(function (g) {
+    assicura(typeof g.titolo === 'string' && g.titolo.length > 0, 'la categoria "' + g.categoria + '" dovrebbe avere un titolo di capitolo');
+  });
+  // elencaGeneratori() e la versione raggruppata devono contenere esattamente gli stessi id.
+  var idPiatti = ctx.BU.gen.elencaGeneratori().map(function (g) { return g.id; }).sort();
+  var idRaggruppati = gruppi.reduce(function (acc, g) { return acc.concat(g.generatori.map(function (x) { return x.id; })); }, []).sort();
+  assicuraUguale(JSON.stringify(idPiatti), JSON.stringify(idRaggruppati), 'i due elenchi dovrebbero contenere gli stessi generatori');
+});
+
+test('documento completo: i titoli di capitolo compaiono numerati, "Parte 1" per la prima categoria dopo la sintesi', function () {
+  var ctx = creaContesto();
+  var bu = creaBuCompilata(ctx);
+  var md = ctx.BU.render.documentoCompleto(bu);
+  assicura(md.indexOf('# Parte 1 — Fondamenta strategiche') !== -1, 'manca il titolo del primo capitolo, numerato correttamente');
+  assicura(md.indexOf('# Parte 4 — Pilota, test e decisione') !== -1, 'manca il titolo dell\'ultimo capitolo, numerato correttamente');
+  // BU One-Page (categoria "sintesi") precede il primo titolo di capitolo, senza titolo proprio.
+  var posBuOnePage = md.indexOf('<!-- Generatore: BU One-Page');
+  var posCapitolo1 = md.indexOf('# Parte 1 —');
+  assicura(posBuOnePage !== -1 && posCapitolo1 !== -1 && posBuOnePage < posCapitolo1,
+    'BU One-Page dovrebbe comparire prima del primo titolo di capitolo');
+});
+
 test('generatori: esattamente 4 hanno haPrompt, ed è sempre l\'ultima cosa nel loro testo', function () {
   var ctx = creaContesto();
   var bu = creaBuCompilata(ctx);

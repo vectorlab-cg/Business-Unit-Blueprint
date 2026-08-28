@@ -54,6 +54,7 @@
 
   BU.registraGeneratore({
     id: 'template-proposta-economica',
+    categoria: 'commerciale',
     nome: 'Template proposta economica',
     descrizione: 'Documento inviabile al cliente: problema, proposta, cosa non include, investimento, tempi, validità.',
     richiede: ['identita.descrizione', 'offerta.servizio', 'offerta.prezzo'],

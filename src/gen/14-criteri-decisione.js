@@ -108,6 +108,7 @@
 
   BU.registraGeneratore({
     id: 'criteri-decisione',
+    categoria: 'pilota_test',
     nome: 'Criteri di continuazione o chiusura',
     descrizione: 'Ipotesi da testare, scheda del test, le due soglie separate, costo dell\'errore, criteri CONTINUA/MODIFICA/FERMA.',
     richiede: ['test.canale_test', 'test.azione_richiesta', 'test.soglia_mercato'],

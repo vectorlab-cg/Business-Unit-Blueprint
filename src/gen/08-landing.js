@@ -211,6 +211,7 @@
 
   BU.registraGeneratore({
     id: 'landing',
+    categoria: 'marketing',
     nome: 'Landing page',
     descrizione: 'Otto sezioni fisse (hero, problema, contrasto, offerta, prove, chi lo fa, FAQ, chiusura) e un prompt per i testi mancanti.',
     richiede: [

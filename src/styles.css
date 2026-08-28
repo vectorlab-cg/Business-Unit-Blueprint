@@ -636,6 +636,36 @@ textarea {
   color: var(--text-debole);
 }
 
+/* Titolo di capitolo (raggruppa i generatori per categoria — vedi CATEGORIE
+   in gen/_registry.js): deliberatamente più marcato del titolo di un
+   singolo generatore, per leggersi come un livello sopra, non uno in più
+   fra i tanti. */
+.materiali-capitolo {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 28px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent);
+}
+
+.materiali-capitolo:first-child {
+  margin-top: 0;
+}
+
+.materiali-capitolo-numero {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.materiali-capitolo-titolo {
+  margin: 0;
+  font-size: 19px;
+}
+
 .documento-avviso-obsoleto {
   display: flex;
   align-items: center;
@@ -803,6 +833,37 @@ textarea {
 .md-render h1 { font-size: 22px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
 .md-render h2 { font-size: 17px; color: var(--accent); }
 .md-render h3 { font-size: 14px; }
+
+/* Titolo di capitolo (raggruppa i generatori per categoria — vedi
+   CATEGORIE in gen/_registry.js): un banda a piena larghezza, deliberata-
+   mente molto più marcata del titolo "# Generatore" di un singolo
+   materiale (sopra), così si legge come un livello sopra e non si confonde
+   con gli altri titoli dentro lo stesso documento renderizzato. */
+.documento-capitolo {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 28px -28px 20px;
+  padding: 14px 28px;
+  background: var(--accent);
+}
+
+.documento-capitolo-numero {
+  color: var(--accent-testo);
+  opacity: 0.75;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.md-render .documento-capitolo-titolo {
+  margin: 0;
+  color: var(--accent-testo);
+  font-size: 20px;
+  border-bottom: none;
+  padding-bottom: 0;
+}
 
 .md-render p {
   margin: 8px 0;

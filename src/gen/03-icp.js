@@ -49,6 +49,7 @@
 
   BU.registraGeneratore({
     id: 'icp',
+    categoria: 'fondamenta',
     nome: 'Ideal Customer Profile',
     descrizione: 'Profilo del cliente, chi decide, segnali osservabili da cercare, cosa fa oggi, criteri di esclusione.',
     richiede: ['mercato.cliente_ideale', 'mercato.decisore', 'mercato.alternativa_attuale'],

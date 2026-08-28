@@ -148,6 +148,7 @@
 
   BU.registraGeneratore({
     id: 'bu-one-page',
+    categoria: 'sintesi',
     nome: 'BU One-Page',
     descrizione: 'La sintesi di una pagina: cosa facciamo, per chi, offerta, pilota, leve principali, cosa fermerebbe la BU.',
     richiede: schema.CAMPI.filter(function (c) { return c.critico; }).map(function (c) { return c.sezione + '.' + c.chiave; }),

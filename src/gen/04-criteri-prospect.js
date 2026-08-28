@@ -91,6 +91,7 @@
 
   BU.registraGeneratore({
     id: 'criteri-prospect',
+    categoria: 'commerciale',
     nome: 'Criteri di ricerca prospect',
     descrizione: 'Titolo, settore, dimensione e parole chiave per cercare 50 prospect su LinkedIn — mai una lista inventata.',
     richiede: ['mercato.cliente_ideale', 'mercato.decisore'],

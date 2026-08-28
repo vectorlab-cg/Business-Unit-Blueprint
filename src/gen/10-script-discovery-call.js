@@ -64,6 +64,7 @@
 
   BU.registraGeneratore({
     id: 'script-discovery-call',
+    categoria: 'commerciale',
     nome: 'Script discovery call',
     descrizione: 'Domande di scoperta dalle leve, qualificazione, transizione all\'offerta, chiusura.',
     richiede: ['mercato.decisore', 'mercato.alternativa_attuale', 'offerta.servizio'],

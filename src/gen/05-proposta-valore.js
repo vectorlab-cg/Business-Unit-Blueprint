@@ -120,6 +120,7 @@
 
   BU.registraGeneratore({
     id: 'proposta-valore',
+    categoria: 'marketing',
     nome: 'Proposta di valore',
     descrizione: 'Formula, tre varianti di taglio, tabella di contrasto dalle leve, prompt per le headline.',
     richiede: [

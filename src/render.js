@@ -170,26 +170,33 @@
     return '# ' + bu.nome + ' — Materiali\n\nStato: ' + (schema.STATI_BU_ETICHETTE[bu.stato] || bu.stato);
   }
 
-  // Un blocco per generatore: usato sia da documentoCompleto (concatenato
-  // in un'unica stringa, per il download del file .md) sia dalla vista
-  // DOCUMENTO (renderizzata generatore per generatore, per poter agganciare
-  // un campo interattivo dopo ogni prompt — vedi src/ui.js). Usa il testo
-  // già generato (ed eventualmente modificato a mano) se presente,
-  // altrimenti genera al volo, senza mai sovrascrivere modifiche manuali
-  // salvate.
+  // Un gruppo per capitolo (vedi CATEGORIE in gen/_registry.js), con un
+  // blocco per generatore dentro: usato sia da documentoCompleto
+  // (concatenato in un'unica stringa, per il download del file .md) sia
+  // dalla vista DOCUMENTO (renderizzata generatore per generatore, per
+  // poter agganciare un campo interattivo dopo ogni prompt — vedi
+  // src/ui.js). Ogni blocco usa il testo già generato (ed eventualmente
+  // modificato a mano) se presente, altrimenti genera al volo, senza mai
+  // sovrascrivere modifiche manuali salvate.
   function blocchiDocumento(bu) {
     var schema = BU.schema;
-    return BU.gen.elencaGeneratori().map(function (generatore) {
-      var materiale = bu.materiali[generatore.id];
-      var testo = materiale ? materiale.testo : generatore.genera(bu);
-      var markdown = [
-        '---', '',
-        '<!-- Generatore: ' + generatore.nome +
-          (materiale ? ' — stato revisione: ' + schema.STATI_MATERIALE_ETICHETTE[materiale.stato] : ' — non ancora salvato, generato al momento dell\'export') +
-          ' -->',
-        '', testo, ''
-      ].join('\n');
-      return { generatore: generatore, materiale: materiale, markdown: markdown };
+    return BU.gen.elencaGeneratoriRaggruppati().map(function (gruppo) {
+      return {
+        categoria: gruppo.categoria,
+        titolo: gruppo.titolo,
+        blocchi: gruppo.generatori.map(function (generatore) {
+          var materiale = bu.materiali[generatore.id];
+          var testo = materiale ? materiale.testo : generatore.genera(bu);
+          var markdown = [
+            '---', '',
+            '<!-- Generatore: ' + generatore.nome +
+              (materiale ? ' — stato revisione: ' + schema.STATI_MATERIALE_ETICHETTE[materiale.stato] : ' — non ancora salvato, generato al momento dell\'export') +
+              ' -->',
+            '', testo, ''
+          ].join('\n');
+          return { generatore: generatore, materiale: materiale, markdown: markdown };
+        })
+      };
     });
   }
 
@@ -205,12 +212,25 @@
 
   function documentoCompleto(bu) {
     var righe = [introDocumento(bu), ''];
-    blocchiDocumento(bu).forEach(function (blocco) {
-      righe.push(blocco.markdown);
-      if (blocco.generatore.haPrompt && blocco.materiale) {
-        righe.push(risultatoPromptMarkdown(blocco.materiale));
+    var numeroCapitolo = 0;
+    blocchiDocumento(bu).forEach(function (gruppo) {
+      if (gruppo.titolo) {
+        numeroCapitolo += 1;
+        // Stesso livello "#" dei titoli dei singoli generatori: nel testo
+        // grezzo non c'è un livello sopra h1. Il numero ("Parte N — ...")
+        // li distingue leggendo il testo; nella vista DOCUMENTO (src/ui.js)
+        // il capitolo è invece un elemento a sé, con uno stile dedicato
+        // molto più marcato di un titolo di generatore.
+        righe.push('# Parte ' + numeroCapitolo + ' — ' + gruppo.titolo);
         righe.push('');
       }
+      gruppo.blocchi.forEach(function (blocco) {
+        righe.push(blocco.markdown);
+        if (blocco.generatore.haPrompt && blocco.materiale) {
+          righe.push(risultatoPromptMarkdown(blocco.materiale));
+          righe.push('');
+        }
+      });
     });
     return righe.join('\n');
   }

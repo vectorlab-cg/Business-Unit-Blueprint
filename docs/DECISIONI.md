@@ -42,6 +42,17 @@ La specifica originale lasciava alcuni dettagli aperti. Scelte fatte, e perché
   nella nuova lista. Se serve ancora, va riaggiunto come generatore a parte
   — il contenuto (angoli dalle leve, email, messaggio LinkedIn) esisteva già
   e si recupera facilmente dallo storico.
+- **I 16 generatori raggruppati in 4 capitoli + BU One-Page a sé**, invece
+  di seguire l'ordine di registrazione (numerazione storica dei file
+  `gen/NN-*.js`, senza logica di lettura): Fondamenta strategiche,
+  Materiali di marketing, Processo commerciale, Pilota/test/decisione —
+  vedi [MODELLO.md](MODELLO.md#capitoli). Nato da un'osservazione
+  dell'utente: la vista Documento mischiava sezioni commerciali e di
+  marketing senza un ordine leggibile. I titoli di capitolo restano `#`
+  nell'export .md (niente livello sopra h1 in Markdown puro), ma nelle
+  viste interattive sono un elemento a sé con uno stile deliberatamente più
+  marcato di un titolo di generatore — altrimenti si sarebbe confuso con
+  gli altri titoli `#` dello stesso documento.
 - **Una riga in corsivo sotto ogni titolo `##`** di ciascun generatore,
   dentro il testo Markdown stesso (non un trucco solo nella vista DOCUMENTO):
   spiega in una frase cosa contiene la sezione, così compare ovunque quel

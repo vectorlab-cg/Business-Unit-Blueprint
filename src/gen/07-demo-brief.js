@@ -53,6 +53,7 @@
 
   BU.registraGeneratore({
     id: 'demo-brief',
+    categoria: 'marketing',
     nome: 'Brief demo/mockup',
     descrizione: 'Obiettivo, pubblico, cosa dimostrare leva per leva: il brief per chi costruisce la demo.',
     richiede: ['mercato.decisore', 'mercato.cliente_ideale', 'offerta.risultato_promesso'],
