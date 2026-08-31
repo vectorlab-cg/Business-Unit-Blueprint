@@ -312,7 +312,7 @@
     { chiave: 'tag_post_consenso_verificati', etichetta: 'Verificato lato browser e lato server (CAPI) che i tag partano post-consenso (§5.3)', categoria: 'tracking_meta' },
     { chiave: 'parametri_utm_tracciati', etichetta: 'Nove parametri tracciati fino al CRM, come campi dedicati (§3.1, §3.2)', categoria: 'tracking_meta' },
     { chiave: 'audit_pagine_collegate', etichetta: 'Audit pagine collegate: nessuna restrizione pregressa (§4.4)', categoria: 'tracking_meta' },
-    { chiave: 'verifiche_meta_ordine', etichetta: 'Verifiche Meta nell\'ordine: profilo → portfolio → dominio → azienda (§4.1)', categoria: 'tracking_meta' },
+    { chiave: 'verifiche_meta_ordine', etichetta: 'Verifiche Meta nell\'ordine: profilo — portfolio — dominio — azienda (§4.1)', categoria: 'tracking_meta' },
     { chiave: 'eventi_pixel_capi_testati', etichetta: 'Quattro eventi testati su pixel e CAPI, deduplicazione via event_id verificata in Events Manager (§3.4)', categoria: 'tracking_meta' },
     { chiave: 'liste_clienti_target', etichetta: 'Liste clienti e target con almeno un identificatore forte (§4.6)', categoria: 'tracking_meta' },
     { chiave: 'privacy_policy_facebook', etichetta: 'Privacy policy linkata sulla pagina Facebook (§5.4)', categoria: 'tracking_meta' }
