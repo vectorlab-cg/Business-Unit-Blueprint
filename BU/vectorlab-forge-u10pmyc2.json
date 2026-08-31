@@ -1,13 +1,13 @@
 {
   "versione": 2,
-  "esportatoIl": "2026-08-28T11:15:13.390Z",
+  "esportatoIl": "2026-08-31T07:42:37.430Z",
   "businessUnit": [
     {
       "id": "bu_msfuzl3u_1_0pmyc2",
       "nome": "Vectorlab Forge",
       "stato": "validata",
       "creata": "2026-08-05T09:02:36.953Z",
-      "modificata": "2026-08-28T09:52:40.920Z",
+      "modificata": "2026-08-31T07:38:27.195Z",
       "campiModificatiIl": "2026-08-28T09:12:02.465Z",
       "campi": {
         "identita": {
