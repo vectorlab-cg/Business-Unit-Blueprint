@@ -23,8 +23,8 @@
     fileHandleDiBU: {} // buId -> { nomeFile, percorso, sha, downloadUrl }
   };
 
-  var VISTE = ['compila', 'materiali', 'documento', 'lancio', 'validazione', 'consegna'];
-  var VISTE_ETICHETTE = { compila: 'Compila', materiali: 'Materiali', documento: 'Documento', lancio: 'Lancio', validazione: 'Validazione', consegna: 'Output' };
+  var VISTE = ['compila', 'materiali', 'documento', 'lancio', 'validazione', 'consegna', 'prompt-design'];
+  var VISTE_ETICHETTE = { compila: 'Compila', materiali: 'Materiali', documento: 'Documento', lancio: 'Lancio', validazione: 'Validazione', consegna: 'Output', 'prompt-design': 'Prompt Design' };
 
   var timerSalvataggio = null;
   var sidebarRefs = {};
@@ -548,6 +548,8 @@
       BU.ui.renderValidazione(container, bu, callback);
     } else if (stato.vista === 'consegna') {
       BU.ui.renderConsegna(container, bu, callback);
+    } else if (stato.vista === 'prompt-design') {
+      BU.ui.renderPromptDesign(container, bu);
     } else {
       BU.ui.renderCompila(container, bu, callbackCampi);
     }

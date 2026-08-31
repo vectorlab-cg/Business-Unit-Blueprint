@@ -1,7 +1,7 @@
 /*
  * ui.js
- * Le sei viste di una business unit: COMPILA, MATERIALI, DOCUMENTO,
- * LANCIO, VALIDAZIONE, OUTPUT.
+ * Le sette viste di una business unit: COMPILA, MATERIALI, DOCUMENTO,
+ * LANCIO, VALIDAZIONE, OUTPUT, PROMPT DESIGN.
  * Le funzioni qui dentro mutano direttamente l'oggetto `bu` passato (è un
  * riferimento vivo nello stato di app.js) e chiamano `segnalaModifica()`
  * per notificare che qualcosa è cambiato (salvataggio differito, sidebar).
@@ -675,6 +675,44 @@
       segnalaModifica);
   }
 
+  // Sola lettura: ogni prompt è calcolato al volo dai dati correnti della
+  // BU (BU.promptDesign), nessuno stato salvato — niente da rigenerare,
+  // riflette sempre l'ultima BU aperta.
+  function renderPromptDesign(container, bu) {
+    container.innerHTML = '';
+
+    container.appendChild(el('div', { class: 'documento-nota' }, [
+      'Un prompt pronto da incollare in uno strumento esterno di generazione immagini (Midjourney, DALL-E, ' +
+      'Ideogram, ecc.) per ciascuna voce "design" del catalogo Output. Nessuna immagine viene generata qui: ' +
+      'l\'app non chiama API esterne. Consiglio: genera prima Logo e Palette, poi usa i colori e lo stile ' +
+      'ottenuti per gli altri prompt, così i materiali restano coerenti tra loro.'
+    ]));
+
+    BU.promptDesign.elencoPromptDesign(bu).forEach(function (voce) {
+      if (!voce.prompt) return;
+      container.appendChild(el('div', { class: 'prompt-design-blocco' }, [
+        el('div', { class: 'prompt-design-intestazione' }, [
+          el('h3', { class: 'prompt-design-titolo', text: voce.etichetta }),
+          el('button', {
+            type: 'button', class: 'pulsante pulsante--secondario pulsante--piccolo',
+            onclick: function (e) {
+              var bottone = e.target;
+              var testoOriginale = bottone.textContent;
+              global.navigator.clipboard.writeText(voce.prompt).then(function () {
+                bottone.textContent = 'Copiato ✓';
+                global.setTimeout(function () { bottone.textContent = testoOriginale; }, 1500);
+              }).catch(function () {
+                bottone.textContent = 'Copia non riuscita';
+                global.setTimeout(function () { bottone.textContent = testoOriginale; }, 1500);
+              });
+            }
+          }, ['Copia'])
+        ]),
+        el('pre', { class: 'prompt-design-testo', text: voce.prompt })
+      ]));
+    });
+  }
+
   function renderLancio(container, bu, segnalaModifica) {
     renderChecklist(container,
       'Checklist operativa per il lancio di questa BU — setup, sito, tracking/Meta, software di qualificazione. ' +
@@ -700,6 +738,7 @@
     renderDocumento: renderDocumento,
     renderValidazione: renderValidazione,
     renderConsegna: renderConsegna,
+    renderPromptDesign: renderPromptDesign,
     renderLancio: renderLancio,
     MAPPA_DECISIONE_STATO: MAPPA_DECISIONE_STATO
   };

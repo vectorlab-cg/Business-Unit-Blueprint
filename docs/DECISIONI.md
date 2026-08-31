@@ -175,3 +175,19 @@ La specifica originale lasciava alcuni dettagli aperti. Scelte fatte, e perché
   vero e proprio `[DA SCRIVERE]`, con un prompt che li riporta: stessa
   logica già usata altrove (es. gli 8 headline della proposta di valore) per
   tutto ciò che richiede un giudizio che lo strumento non si prende.
+- **Vista "Prompt Design" (settima vista, dopo Output): prompt per uno
+  strumento esterno di generazione immagini, mai un'immagine generata
+  dall'app.** Stessa ragione del divieto di chiamate LLM esterne: il repo
+  che ospita l'app è **pubblico** — una chiave API di un servizio a
+  pagamento incollata nel browser sarebbe esposta a chiunque apra la
+  pagina, con il rischio di un uso non autorizzato addebitato a chi l'ha
+  fornita (peggio del token GitHub: lì il danno peggiore è una scrittura
+  indesiderata nel repo, qui sarebbe una bolletta). `src/prompt-design.js`
+  produce un prompt per ciascuna delle 12 voci "design" del catalogo Output
+  (`OUTPUT_CREATIVI`), calcolato al volo dai dati correnti della BU —
+  nessuno stato salvato, a differenza dei materiali: non c'è un testo
+  generato da rigenerare, il prompt riflette sempre l'ultima BU aperta.
+  Nessuna invenzione di fatti sul brand non presenti nei campi (colori,
+  tono): dove servirebbe un dato che non esiste (es. una palette), il
+  prompt chiede allo strumento esterno di proporla, non finge che sia già
+  decisa.

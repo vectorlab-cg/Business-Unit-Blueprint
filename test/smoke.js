@@ -32,7 +32,7 @@ function elencaFileGeneratori() {
   return ordinati.map(function (f) { return 'src/gen/' + f; });
 }
 
-var FILE_SORGENTE = ['src/schema.js', 'src/store.js', 'src/cartella.js', 'src/render.js', 'src/markdown.js'].concat(elencaFileGeneratori());
+var FILE_SORGENTE = ['src/schema.js', 'src/store.js', 'src/cartella.js', 'src/render.js', 'src/markdown.js', 'src/prompt-design.js'].concat(elencaFileGeneratori());
 
 // ---------------------------------------------------------------------
 // Localstorage minimale, per testare store.js in Node
@@ -968,6 +968,40 @@ test('materiali: risultatoPrompt nasce vuoto, un valore salvato sopravvive alla 
 
   var altro = ctx.BU.schema.normalizzaBU({ nome: 'Senza', materiali: { x: { stato: 'bozza', testo: 'y', generatoIl: '2024-01-01T00:00:00.000Z' } } });
   assicuraUguale(altro.materiali.x.risultatoPrompt, '', 'senza risultatoPrompt salvato dovrebbe nascere stringa vuota, non undefined');
+});
+
+// ---------------------------------------------------------------------
+// Test: prompt per la generazione immagini (src/prompt-design.js) — un
+// prompt per ciascuna delle 12 voci "design" del catalogo Output, mai
+// un'immagine generata dall'app stessa.
+// ---------------------------------------------------------------------
+
+test('promptDesign: un prompt per ciascuna delle 12 voci "design" di OUTPUT_CREATIVI, nessuno mancante', function () {
+  var ctx = creaContesto();
+  var bu = creaBuCompilata(ctx);
+  var elenco = ctx.BU.promptDesign.elencoPromptDesign(bu);
+  var chiaviAttese = ctx.BU.schema.OUTPUT_CREATIVI
+    .filter(function (d) { return d.categoria === 'design'; })
+    .map(function (d) { return d.chiave; });
+  assicuraUguale(elenco.length, 12, 'dovrebbero esserci 12 voci design');
+  assicuraUguale(elenco.map(function (v) { return v.chiave; }).join(','), chiaviAttese.join(','),
+    'le chiavi dovrebbero combaciare con OUTPUT_CREATIVI, nello stesso ordine');
+  elenco.forEach(function (voce) {
+    assicura(typeof voce.prompt === 'string' && voce.prompt.length > 0, 'manca il prompt per "' + voce.chiave + '"');
+    assicura(voce.prompt.indexOf('```') === 0, 'il prompt per "' + voce.chiave + '" dovrebbe essere un blocco di codice');
+  });
+});
+
+test('promptDesign: ogni prompt include il contesto reale della BU (nome, descrizione, cliente ideale)', function () {
+  var ctx = creaContesto();
+  var bu = creaBuCompilata(ctx);
+  var elenco = ctx.BU.promptDesign.elencoPromptDesign(bu);
+  elenco.forEach(function (voce) {
+    assicura(voce.prompt.indexOf('Brand: "' + bu.nome + '"') !== -1,
+      'il prompt per "' + voce.chiave + '" dovrebbe citare il nome della BU');
+    assicura(voce.prompt.indexOf(bu.campi.identita.descrizione.valore) !== -1,
+      'il prompt per "' + voce.chiave + '" dovrebbe citare la descrizione reale');
+  });
 });
 
 // ---------------------------------------------------------------------

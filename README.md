@@ -33,7 +33,7 @@ tracking, Meta, privacy, deliverable). È un documento a sé, uguale per ogni
 BU — non cambia in base a quale hai selezionato, quindi vive fuori dal
 flusso Compila/Materiali/.../Output invece che come tab.
 
-## Le sei viste
+## Le sette viste
 
 - **Compila** — questionario per sezioni (Identità, Mercato, Offerta,
   Risorse, Economia, Pilota, Test), apribili/chiudibili una per una, più le
@@ -68,6 +68,13 @@ flusso Compila/Materiali/.../Output invece che come tab.
   design). Si spunta cosa serve davvero per questa BU specifica; non
   influisce su completezza o campi critici, è solo un promemoria per il
   brief di consegna al team creativo.
+- **Prompt Design** — un prompt pronto da incollare in uno strumento
+  esterno di generazione immagini (Midjourney, DALL-E, Ideogram, ecc.) per
+  ciascuna delle 12 voci "design" del catalogo Output (logo, identità
+  visiva, mockup, creatività annunci, ecc.). Sola lettura, sempre calcolato
+  dai dati correnti della BU — nessuna immagine generata dall'app stessa:
+  niente API esterne, niente chiavi da proteggere in un repository
+  pubblico. Vedi [docs/DECISIONI.md](docs/DECISIONI.md).
 
 ## I 16 generatori
 
@@ -105,7 +112,8 @@ src/
   store.js            localStorage, export/import JSON
   render.js           helper condivisi dai generatori
   markdown.js          renderer Markdown -> HTML per la vista Documento
-  ui.js                le quattro viste
+  prompt-design.js     prompt immagini per la vista Prompt Design
+  ui.js                le sette viste
   app.js               avvio, routing, sidebar, cartella condivisa
   cartella.js          lettura/scrittura BU via API GitHub
   gen/                 un file per generatore
